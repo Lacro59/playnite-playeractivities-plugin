@@ -18,6 +18,11 @@ namespace PlayerActivities
 
 
         public bool IsFirstRun { get; set; } = true;
+
+
+        public bool EnableSuccessStoryData { get; set; } = true;
+        public bool EnableScreenshotsVisualizerData { get; set; } = true;
+        public bool EnableHowLongToBeatData { get; set; } = true;
         #endregion
 
         // Playnite serializes settings object to a JSON object and saves it as text file.

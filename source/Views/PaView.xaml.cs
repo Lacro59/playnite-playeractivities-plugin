@@ -46,9 +46,27 @@ namespace PlayerActivities.Views
                 });
             });
 
+
+            // Options
+            List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
+            if (PluginDatabase.PluginSettings.Settings.EnableHowLongToBeatData)
+            {
+                activityTypes.Add(ActivityType.HowLongToBeatCompleted);
+            }
+            if (PluginDatabase.PluginSettings.Settings.EnableScreenshotsVisualizerData)
+            {
+                activityTypes.Add(ActivityType.ScreenshotsTaked);
+            }
+            if (PluginDatabase.PluginSettings.Settings.EnableSuccessStoryData)
+            {
+                activityTypes.Add(ActivityType.AchievementsGoal);
+                activityTypes.Add(ActivityType.AchievementsUnlocked);
+            }
+
+
             ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
             activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
-            activityLists.ForEach(x => 
+            activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x => 
             {
                 var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
                 if (finded != null)
