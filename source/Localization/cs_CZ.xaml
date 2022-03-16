@@ -1,0 +1,35 @@
+﻿<?xml version="1.0"?>
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- MainView -->
+
+    <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
+
+    
+    <!-- PlayerActivitiesSettingsView -->
+
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+
+    
+    <!-- ActivitiesView -->
+
+    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+
+    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+
+    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    
+</ResourceDictionary>
