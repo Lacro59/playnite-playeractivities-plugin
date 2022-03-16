@@ -1,0 +1,7 @@
+﻿Id: playnite-playeractivities-plugin
+Name: PlayerActivities
+Author: Lacro59
+Version: 0.1
+Module: PlayerActivities.dll
+Type: GenericPlugin
+Icon: icon.png
