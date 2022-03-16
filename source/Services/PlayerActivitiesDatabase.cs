@@ -171,6 +171,11 @@ namespace PlayerActivities.Services
                                 }
                             });
                         });
+
+                        if (PluginSettings.Settings.IsFirstRun)
+                        {
+                            AddOrUpdate(playerActivitiesData);
+                        }
                     }
                 }
             }
@@ -229,6 +234,11 @@ namespace PlayerActivities.Services
                                 Value = Value
                             });
                         });
+
+                        if (PluginSettings.Settings.IsFirstRun)
+                        {
+                            AddOrUpdate(playerActivitiesData);
+                        }
                     }
                 }
             }
@@ -300,6 +310,11 @@ namespace PlayerActivities.Services
                                 }
                             });
                         });
+
+                        if (PluginSettings.Settings.IsFirstRun)
+                        {
+                            AddOrUpdate(playerActivitiesData);
+                        }
                     }
                 }
             }
@@ -355,6 +370,11 @@ namespace PlayerActivities.Services
                                     Type = ActivityType.HowLongToBeatCompleted
                                 });
                             }
+                        }
+
+                        if (PluginSettings.Settings.IsFirstRun)
+                        {
+                            AddOrUpdate(playerActivitiesData);
                         }
                     }
                 }
