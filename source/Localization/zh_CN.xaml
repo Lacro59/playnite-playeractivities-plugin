@@ -3,33 +3,33 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
+    <sys:String x:Key="LOCPa">玩家活动</sys:String>
 
     
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件）</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示截图可视化的数据 (需要截图可视化插件)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示攻关历时的数据 (需要攻关历时插件)</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">这是您第一次游玩。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">您已经游玩过 {0} 小时。</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">您已经解锁了 {0} 个成就。</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">您已经达成 {0}% 的成就。</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">您已截取 {0} 张截图。</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">您已完成此游戏。</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} 天前</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} 天前</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} 月前</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} 月前</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} 年前</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} 年前</sys:String>
     
 </ResourceDictionary>
