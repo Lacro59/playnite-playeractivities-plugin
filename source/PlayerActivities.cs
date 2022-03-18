@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
+using PlayerActivities.Clients;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using PlayerActivities.Views;
@@ -152,7 +153,6 @@ namespace PlayerActivities
             List<GameMenuItem> gameMenuItems = new List<GameMenuItem>();
 
 
-
 #if DEBUG
             gameMenuItems.Add(new GameMenuItem
             {
@@ -205,7 +205,10 @@ namespace PlayerActivities
             {
                 MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
                 Description = "Test",
-                Action = (mainMenuItem) => { }
+                Action = (mainMenuItem) => 
+                {
+
+                }
             });
 #endif
 

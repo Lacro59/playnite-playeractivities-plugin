@@ -1,15 +1,20 @@
-﻿using PlayerActivities.Models;
+﻿using CommonPluginsShared;
+using PlayerActivities.Clients;
+using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 
 namespace PlayerActivities.Views
 {
@@ -31,72 +36,107 @@ namespace PlayerActivities.Views
             InitializeComponent();
             DataContext = ControlDataContext;
 
-            ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
-            PluginDatabase.Database.ForEach(x => 
+            GetData();
+            GetFriends();
+        }
+
+
+        private void GetData()
+        {
+            Task.Run(() =>
             {
-                x.Items.ForEach(y =>
+                ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
+                PluginDatabase.Database.ForEach(x =>
                 {
-                    activityLists.Add(new ActivityList
+                    x.Items.ForEach(y =>
                     {
-                        GameContext = x.Game,
-                        DateActivity = y.DateActivity,
-                        Type = y.Type,
-                        Value = y.Value
+                        activityLists.Add(new ActivityList
+                        {
+                            GameContext = x.Game,
+                            DateActivity = y.DateActivity,
+                            Type = y.Type,
+                            Value = y.Value
+                        });
                     });
                 });
-            });
 
 
-            // Options
-            List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
-            if (PluginDatabase.PluginSettings.Settings.EnableHowLongToBeatData)
-            {
-                activityTypes.Add(ActivityType.HowLongToBeatCompleted);
-            }
-            if (PluginDatabase.PluginSettings.Settings.EnableScreenshotsVisualizerData)
-            {
-                activityTypes.Add(ActivityType.ScreenshotsTaked);
-            }
-            if (PluginDatabase.PluginSettings.Settings.EnableSuccessStoryData)
-            {
-                activityTypes.Add(ActivityType.AchievementsGoal);
-                activityTypes.Add(ActivityType.AchievementsUnlocked);
-            }
-
-
-            ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
-            activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
-            activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x => 
-            {
-                var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
-                if (finded != null)
+                // Options
+                List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
+                if (PluginDatabase.PluginSettings.Settings.EnableHowLongToBeatData)
                 {
-                    finded.Activities.Add(new Activity
-                    {
-                        DateActivity = x.DateActivity,
-                        Value = x.Value,
-                        Type = x.Type
-                    });
+                    activityTypes.Add(ActivityType.HowLongToBeatCompleted);
                 }
-                else
+                if (PluginDatabase.PluginSettings.Settings.EnableScreenshotsVisualizerData)
                 {
-                    activityListsGrouped.Add(new ActivityListGrouped 
-                    { 
-                        GameContext = x.GameContext,
-                        dtString = x.DateActivity.ToString("yyyy-MM-dd"),
-                        Activities = new List<Activity> { 
-                            new Activity 
-                            { 
+                    activityTypes.Add(ActivityType.ScreenshotsTaked);
+                }
+                if (PluginDatabase.PluginSettings.Settings.EnableSuccessStoryData)
+                {
+                    activityTypes.Add(ActivityType.AchievementsGoal);
+                    activityTypes.Add(ActivityType.AchievementsUnlocked);
+                }
+
+
+                ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
+                activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
+                activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
+                {
+                    var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
+                    if (finded != null)
+                    {
+                        finded.Activities.Add(new Activity
+                        {
+                            DateActivity = x.DateActivity,
+                            Value = x.Value,
+                            Type = x.Type
+                        });
+                    }
+                    else
+                    {
+                        activityListsGrouped.Add(new ActivityListGrouped
+                        {
+                            GameContext = x.GameContext,
+                            dtString = x.DateActivity.ToString("yyyy-MM-dd"),
+                            Activities = new List<Activity> {
+                            new Activity
+                            {
                                 DateActivity = x.DateActivity,
                                 Value = x.Value,
                                 Type = x.Type
                             }
                         }
-                    });
-                }
-            });
+                        });
+                    }
+                });
 
-            ControlDataContext.ItemsSource = activityListsGrouped;
+                ControlDataContext.ItemsSource = activityListsGrouped;
+            });
+        }
+
+        private void GetFriends()
+        {
+            Task.Run(() => 
+            {
+                GogFriends gogFriends = new GogFriends();
+                var gogs = gogFriends.GetFriends();
+
+                ControlDataContext.FriendsSource = gogs.ToObservable();
+            });
+        }
+
+
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                Process.Start(((Hyperlink)sender).Tag.ToString());
+            }
+            catch(Exception ex)
+            {
+                Common.LogError(ex, false);
+            }
         }
     }
 
@@ -104,5 +144,8 @@ namespace PlayerActivities.Views
     {
         private ObservableCollection<ActivityListGrouped> _ItemsSource;
         public ObservableCollection<ActivityListGrouped> ItemsSource { get => _ItemsSource; set => SetValue(ref _ItemsSource, value); }
+
+        private ObservableCollection<PlayerFriends> _FriendsSource;
+        public ObservableCollection<PlayerFriends> FriendsSource { get => _FriendsSource; set => SetValue(ref _FriendsSource, value); }
     }
 }

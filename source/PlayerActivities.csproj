@@ -41,6 +41,12 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="protobuf-net, Version=2.0.0.668, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>packages\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="SteamKit2, Version=1.8.3.0, Culture=neutral, PublicKeyToken=ed3ce47ed5aad940, processorArchitecture=MSIL">
+      <HintPath>packages\SteamKit2.1.8.3\lib\net45\SteamKit2.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -67,6 +73,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clients\GenericFriends.cs" />
+    <Compile Include="Clients\GogFriends.cs" />
     <Compile Include="Controls\ScreeshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -74,17 +82,23 @@
     <Compile Include="Models\ActivityList.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />
+    <Compile Include="Models\Gog\ProfileUser.cs" />
+    <Compile Include="Models\Gog\ProfileUserFriends.cs" />
     <Compile Include="Models\HowLongToBeat\GameHowLongToBeat.cs" />
     <Compile Include="Models\HowLongToBeat\HltbDataUser.cs" />
     <Compile Include="Models\HowLongToBeat\HltbUserStats.cs" />
     <Compile Include="Models\PlayerActivitiesData.cs" />
     <Compile Include="Models\PlayerActivitiesCollection.cs" />
+    <Compile Include="Models\PlayerFriends.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\GameScreenshots.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\Screenshot.cs" />
     <Compile Include="Models\SuccessStory\Achievements.cs" />
     <Compile Include="Models\SuccessStory\GameAchievements.cs" />
     <Compile Include="PlayerActivities.cs" />
     <Compile Include="PlayerActivitiesSettings.cs" />
+    <Compile Include="playnite-plugincommon\CommonPluginsControls\Controls\TextBlockTrimmed.xaml.cs">
+      <DependentUpon>TextBlockTrimmed.xaml</DependentUpon>
+    </Compile>
     <Compile Include="playnite-plugincommon\CommonPluginsControls\Views\OptionsDownloadData.xaml.cs">
       <DependentUpon>OptionsDownloadData.xaml</DependentUpon>
     </Compile>
@@ -208,6 +222,10 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Include="playnite-plugincommon\CommonPluginsControls\Controls\TextBlockTrimmed.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="playnite-plugincommon\CommonPluginsControls\Views\OptionsDownloadData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
