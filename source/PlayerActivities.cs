@@ -190,7 +190,7 @@ namespace PlayerActivities
                 Description = resources.GetString("LOCCommonRefreshAllData"),
                 Action = (mainMenuItem) =>
                 {
-          
+                    PluginDatabase.InitializePluginData(true);
                 }
             });
 
@@ -322,23 +322,9 @@ namespace PlayerActivities
         {
             if (PluginSettings.Settings.IsFirstRun)
             {
-                GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
-                    $"{PluginDatabase.PluginName} - {resources.GetString("LOCCommonGettingData")}",
-                    false
-                );
-                globalProgressOptions.IsIndeterminate = true;
-
-                PlayniteApi.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
-                {
-                    Thread.Sleep(5000);
-                    PluginDatabase.FirstScanSuccessStory();
-                    PluginDatabase.FirstScanScreenshotsVisualizer();
-                    PluginDatabase.FirstScanGameActivity();
-                    PluginDatabase.FirstScanHowLongToBeat();
-
-                    PluginSettings.Settings.IsFirstRun = false;
-                    this.SavePluginSettings(PluginSettings.Settings);
-                }, globalProgressOptions);
+                PluginDatabase.InitializePluginData();
+                PluginSettings.Settings.IsFirstRun = false;
+                this.SavePluginSettings(PluginSettings.Settings);
             }
         }
 

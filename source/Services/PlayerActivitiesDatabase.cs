@@ -16,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace PlayerActivities.Services
 {
@@ -99,6 +100,42 @@ namespace PlayerActivities.Services
                 }
             }
             return playerActivities;
+        }
+
+
+        #region Plugin data
+        public void InitializePluginData(bool forced = false)
+        {
+            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
+                $"{PluginName} - {resources.GetString("LOCCommonProcessing")}",
+                false
+            );
+            globalProgressOptions.IsIndeterminate = true;
+
+            PlayniteApi.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
+            {
+                Thread.Sleep(5000);
+
+                // Remove existing data
+                if (forced)
+                {
+                    Database.ForEach(y =>
+                    {
+                        y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
+                        y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
+                        y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
+                        y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                    });
+                }
+
+                FirstScanSuccessStory();
+                FirstScanScreenshotsVisualizer();
+                if (!forced)
+                {
+                    FirstScanGameActivity();
+                }
+                FirstScanHowLongToBeat();
+            }, globalProgressOptions);
         }
 
 
@@ -384,5 +421,6 @@ namespace PlayerActivities.Services
                 Common.LogError(ex, false);
             }
         }
+        #endregion
     }
 }
