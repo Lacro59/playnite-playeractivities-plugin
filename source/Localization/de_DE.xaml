@@ -32,4 +32,7 @@
     <sys:String x:Key="LOCPaYearAgo">vor {0} Jahr</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">vor {0} Jahren</sys:String>
     
+    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
+    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+
 </ResourceDictionary>
