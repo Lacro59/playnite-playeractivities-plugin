@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Clients\GenericFriends.cs" />
     <Compile Include="Clients\GogFriends.cs" />
+    <Compile Include="Clients\SteamFriends.cs" />
     <Compile Include="Controls\ScreeshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Models\PlayerFriends.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\GameScreenshots.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\Screenshot.cs" />
+    <Compile Include="Models\Steam\FriendsApps.cs" />
     <Compile Include="Models\SuccessStory\Achievements.cs" />
     <Compile Include="Models\SuccessStory\GameAchievements.cs" />
     <Compile Include="PlayerActivities.cs" />
@@ -255,5 +257,6 @@
   </ItemGroup>
   <Import Project="playnite-plugincommon\CommonPlayniteShared\CommonPlayniteShared.projitems" Label="Shared" />
   <Import Project="playnite-plugincommon\CommonPluginsShared\CommonPluginsShared.projitems" Label="Shared" />
+  <Import Project="playnite-plugincommon\CommonPluginsStores\CommonPluginsStores.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

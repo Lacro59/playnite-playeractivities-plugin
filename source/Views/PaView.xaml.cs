@@ -131,10 +131,17 @@ namespace PlayerActivities.Views
         {
             Task.Run(() => 
             {
-                GogFriends gogFriends = new GogFriends();
-                var gogs = gogFriends.GetFriends();
+                List<PlayerFriends> playerFriends = new List<PlayerFriends>();
 
-                ControlDataContext.FriendsSource = gogs.ToObservable();
+                GogFriends gogFriends = new GogFriends();
+                List<PlayerFriends> gogs = gogFriends.GetFriends();
+
+                SteamFriends steamFriends = new SteamFriends();
+                List<PlayerFriends> steams = steamFriends.GetFriends();
+
+
+                playerFriends = playerFriends.Concat(gogs).Concat(steams).ToList();
+                ControlDataContext.FriendsSource = playerFriends.ToObservable();
 
 
                 IsFriendsFinished = true;

@@ -41,7 +41,7 @@ namespace PlayerActivities.Clients
         }
 
 
-        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
+        internal static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
 
         protected string ClientName { get; }
 

@@ -30,6 +30,6 @@ namespace PlayerActivities.Models
     {
         public int GamesOwned { get; set; }
         public int Achievements { get; set; }
-        public int HoursPlayed { get; set; }
+        public double HoursPlayed { get; set; }
     }
 }
