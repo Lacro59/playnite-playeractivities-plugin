@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Threading;
 
 namespace PlayerActivities.Views
 {
@@ -31,16 +32,24 @@ namespace PlayerActivities.Views
         private PaViewData ControlDataContext = new PaViewData();
 
 
+        private bool IsDataFinished = false;
+        private bool IsFriendsFinished = false;
+
+
         public PaView()
         {
             InitializeComponent();
             DataContext = ControlDataContext;
+
+            PART_DataLoad.Visibility = Visibility.Visible;
+            PART_Data.Visibility = Visibility.Hidden;
 
             GetData();
             GetFriends();
         }
 
 
+        #region Data
         private void GetData()
         {
             Task.Run(() =>
@@ -111,6 +120,10 @@ namespace PlayerActivities.Views
                 });
 
                 ControlDataContext.ItemsSource = activityListsGrouped;
+
+
+                IsDataFinished = true;
+                IsFinish();
             });
         }
 
@@ -122,9 +135,25 @@ namespace PlayerActivities.Views
                 var gogs = gogFriends.GetFriends();
 
                 ControlDataContext.FriendsSource = gogs.ToObservable();
+
+
+                IsFriendsFinished = true;
+                IsFinish();
             });
         }
 
+        private void IsFinish()
+        {
+            if (IsDataFinished && IsFriendsFinished)
+            {
+                this.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                {
+                    PART_DataLoad.Visibility = Visibility.Hidden;
+                    PART_Data.Visibility = Visibility.Visible;
+                }));
+            }
+        }
+        #endregion
 
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
