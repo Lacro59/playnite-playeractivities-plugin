@@ -8,31 +8,31 @@
     
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">عرض بيانات SuccessStory (إضافة SuccessStory مطلوبة)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">عرض بيانات ScreenshotsVisualizer (إضافة ScreenshotsVisualizer مطلوبة)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">عرض بيانات HowLongToBeat (إضافة HowLongToBeat مطلوبة)</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">لقد لعبت لأول مرة.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">لقد وصلت إلى {0} ساعة من اللعب.</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">لقد فتحت {0} إنجازات.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">لقد وصلت إلى {0}% من الإنجازات.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">لقد أخذت {0} لقطة شاشة.</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">لقد أكملت اللعبة.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">منذ {0} يوم </sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">منذ {0} أيّام</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">منذ {0} شهر</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">منذ {0} أشهر</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">منذ {0} عام </sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">منذ {0} سنوات</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">لعبة مملوكة</sys:String>
+    <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
 
 </ResourceDictionary>
