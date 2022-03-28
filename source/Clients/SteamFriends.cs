@@ -166,7 +166,7 @@ namespace PlayerActivities.Clients
                 bool UsedWebAchdata = achievements == 0;
 
                 IElement itemCompleted = htmlDocument.QuerySelector("div.achievement_showcase a.showcase_stat div.value");
-                int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out GamesCompleted);
+                int.TryParse(itemCompleted?.InnerHtml?.Trim(), out GamesCompleted);
 
                 if (!gamesOwnedUrl.IsNullOrEmpty())
                 {
@@ -220,6 +220,7 @@ namespace PlayerActivities.Clients
                 playerFriends.Stats = new PlayerStats
                 {
                     GamesOwned = gamesOwned,
+                    GamesCompleted = GamesCompleted,
                     Achievements = achievements,
                     HoursPlayed = Math.Round(hoursPlayed, 2)
                 };

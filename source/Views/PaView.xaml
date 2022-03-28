@@ -279,7 +279,7 @@
             <Grid Grid.Column="2" Name="PART_GridFriendsContener">
                 <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
                                               FontSize="24" Style="{StaticResource {x:Type ListView}}" 
-                                              SortingEnable="True" SortingDefaultDataName="tt" SortingSortDirection="Ascending"
+                                              SortingEnable="True" SortingDefaultDataName="Stats.HoursPlayed" SortingSortDirection="Descending"
                                               ItemsSource="{Binding FriendsSource}">
 
                     <ListView.View>
@@ -333,7 +333,7 @@
                                 <GridViewColumnHeader Content="{DynamicResource LOCPaAchievements}" />
                             </GridViewColumn>
 
-                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.HoursPlayed}" x:Name="tt">
+                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.HoursPlayed}">
                                 <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
                             </GridViewColumn>
                         </GridView>

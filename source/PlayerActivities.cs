@@ -73,7 +73,7 @@ namespace PlayerActivities
                             Height = 740
                         };
 
-                        PaView ViewExtension = new PaView();
+                        PaView ViewExtension = new PaView(this);
                         Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCSPa"), ViewExtension, windowOptions);
                         windowExtension.ResizeMode = ResizeMode.CanResize;
                         windowExtension.ShowDialog();
@@ -124,7 +124,7 @@ namespace PlayerActivities
                 {
                     SidebarItemControl sidebarItemControl = new SidebarItemControl(PluginDatabase.PlayniteApi);
                     sidebarItemControl.SetTitle(resources.GetString("LOCPa"));
-                    sidebarItemControl.AddContent(new PaView());
+                    sidebarItemControl.AddContent(new PaView(plugin));
 
                     return sidebarItemControl;
                 };

@@ -12,6 +12,8 @@ namespace PlayerActivities
     {
         #region Settings variables
         public bool MenuInExtensions { get; set; } = true; 
+
+        public DateTime LastFriendsRefresh { get; set; } = DateTime.Now; 
         
         public bool EnableIntegrationButtonHeader { get; set; } = false;
         public bool EnableIntegrationButtonSide { get; set; } = true;

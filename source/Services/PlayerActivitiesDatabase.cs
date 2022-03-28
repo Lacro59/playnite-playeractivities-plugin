@@ -17,6 +17,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using PlayerActivities.Clients;
 
 namespace PlayerActivities.Services
 {
@@ -36,7 +37,7 @@ namespace PlayerActivities.Services
                 if (_hltbUserStats == null)
                 {
                     string PathHltbUserStats = Path.Combine(howLongToBeatPath, "..", "HltbUserStats.json");
-                    if (File.Exists(PathHltbUserStats)) 
+                    if (File.Exists(PathHltbUserStats))
                     {
                         try
                         {
@@ -50,6 +51,54 @@ namespace PlayerActivities.Services
                     }
                 }
                 return _hltbUserStats;
+            }
+        }
+
+
+        private List<PlayerFriends> _playerFriends;
+        private List<PlayerFriends> playerFriends
+        {
+            get
+            {
+                if (PluginSettings.Settings.LastFriendsRefresh.AddDays(1) < DateTime.Now)
+                {
+                    GogFriends gogFriends = new GogFriends();
+                    List<PlayerFriends> gogs = gogFriends.GetFriends();
+
+                    SteamFriends steamFriends = new SteamFriends();
+                    List<PlayerFriends> steams = steamFriends.GetFriends();
+
+                    _playerFriends = new List<PlayerFriends>();
+                    _playerFriends = _playerFriends.Concat(gogs).Concat(steams).ToList();
+                    PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
+
+                    File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(_playerFriends));
+                }
+                else
+                {
+                    if (_playerFriends == null)
+                    {
+                        string PathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
+                        if (File.Exists(PathPlayerFriends))
+                        {
+                            try
+                            {
+                                _playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(PathPlayerFriends);
+                            }
+                            catch (Exception ex)
+                            {
+                                Common.LogError(ex, false);
+                            }
+                        }
+                    }
+                }
+
+                if (_playerFriends == null)
+                {
+                    return new List<PlayerFriends>();
+                }
+
+                return _playerFriends;
             }
         }
 
@@ -422,5 +471,13 @@ namespace PlayerActivities.Services
             }
         }
         #endregion
+
+
+        public List<PlayerFriends> GetFriends(PlayerActivities plugin)
+        {
+            List<PlayerFriends> pa = playerFriends;
+            plugin.SavePluginSettings(PluginSettings.Settings);
+            return pa;
+        }
     }
 }

@@ -27,6 +27,7 @@ namespace PlayerActivities.Views
         internal static readonly ILogger logger = LogManager.GetLogger();
         internal static IResourceProvider resources = new ResourceProvider();
 
+        private PlayerActivities Plugin;
         private PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
 
         private PaViewData ControlDataContext = new PaViewData();
@@ -36,8 +37,10 @@ namespace PlayerActivities.Views
         private bool IsFriendsFinished = false;
 
 
-        public PaView()
+        public PaView(PlayerActivities Plugin)
         {
+            this.Plugin = Plugin;
+
             InitializeComponent();
             DataContext = ControlDataContext;
 
@@ -131,19 +134,7 @@ namespace PlayerActivities.Views
         {
             Task.Run(() => 
             {
-                List<PlayerFriends> playerFriends = new List<PlayerFriends>();
-
-                GogFriends gogFriends = new GogFriends();
-                List<PlayerFriends> gogs = gogFriends.GetFriends();
-
-                SteamFriends steamFriends = new SteamFriends();
-                List<PlayerFriends> steams = steamFriends.GetFriends();
-
-
-                playerFriends = playerFriends.Concat(gogs).Concat(steams).ToList();
-                ControlDataContext.FriendsSource = playerFriends.ToObservable();
-
-
+                ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
                 IsFriendsFinished = true;
                 IsFinish();
             });
