@@ -44,6 +44,7 @@ namespace PlayerActivities.Clients
         private const string UrlProfil = @"https://steamcommunity.com/my/profile";
         private const string UrlProfilById = @"https://steamcommunity.com/profiles/{0}/friends";
         private const string UrlProfilByName = @"https://steamcommunity.com/id/{0}/friends";
+        private const string UrlAch = @"/stats/{0}/?tab=achievements";
 
         private static string SteamId { get; set; } = string.Empty;
         private static string SteamUser { get; set; } = string.Empty;
@@ -124,7 +125,13 @@ namespace PlayerActivities.Clients
                 HtmlParser parser = new HtmlParser();
                 List<HttpCookie> cookies = GetCookies();
 
-                string webData = Web.DownloadStringData(link, cookies).GetAwaiter().GetResult();
+                //string webData = Web.DownloadStringData(link, cookies).GetAwaiter().GetResult();
+                string webData = string.Empty;
+                using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+                {
+                    WebViewOffscreen.NavigateAndWait(link);
+                    webData = WebViewOffscreen.GetPageSource();
+                }
                 IHtmlDocument htmlDocument = parser.Parse(webData);
 
                 var avatars = htmlDocument.QuerySelectorAll("div.playerAvatarAutoSizeInner img");
@@ -136,6 +143,7 @@ namespace PlayerActivities.Clients
                 string pseudo = htmlDocument.QuerySelector("span.actual_persona_name").InnerHtml;
 
                 int gamesOwned = 0;
+                int GamesCompleted = 0;
                 string gamesOwnedUrl = string.Empty;
                 int achievements = 0;
                 double hoursPlayed = 0;
@@ -155,6 +163,11 @@ namespace PlayerActivities.Clients
                 IElement itemAch = htmlDocument.QuerySelector("div.achievement_showcase div.showcase_stat div.value");
                 int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out achievements);
 
+                bool UsedWebAchdata = achievements == 0;
+
+                IElement itemCompleted = htmlDocument.QuerySelector("div.achievement_showcase a.showcase_stat div.value");
+                int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out GamesCompleted);
+
                 if (!gamesOwnedUrl.IsNullOrEmpty())
                 {
                     //webData = Web.DownloadStringData(gamesOwnedUrl, cookies).GetAwaiter().GetResult();
@@ -163,19 +176,39 @@ namespace PlayerActivities.Clients
                         WebViewOffscreen.NavigateAndWait(gamesOwnedUrl);
                         webData = WebViewOffscreen.GetPageSource();
                     }
-
-                    string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}}];");
+                    
+                    string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}];");
                     Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
-                    FriendsAppsAll.ForEach(x => 
+
+                    using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
                     {
-                        if (!x.hours_forever.IsNullOrEmpty())
+                        FriendsAppsAll.ForEach(x =>
                         {
-                            double.TryParse(x.hours_forever
-                                .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                                .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
-                            hoursPlayed += hours_forever;
-                        }
-                    });
+                            if (!x.hours_forever.IsNullOrEmpty())
+                            {
+                                double.TryParse(x.hours_forever
+                                    .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                                    .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
+                                hoursPlayed += hours_forever;
+                            }
+
+                            if (x.availStatLinks.achievements && UsedWebAchdata)
+                            {
+                                string urlPlayerAch = link + string.Format(UrlAch, x.appid);
+                                WebViewOffscreen.NavigateAndWait(urlPlayerAch);
+                                webData = WebViewOffscreen.GetPageSource();
+
+                                htmlDocument = parser.Parse(webData);
+                                IHtmlCollection<IElement> data = htmlDocument.QuerySelectorAll("#topSummaryAchievements div");
+                                if (data.Count() > 0 && data[0] != null)
+                                {
+                                    Regex regex = new Regex(@"(\d+)");
+                                    int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
+                                    achievements += achCount;
+                                }
+                            }
+                        });
+                    }
                 }
 
 
@@ -188,7 +221,7 @@ namespace PlayerActivities.Clients
                 {
                     GamesOwned = gamesOwned,
                     Achievements = achievements,
-                    HoursPlayed = hoursPlayed
+                    HoursPlayed = Math.Round(hoursPlayed, 2)
                 };
             }
             catch (Exception ex)
@@ -226,7 +259,7 @@ namespace PlayerActivities.Clients
                 //this finds the Games link on the right side of the profile page. If that's public then so are achievements.
                 IHtmlDocument HtmlDoc = new HtmlParser().Parse(ResultWeb);
                 AngleSharp.Dom.IElement gamesPageLink = HtmlDoc.QuerySelector(@".profile_item_links a[href$=""/games/?tab=all""]");
-                if (gamesPageLink != null)
+                if (gamesPageLink != null && cookies?.Count > 0)
                 {
                     return true;
                 }
@@ -241,7 +274,7 @@ namespace PlayerActivities.Clients
                 //this finds the Games link on the right side of the profile page. If that's public then so are achievements.
                 HtmlDoc = new HtmlParser().Parse(ResultWeb);
                 gamesPageLink = HtmlDoc.QuerySelector(@".profile_item_links a[href$=""/games/?tab=all""]");
-                if (gamesPageLink != null)
+                if (gamesPageLink != null && cookies?.Count > 0)
                 {
                     SetCookies(cookies);
                     return true;

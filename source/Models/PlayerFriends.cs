@@ -29,6 +29,7 @@ namespace PlayerActivities.Models
     public class PlayerStats
     {
         public int GamesOwned { get; set; }
+        public int GamesCompleted { get; set; }
         public int Achievements { get; set; }
         public double HoursPlayed { get; set; }
     }

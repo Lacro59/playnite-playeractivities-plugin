@@ -143,7 +143,7 @@ namespace PlayerActivities.Clients
                                 {
                                     GamesOwned = x.stats.games_owned,
                                     Achievements = x.stats.achievements,
-                                    HoursPlayed = x.stats.hours_played
+                                    HoursPlayed = Math.Round((double)x.stats.hours_played, 2)
                                 }
                             });
                         });
