@@ -25,14 +25,14 @@
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} день тому</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} днів тому</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} місяць тому</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} місяців тому</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} рік тому</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} років тому</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Гра придбана</sys:String>
+    <sys:String x:Key="LOCPaAchievements">Досягнення</sys:String>
 
 </ResourceDictionary>
