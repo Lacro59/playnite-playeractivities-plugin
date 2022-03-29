@@ -99,8 +99,6 @@ namespace PlayerActivities.Clients
                     {
                         string linkFriends = el.GetAttribute("href");
                         Friends.Add(GetPlayerFriends(linkFriends));
-
-
                     }
                 }
                 catch (Exception ex)

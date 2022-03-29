@@ -68,8 +68,11 @@ namespace PlayerActivities.Services
                     SteamFriends steamFriends = new SteamFriends();
                     List<PlayerFriends> steams = steamFriends.GetFriends();
 
+                    OriginFriends originFriends = new OriginFriends();
+                    List<PlayerFriends> origin = originFriends.GetFriends();
+
                     _playerFriends = new List<PlayerFriends>();
-                    _playerFriends = _playerFriends.Concat(gogs).Concat(steams).ToList();
+                    _playerFriends = _playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
                     PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
 
                     File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(_playerFriends));

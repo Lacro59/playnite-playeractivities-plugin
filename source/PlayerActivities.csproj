@@ -75,6 +75,7 @@
   <ItemGroup>
     <Compile Include="Clients\GenericFriends.cs" />
     <Compile Include="Clients\GogFriends.cs" />
+    <Compile Include="Clients\OriginFriends.cs" />
     <Compile Include="Clients\SteamFriends.cs" />
     <Compile Include="Controls\ScreeshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
@@ -88,6 +89,9 @@
     <Compile Include="Models\HowLongToBeat\GameHowLongToBeat.cs" />
     <Compile Include="Models\HowLongToBeat\HltbDataUser.cs" />
     <Compile Include="Models\HowLongToBeat\HltbUserStats.cs" />
+    <Compile Include="Models\Origin\AvatarResponse.cs" />
+    <Compile Include="Models\Origin\Encoded.cs" />
+    <Compile Include="Models\Origin\Friends.cs" />
     <Compile Include="Models\PlayerActivitiesData.cs" />
     <Compile Include="Models\PlayerActivitiesCollection.cs" />
     <Compile Include="Models\PlayerFriends.cs" />

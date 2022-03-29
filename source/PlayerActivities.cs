@@ -207,7 +207,8 @@ namespace PlayerActivities
                 Description = "Test",
                 Action = (mainMenuItem) => 
                 {
-
+                    OriginFriends originFriends = new OriginFriends();
+                    originFriends.GetFriends();
                 }
             });
 #endif
