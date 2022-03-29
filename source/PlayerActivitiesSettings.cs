@@ -19,6 +19,11 @@ namespace PlayerActivities
         public bool EnableIntegrationButtonSide { get; set; } = true;
 
 
+        public bool EnableSteamFriends { get; set; } = false;
+        public bool EnableGogFriends { get; set; } = false;
+        public bool EnableOriginFriends { get; set; } = false;
+
+
         public bool IsFirstRun { get; set; } = true;
 
 

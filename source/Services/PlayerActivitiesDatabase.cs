@@ -62,14 +62,26 @@ namespace PlayerActivities.Services
             {
                 if (PluginSettings.Settings.LastFriendsRefresh.AddDays(1) < DateTime.Now)
                 {
-                    GogFriends gogFriends = new GogFriends();
-                    List<PlayerFriends> gogs = gogFriends.GetFriends();
+                    List<PlayerFriends> gogs = new List<PlayerFriends>();
+                    if (PluginSettings.Settings.EnableGogFriends)
+                    {
+                        GogFriends gogFriends = new GogFriends();
+                        gogs = gogFriends.GetFriends();
+                    }
 
-                    SteamFriends steamFriends = new SteamFriends();
-                    List<PlayerFriends> steams = steamFriends.GetFriends();
+                    List<PlayerFriends> steams = new List<PlayerFriends>();
+                    if (PluginSettings.Settings.EnableSteamFriends)
+                    {
+                        SteamFriends steamFriends = new SteamFriends();
+                        steams = steamFriends.GetFriends();
+                    }
 
-                    OriginFriends originFriends = new OriginFriends();
-                    List<PlayerFriends> origin = originFriends.GetFriends();
+                    List<PlayerFriends> origin = new List<PlayerFriends>();
+                    if (PluginSettings.Settings.EnableOriginFriends)
+                    {
+                        OriginFriends originFriends = new OriginFriends();
+                        origin = originFriends.GetFriends();
+                    }
 
                     _playerFriends = new List<PlayerFriends>();
                     _playerFriends = _playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
@@ -476,8 +488,13 @@ namespace PlayerActivities.Services
         #endregion
 
 
-        public List<PlayerFriends> GetFriends(PlayerActivities plugin)
+        public List<PlayerFriends> GetFriends(PlayerActivities plugin, bool force = false)
         {
+            if (force)
+            {
+                PluginSettings.Settings.LastFriendsRefresh = PluginSettings.Settings.LastFriendsRefresh.AddDays(-5);
+            }
+
             List<PlayerFriends> pa = playerFriends;
             plugin.SavePluginSettings(PluginSettings.Settings);
             return pa;

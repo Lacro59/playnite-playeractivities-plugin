@@ -30,9 +30,19 @@
                     <CheckBox IsChecked="{Binding Settings.EnableHowLongToBeatData}" VerticalAlignment="Center" Margin="0,15,0,0">
                         <Label Content="{DynamicResource LOCPaEnableHowLongToBeatData}" />
                     </CheckBox>
+
+
+                    <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0">
+                        <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
+                    </CheckBox>
                     
+                    <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
+                        <Label Content="{DynamicResource LOCPaEnableOriginFriends}" />
+                    </CheckBox>
                     
-                    
+                    <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
+                        <Label Content="{DynamicResource LOCPaEnableSteamFriends}" />
+                    </CheckBox>
                 </StackPanel>
             </ScrollViewer>
         </TabItem>
