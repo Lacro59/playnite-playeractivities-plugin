@@ -8,22 +8,22 @@
     
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Показувати дані SuccessStory (необхідний плагін SuccessStory)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Показувати дані ScreenshotsVisualizer (необхідний плагін ScreenshotsVisualizer)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Показувати дані HowLongToBeat (необхідний плагін HowLongToBeat)</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">Ви грали вперше.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">Ви досягли {0} годин гри.</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">Ви здобули {0} досягнень.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">Ви досягли {0}% досягнень.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">Ви зробили {0} знімків екрану.</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">Ви пройшли гру.</sys:String>
 
     <sys:String x:Key="LOCPaDayAgo">{0} день тому</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} днів тому</sys:String>
