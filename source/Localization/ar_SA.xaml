@@ -5,12 +5,18 @@
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
+    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+
     
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">عرض بيانات SuccessStory (إضافة SuccessStory مطلوبة)</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">عرض بيانات ScreenshotsVisualizer (إضافة ScreenshotsVisualizer مطلوبة)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">عرض بيانات HowLongToBeat (إضافة HowLongToBeat مطلوبة)</sys:String>
+    
+    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
 
     
     <!-- ActivitiesView -->
