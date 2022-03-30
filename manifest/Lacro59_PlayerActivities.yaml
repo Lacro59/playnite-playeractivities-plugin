@@ -3,7 +3,7 @@ Packages:
   - Version: 0.1
     RequiredApiVersion: 6.2.0
     ReleaseDate: 2022-03-30
-    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v0.1/playnite-successstory-plugin_0_1.pext
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v0.1/playnite-playeractivities-plugin_0_1.pext
     Changelog:
       - Warning experimental features (maybe playnite crash)
       - Added Steam friends data
