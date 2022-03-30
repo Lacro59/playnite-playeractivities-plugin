@@ -5,12 +5,18 @@
 
     <sys:String x:Key="LOCPa">玩家活动</sys:String>
 
+    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+
     
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件）</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示截图可视化的数据 (需要截图可视化插件)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示攻关历时的数据 (需要攻关历时插件)</sys:String>
+    
+    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
 
     
     <!-- ActivitiesView -->
