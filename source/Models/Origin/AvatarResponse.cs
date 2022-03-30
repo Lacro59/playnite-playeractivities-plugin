@@ -13,15 +13,15 @@ namespace PlayerActivities.Models.Origin
 
     public class Avatar
     {
-        public int avatarId { get; set; }
-        public int orderNumber { get; set; }
+        public int? avatarId { get; set; }
+        public int? orderNumber { get; set; }
         public bool isRecent { get; set; }
         public string link { get; set; }
-        public int typeId { get; set; }
+        public int? typeId { get; set; }
         public string typeName { get; set; }
-        public int statusId { get; set; }
+        public int? statusId { get; set; }
         public string statusName { get; set; }
-        public int galleryId { get; set; }
+        public int? galleryId { get; set; }
         public string galleryName { get; set; }
     }
 

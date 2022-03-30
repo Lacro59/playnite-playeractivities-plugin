@@ -92,6 +92,8 @@
     <Compile Include="Models\Origin\AvatarResponse.cs" />
     <Compile Include="Models\Origin\Encoded.cs" />
     <Compile Include="Models\Origin\Friends.cs" />
+    <Compile Include="Models\Origin\OriginProductInfos.cs" />
+    <Compile Include="Models\Origin\UsersInfos.cs" />
     <Compile Include="Models\PlayerActivitiesData.cs" />
     <Compile Include="Models\PlayerActivitiesCollection.cs" />
     <Compile Include="Models\PlayerFriends.cs" />
