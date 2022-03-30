@@ -5,3 +5,10 @@ Version: 0.1
 Module: PlayerActivities.dll
 Type: GenericPlugin
 Icon: icon.png
+Links:
+  - Name: Forum
+    Url: https://playnite.link/forum/thread-1148.html
+  - Name: Github
+    Url: https://github.com/Lacro59/playnite-playeractivities-plugin
+  - Name: Translate
+    Url: https://crowdin.com/project/playnite-extensions
