@@ -1,8 +1,10 @@
-﻿using CommonPluginsShared.Extensions;
+﻿using CommonPluginsShared.Converters;
+using CommonPluginsShared.Extensions;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,9 +38,9 @@ namespace PlayerActivities.Models
                 {
                     return months == 1 ? string.Format(resources.GetString("LOCPaMonthAgo"), months) : string.Format(resources.GetString("LOCPaMonthsAgo"), months);
                 }
-                if (days > 0)
+                if (days >= 0)
                 {
-                    return days == 1 ? string.Format(resources.GetString("LOCPaDayAgo"), days) : string.Format(resources.GetString("LOCPaDaysAgo"), days);
+                    return days >= 0 ? string.Format(resources.GetString("LOCPaDayAgo"), days) : string.Format(resources.GetString("LOCPaDaysAgo"), days);
                 }
 
                 return string.Empty;

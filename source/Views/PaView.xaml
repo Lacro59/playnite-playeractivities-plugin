@@ -7,7 +7,8 @@
              xmlns:controls="clr-namespace:PlayerActivities.Controls"
              xmlns:enum="clr-namespace:PlayerActivities.Models" 
              xmlns:convertersshared="clr-namespace:CommonPluginsShared.Converters" 
-             xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" xmlns:controls2="clr-namespace:CommonPluginsControls.Controls"
+             xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" 
+             xmlns:controls2="clr-namespace:CommonPluginsControls.Controls"
              mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1100"
              d:DataContext="{d:DesignInstance Type=local:PaViewData}">
 
