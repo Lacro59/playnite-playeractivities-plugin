@@ -21,7 +21,7 @@ namespace PlayerActivities.Controls
             {
                 if (_plugin == null)
                 {
-                    _plugin = API.Instance.Addons.Plugins.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488"));
+                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
                 }
                 return _plugin;
             }
