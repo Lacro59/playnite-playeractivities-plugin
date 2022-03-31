@@ -226,8 +226,7 @@ namespace PlayerActivities
                 Description = "Test",
                 Action = (mainMenuItem) => 
                 {
-                    OriginFriends originFriends = new OriginFriends();
-                    originFriends.GetFriends();
+
                 }
             });
 #endif
@@ -288,7 +287,7 @@ namespace PlayerActivities
             {
                 try
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                     PlayerActivitiesData playerActivities = PluginDatabase.Get(args.Game);
 
                     // Playtime first
