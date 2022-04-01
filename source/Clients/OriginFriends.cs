@@ -1,11 +1,7 @@
-﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
-using CommonPlayniteShared.PluginLibrary.OriginLibrary.Models;
+﻿using CommonPlayniteShared.PluginLibrary.OriginLibrary.Models;
 using CommonPlayniteShared.PluginLibrary.OriginLibrary.Services;
 using CommonPluginsShared;
 using PlayerActivities.Models;
-using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
@@ -30,6 +26,8 @@ namespace PlayerActivities.Clients
         private string UrlAchGames = @"https://achievements.gameservices.ea.com/achievements/personas/{0}/{1}/all?lang={2}&metadata=true&fullset=true";
 
         private const string UrlProfileUser = @"https://www.origin.com/profile/user/{0}";
+        private const string UrlStoreGame = @"https://www.origin.com/store{0}";
+        private const string UrlGameInfo = @"https://api2.origin.com/ecommerce2/public/supercat/{0}/no_NO?country=NO";
 
 
         protected static OriginAccountClient _OriginAPI;
@@ -151,24 +149,13 @@ namespace PlayerActivities.Clients
                         }
                     }
 
+                    PlayerFriends playerFriendsUs = null;
                     PlayerFriends playerFriends = null;
                     using (WebClient webClient = new WebClient { Encoding = Encoding.UTF8 })
                     {
                         webClient.Headers.Add("AuthToken", accessToken);
                         //webClient.Headers.Add("accept", "application/vnd.origin.v3+json; x-cache/force-write");
                         webClient.Headers.Add("accept", "application/json");
-
-                        if (FriendsAll?.entries?.Count > 0)
-                        {
-                            FriendsAll.entries.ForEach(x =>
-                            {
-                                playerFriends = GetPlayerFriends(x, userId, accessToken);
-                                if (playerFriends != null)
-                                {
-                                    Friends.Add(playerFriends);
-                                }
-                            });
-                        }
 
                         // Us
                         Entry entry = new Entry
@@ -177,10 +164,23 @@ namespace PlayerActivities.Clients
                             displayName = userPseudo,
                             personaId = personaId
                         };
-                        playerFriends = GetPlayerFriends(entry, userId, accessToken);
-                        if (playerFriends != null)
+                        playerFriendsUs = GetPlayerFriends(entry, userId, accessToken);
+                        if (playerFriendsUs != null)
                         {
-                            Friends.Add(playerFriends);
+                            playerFriendsUs.IsUser = true;
+                            Friends.Add(playerFriendsUs);
+                        }
+
+                        if (FriendsAll?.entries?.Count > 0)
+                        {
+                            FriendsAll.entries.ForEach(x =>
+                            {
+                                playerFriends = GetPlayerFriends(x, userId, accessToken, playerFriendsUs);
+                                if (playerFriends != null)
+                                {
+                                    Friends.Add(playerFriends);
+                                }
+                            });
                         }
                     }
                 }
@@ -198,7 +198,7 @@ namespace PlayerActivities.Clients
         }
 
 
-        private PlayerFriends GetPlayerFriends(Entry entry, long userId, string accessToken)
+        private PlayerFriends GetPlayerFriends(Entry entry, long userId, string accessToken, PlayerFriends playerFriendsUs = null)
         {
             PlayerFriends playerFriends = null;
             try
@@ -237,6 +237,28 @@ namespace PlayerActivities.Clients
                     catch (Exception ex) { }
 
                     int GamesOwned = originProductInfos?.productInfos?.Count ?? 0;
+                    List<PlayerGames> Games = new List<PlayerGames>();
+                    originProductInfos?.productInfos?.ForEach(x => 
+                    {
+                        NewUrl = string.Format(UrlGameInfo, x.productId);
+                        DownloadString = webClient.DownloadString(NewUrl);
+                        Serialization.TryFromJson<GameStoreDataResponse>(DownloadString, out GameStoreDataResponse gameStoreDataResponse);
+
+                        bool IsCommun = false;
+                        if (playerFriendsUs != null)
+                        {
+                            IsCommun = playerFriendsUs.Games?.Where(y => y.Name.IsEqual(x.displayProductName))?.Count() != 0;
+                        }
+
+                        Games.Add(new PlayerGames 
+                        { 
+                            Id = x.productId,
+                            Name = x.displayProductName,
+                            Link = gameStoreDataResponse?.offerPath != null ? string.Format(UrlStoreGame, gameStoreDataResponse.offerPath) : string.Empty,
+                            IsCommun = IsCommun
+                        });
+                    });
+
 
                     // Achievements
                     dynamic originAchievements = null;
@@ -268,12 +290,20 @@ namespace PlayerActivities.Clients
                                 DownloadString = webClient.DownloadString(NewUrl);
                                 Serialization.TryFromJson<dynamic>(DownloadString, out originAchievements);
 
+                                int gameAchievements = 0;
                                 foreach (var item in originAchievements["achievements"])
                                 {
                                     if ((string)item.Value["state"]["a_st"] != "ACTIVE")
                                     {
                                         Achievements++;
+                                        gameAchievements++;
                                     }
+                                }
+
+                                var data = Games.Find(y => y.Id.IsEqual(x.productId));
+                                if (data != null)
+                                {
+                                    data.Achievements = gameAchievements;
                                 }
                             }
                             // No data
@@ -296,7 +326,8 @@ namespace PlayerActivities.Clients
                         {
                             GamesOwned = GamesOwned,
                             Achievements = Achievements
-                        }
+                        },
+                        Games = Games
                     };
                 }
             }

@@ -1,6 +1,7 @@
 ﻿using CommonPlayniteShared.PluginLibrary.GogLibrary.Models;
 using CommonPlayniteShared.PluginLibrary.Services.GogLibrary;
 using CommonPluginsShared;
+using CommonPluginsShared.Extensions;
 using PlayerActivities.Models;
 using PlayerActivities.Models.Gog;
 using Playnite.SDK;
@@ -57,6 +58,7 @@ namespace PlayerActivities.Clients
 
         private string UrlFriends = @"https://embed.gog.com/users/info/{0}?expand=friendStatus";
         private string UrlProfileFriend = @"https://www.gog.com/u/{0}/friends";
+        private string UrlGamesFriend = @"https://www.gog.com/u/{0}/games/stats?page={1}";
 
         public GogFriends() : base("GOG")
         {
@@ -112,20 +114,23 @@ namespace PlayerActivities.Clients
                     // set data
                     if (profileUserFriends != null && profileUser != null)
                     {
-                        Friends.Add(new PlayerFriends
+                        PlayerFriends playerFriendsUs = new PlayerFriends
                         {
                             ClientName = ClientName,
                             FriendId = profileUser.userId,
                             FriendPseudo = profileUser.username,
                             FriendsAvatar = profileUser.avatar.Replace("\\", string.Empty),
                             FriendsLink = string.Format(UrlProfileFriend, profileUser.username),
+                            IsUser = true,
                             Stats = new PlayerStats
                             {
                                 GamesOwned = profileUser.stats.games_owned,
                                 Achievements = profileUser.stats.achievements,
                                 HoursPlayed = profileUser.stats.hours_played
-                            }
-                        });
+                            },
+                            Games = GetPlayerGames(profileUser.username)
+                        };
+                        Friends.Add(playerFriendsUs); ;
 
                         profileUserFriends.ForEach(x =>
                         {
@@ -144,7 +149,8 @@ namespace PlayerActivities.Clients
                                     GamesOwned = x.stats.games_owned,
                                     Achievements = x.stats.achievements,
                                     HoursPlayed = Math.Round((double)x.stats.hours_played, 2)
-                                }
+                                },
+                                Games = GetPlayerGames(x.user.username, playerFriendsUs)
                             });
                         });
                     }
@@ -160,6 +166,61 @@ namespace PlayerActivities.Clients
             }
 
             return Friends;
+        }
+
+
+        public List<PlayerGames> GetPlayerGames(string UserName, PlayerFriends playerFriendsUs = null)
+        {
+            List<PlayerGames> playerGames = new List<PlayerGames>();
+
+            for(int idx = 1; idx < 10; idx++)
+            {
+                try
+                {
+                    string ResultWeb = Web.DownloadStringData(string.Format(UrlGamesFriend, UserName, idx), GetCookies()).GetAwaiter().GetResult();
+                    Serialization.TryFromJson<ProfileGames>(ResultWeb, out ProfileGames profileGames);
+
+                    if (profileGames == null)
+                    {
+                        break;
+                    }
+
+                    profileGames?._embedded?.items?.ForEach(x =>
+                    {
+                        bool IsCommun = false;
+                        if (playerFriendsUs != null)
+                        {
+                            IsCommun = playerFriendsUs.Games?.Where(y => y.Id.IsEqual(x.game.id))?.Count() != 0;
+                        }
+
+                        int Achievements = 0;
+                        double HoursPlayed = 0;
+
+                    //var aaa = ((dynamic)x.stats);
+                    foreach (var data in (dynamic)x.stats)
+                        {
+                            double.TryParse(((dynamic)x.stats)[data.Path]["playtime"].ToString(), out HoursPlayed);
+                            HoursPlayed = HoursPlayed * 60;
+                        }
+
+                        playerGames.Add(new PlayerGames
+                        {
+                            Id = x.game.id,
+                            Name = x.game.title,
+                            Link = @"https://www.gog.com" + x.game.url.Replace("\\", string.Empty),
+                            IsCommun = IsCommun,
+                            Achievements = Achievements,
+                            HoursPlayed = HoursPlayed
+                        });
+                    });
+                }
+                catch (Exception ex)
+                { 
+                
+                }
+            }
+
+            return playerGames;
         }
     }
 }

@@ -226,7 +226,8 @@ namespace PlayerActivities
                 Description = "Test",
                 Action = (mainMenuItem) => 
                 {
-
+                    var data = new GogFriends();
+                    data.GetFriends();
                 }
             });
 #endif

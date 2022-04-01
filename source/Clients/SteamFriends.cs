@@ -17,6 +17,7 @@ using static CommonPluginsShared.PlayniteTools;
 using CommonPluginsStores;
 using System.Globalization;
 using PlayerActivities.Models.Steam;
+using CommonPluginsShared.Extensions;
 
 namespace PlayerActivities.Clients
 {
@@ -45,6 +46,8 @@ namespace PlayerActivities.Clients
         private const string UrlProfilById = @"https://steamcommunity.com/profiles/{0}/friends";
         private const string UrlProfilByName = @"https://steamcommunity.com/id/{0}/friends";
         private const string UrlAch = @"/stats/{0}/?tab=achievements";
+        private const string UrlStoreGame = @"https://store.steampowered.com/app/{0}";
+
 
         private static string SteamId { get; set; } = string.Empty;
         private static string SteamUser { get; set; } = string.Empty;
@@ -91,14 +94,16 @@ namespace PlayerActivities.Clients
                     }
 
                     // us
-                    Friends.Add(GetPlayerFriends(url.Replace("/friends", string.Empty)));
+                    PlayerFriends playerFriendsUs = GetPlayerFriends(url.Replace("/friends", string.Empty));
+                    playerFriendsUs.IsUser = true;
+                    Friends.Add(playerFriendsUs);
 
 
                     IHtmlCollection<IElement> els = htmlDocument.QuerySelectorAll("a.selectable_overlay");
                     foreach (IElement el in els)
                     {
                         string linkFriends = el.GetAttribute("href");
-                        Friends.Add(GetPlayerFriends(linkFriends));
+                        Friends.Add(GetPlayerFriends(linkFriends, playerFriendsUs));
                     }
                 }
                 catch (Exception ex)
@@ -114,7 +119,7 @@ namespace PlayerActivities.Clients
             return Friends;
         }
 
-        private PlayerFriends GetPlayerFriends(string link)
+        private PlayerFriends GetPlayerFriends(string link, PlayerFriends playerFriendsUs = null)
         {
             PlayerFriends playerFriends = new PlayerFriends();
 
@@ -149,7 +154,7 @@ namespace PlayerActivities.Clients
                 IHtmlCollection<IElement> items = htmlDocument.QuerySelectorAll("div.profile_item_links div");
                 foreach (IElement item in items)
                 {
-                    IElement a = item.QuerySelector("a");                    
+                    IElement a = item.QuerySelector("a");
                     if (a?.GetAttribute("href")?.Contains("games", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
                         gamesOwnedUrl = a.GetAttribute("href");
@@ -166,6 +171,7 @@ namespace PlayerActivities.Clients
                 IElement itemCompleted = htmlDocument.QuerySelector("div.achievement_showcase a.showcase_stat div.value");
                 int.TryParse(itemCompleted?.InnerHtml?.Trim(), out GamesCompleted);
 
+                List<PlayerGames> Games = new List<PlayerGames>();
                 if (!gamesOwnedUrl.IsNullOrEmpty())
                 {
                     //webData = Web.DownloadStringData(gamesOwnedUrl, cookies).GetAwaiter().GetResult();
@@ -177,17 +183,33 @@ namespace PlayerActivities.Clients
                     
                     string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}];");
                     Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
-
+                    
                     using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
                     {
                         FriendsAppsAll.ForEach(x =>
                         {
+                            bool IsCommun = false;
+                            if (playerFriendsUs != null)
+                            {
+                                IsCommun = playerFriendsUs.Games?.Where(y => y.Id.IsEqual(x.appid.ToString()))?.Count() != 0;
+                            }
+
+                            PlayerGames playerGames = new PlayerGames
+                            {
+                                Id = x.appid.ToString(),
+                                Name = x.name,
+                                Link = string.Format(UrlStoreGame, x.appid),
+                                IsCommun = IsCommun
+                            };
+
                             if (!x.hours_forever.IsNullOrEmpty())
                             {
                                 double.TryParse(x.hours_forever
                                     .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
                                     .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
                                 hoursPlayed += hours_forever;
+
+                                playerGames.HoursPlayed = hours_forever;
                             }
 
                             if (x.availStatLinks.achievements && UsedWebAchdata)
@@ -203,8 +225,12 @@ namespace PlayerActivities.Clients
                                     Regex regex = new Regex(@"(\d+)");
                                     int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
                                     achievements += achCount;
+
+                                    playerGames.Achievements = achCount;
                                 }
                             }
+
+                            Games.Add(playerGames);
                         });
                     }
                 }
@@ -222,6 +248,7 @@ namespace PlayerActivities.Clients
                     Achievements = achievements,
                     HoursPlayed = Math.Round(hoursPlayed, 2)
                 };
+                playerFriends.Games = Games;
             }
             catch (Exception ex)
             {

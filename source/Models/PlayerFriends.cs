@@ -15,6 +15,7 @@ namespace PlayerActivities.Models
         public string FriendPseudo { get; set; }
         public string FriendsAvatar { get; set; }
         public string FriendsLink { get; set; }
+        public bool IsUser { get; set; }
 
 
         [DontSerialize]
@@ -22,7 +23,9 @@ namespace PlayerActivities.Models
 
         public DateTime? AcceptedAt { get; set; }
 
-        public PlayerStats Stats {get;set;}
+        public PlayerStats Stats { get; set; }
+
+        public List<PlayerGames> Games { get; set; } = new List<PlayerGames>();
     }
 
 
@@ -30,6 +33,17 @@ namespace PlayerActivities.Models
     {
         public int GamesOwned { get; set; }
         public int GamesCompleted { get; set; }
+        public int Achievements { get; set; }
+        public double HoursPlayed { get; set; }
+    }
+
+
+    public class PlayerGames
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Link { get; set; }
+        public bool IsCommun { get; set; }
         public int Achievements { get; set; }
         public double HoursPlayed { get; set; }
     }

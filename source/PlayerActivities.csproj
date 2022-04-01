@@ -84,6 +84,7 @@
     <Compile Include="Models\ActivityList.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />
+    <Compile Include="Models\Gog\ProfileGames.cs" />
     <Compile Include="Models\Gog\ProfileUser.cs" />
     <Compile Include="Models\Gog\ProfileUserFriends.cs" />
     <Compile Include="Models\HowLongToBeat\GameHowLongToBeat.cs" />
