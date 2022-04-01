@@ -5,7 +5,7 @@
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Оновити дані друзів</sys:String>
 
     
     <!-- PlayerActivitiesSettingsView -->
@@ -14,9 +14,9 @@
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Показувати дані ScreenshotsVisualizer (необхідний плагін ScreenshotsVisualizer)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Показувати дані HowLongToBeat (необхідний плагін HowLongToBeat)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Увімкнути друзів Steam</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Увімкнути друзів GOG</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Увімкнути друзів Origin</sys:String>
 
     
     <!-- ActivitiesView -->
