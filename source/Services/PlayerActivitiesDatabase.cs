@@ -55,69 +55,6 @@ namespace PlayerActivities.Services
         }
 
 
-        private List<PlayerFriends> _playerFriends;
-        private List<PlayerFriends> playerFriends
-        {
-            get
-            {
-                if (PluginSettings.Settings.LastFriendsRefresh.AddDays(1) < DateTime.Now)
-                {
-                    List<PlayerFriends> gogs = new List<PlayerFriends>();
-                    if (PluginSettings.Settings.EnableGogFriends)
-                    {
-                        GogFriends gogFriends = new GogFriends();
-                        gogs = gogFriends.GetFriends();
-                    }
-
-                    List<PlayerFriends> steams = new List<PlayerFriends>();
-                    if (PluginSettings.Settings.EnableSteamFriends)
-                    {
-                        SteamFriends steamFriends = new SteamFriends();
-                        steams = steamFriends.GetFriends();
-                    }
-
-                    List<PlayerFriends> origin = new List<PlayerFriends>();
-                    if (PluginSettings.Settings.EnableOriginFriends)
-                    {
-                        OriginFriends originFriends = new OriginFriends();
-                        origin = originFriends.GetFriends();
-                    }
-
-                    _playerFriends = new List<PlayerFriends>();
-                    _playerFriends = _playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
-                    PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
-
-                    File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(_playerFriends));
-                }
-                else
-                {
-                    if (_playerFriends == null)
-                    {
-                        string PathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
-                        if (File.Exists(PathPlayerFriends))
-                        {
-                            try
-                            {
-                                _playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(PathPlayerFriends);
-                            }
-                            catch (Exception ex)
-                            {
-                                Common.LogError(ex, false);
-                            }
-                        }
-                    }
-                }
-
-                if (_playerFriends == null)
-                {
-                    return new List<PlayerFriends>();
-                }
-
-                return _playerFriends;
-            }
-        }
-
-
         public PlayerActivitiesDatabase(IPlayniteAPI PlayniteApi, PlayerActivitiesSettingsViewModel PluginSettings, string PluginUserDataPath) : base(PlayniteApi, PluginSettings, "PlayerActivities", PluginUserDataPath)
         {
             successStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", "cebe6d32-8c46-4459-b993-5a5189d60788", "SuccessStory");
@@ -490,14 +427,59 @@ namespace PlayerActivities.Services
 
         public List<PlayerFriends> GetFriends(PlayerActivities plugin, bool force = false)
         {
+            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+
             if (force)
             {
-                PluginSettings.Settings.LastFriendsRefresh = PluginSettings.Settings.LastFriendsRefresh.AddDays(-5);
+                List<PlayerFriends> gogs = new List<PlayerFriends>();
+                if (PluginSettings.Settings.EnableGogFriends)
+                {
+                    GogFriends gogFriends = new GogFriends();
+                    gogs = gogFriends.GetFriends();
+                }
+
+                List<PlayerFriends> steams = new List<PlayerFriends>();
+                if (PluginSettings.Settings.EnableSteamFriends)
+                {
+                    SteamFriends steamFriends = new SteamFriends();
+                    steams = steamFriends.GetFriends();
+                }
+
+                List<PlayerFriends> origin = new List<PlayerFriends>();
+                if (PluginSettings.Settings.EnableOriginFriends)
+                {
+                    OriginFriends originFriends = new OriginFriends();
+                    origin = originFriends.GetFriends();
+                }
+
+                playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
+                
+                PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
+                plugin.SavePluginSettings(PluginSettings.Settings);
+
+                File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
+            }
+            else
+            {
+                string PathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
+                if (File.Exists(PathPlayerFriends))
+                {
+                    try
+                    {
+                        playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(PathPlayerFriends);
+                    }
+                    catch (Exception ex)
+                    {
+                        Common.LogError(ex, false);
+                    }
+                }
+                else
+                {
+                    return GetFriends(plugin, true);
+                }
             }
 
-            List<PlayerFriends> pa = playerFriends;
-            plugin.SavePluginSettings(PluginSettings.Settings);
-            return pa;
+            return playerFriends;
         }
     }
 }

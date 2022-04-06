@@ -16,6 +16,7 @@
     <UserControl.Resources>
         <convertersshared:LocalDateConverter x:Key="LocalDateConverter" />
         <convertersshared:PlayTimeToStringConverterWithZero x:Key="PlayTimeToStringConverterWithZero" />
+        <convertersshared:LocalDateTimeConverter x:Key="LocalDateTimeConverter" />
     </UserControl.Resources>
 
     <Grid Margin="20">
@@ -317,69 +318,92 @@
             </Grid>
 
             <!-- List of friends -->
-            <Grid Grid.Column="2" Name="PART_GridFriendsContener">
-                <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
-                                              FontSize="24" Style="{StaticResource {x:Type ListView}}" 
-                                              SortingEnable="True" SortingDefaultDataName="Stats.HoursPlayed" SortingSortDirection="Descending"
-                                              ItemsSource="{Binding FriendsSource}">
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="10" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                
+                <Grid Name="PART_GridFriendsContener" Grid.Row="0">
+                    <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
+                                                  FontSize="24" Style="{StaticResource {x:Type ListView}}" 
+                                                  SortingEnable="True" SortingDefaultDataName="Stats.HoursPlayed" SortingSortDirection="Descending"
+                                                  ItemsSource="{Binding FriendsSource}">
 
-                    <ListView.View>
-                        <GridView>
-                            <GridViewColumn Width="50">
-                                <GridViewColumnHeader Content="{DynamicResource LOCGameIconTitle}" Tag="noSort" />
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Image HorizontalAlignment="Center" Height="32" VerticalAlignment="Center" Width="32" 
-                                                   Source="{Binding FriendsAvatar, IsAsync=True}" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Width="50">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCGameIconTitle}" Tag="noSort" />
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image HorizontalAlignment="Center" Height="32" VerticalAlignment="Center" Width="32" 
+                                                       Source="{Binding FriendsAvatar, IsAsync=True}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="0" DisplayMemberBinding="{Binding FriendPseudo}">
-                                <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
-                            </GridViewColumn>
-                            <GridViewColumn Width="140">
-                                <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="FriendPseudo" />
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <StackPanel>
-                                            <TextBlock ToolTip="{Binding FriendsLink}">
-                                                    <Hyperlink Tag="{Binding FriendsLink}" Click="Hyperlink_Click">
-                                                        <controls2:TextBlockTrimmed Text="{Binding FriendPseudo}" Style="{DynamicResource ListExtendStyleTextBlock}" />
-                                                    </Hyperlink>
-                                            </TextBlock>
-                                        </StackPanel>
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding FriendPseudo}">
+                                    <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
+                                </GridViewColumn>
+                                <GridViewColumn Width="140">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="FriendPseudo" />
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel>
+                                                <TextBlock ToolTip="{Binding FriendsLink}">
+                                                        <Hyperlink Tag="{Binding FriendsLink}" Click="Hyperlink_Click">
+                                                            <controls2:TextBlockTrimmed Text="{Binding FriendPseudo}" Style="{DynamicResource ListExtendStyleTextBlock}" />
+                                                        </Hyperlink>
+                                                </TextBlock>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="0" DisplayMemberBinding="{Binding ClientName}">
-                                <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
-                            </GridViewColumn>
-                            <GridViewColumn Width="75">
-                                <GridViewColumnHeader Name="lvSourceIcon" Content="{DynamicResource LOCSourceLabel}" Tag="ClientName" />
-                                <GridViewColumn.CellTemplate>
-                                    <DataTemplate>
-                                        <Label Content="{Binding ClientIcon}" FontFamily="{DynamicResource CommonFont}" 
-                                                   HorizontalAlignment="Center" VerticalAlignment="Stretch" FontSize="30" />
-                                    </DataTemplate>
-                                </GridViewColumn.CellTemplate>
-                            </GridViewColumn>
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding ClientName}">
+                                    <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
+                                </GridViewColumn>
+                                <GridViewColumn Width="75">
+                                    <GridViewColumnHeader Name="lvSourceIcon" Content="{DynamicResource LOCSourceLabel}" Tag="ClientName" />
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Label Content="{Binding ClientIcon}" FontFamily="{DynamicResource CommonFont}" 
+                                                       HorizontalAlignment="Center" VerticalAlignment="Stretch" FontSize="30" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesOwned}">
-                                <GridViewColumnHeader Content="{DynamicResource LOCPaGameOwned}" />
-                            </GridViewColumn>
+                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesOwned}">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCPaGameOwned}" />
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Achievements}">
-                                <GridViewColumnHeader Content="{DynamicResource LOCPaAchievements}" />
-                            </GridViewColumn>
+                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Achievements}">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCPaAchievements}" />
+                                </GridViewColumn>
 
-                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
-                                <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
-                            </GridViewColumn>
-                        </GridView>
-                    </ListView.View>
-                </controls1:ListViewExtend>
+                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
+                                </GridViewColumn>
+                            </GridView>
+                        </ListView.View>
+                    </controls1:ListViewExtend>
+                </Grid>
+
+                <Grid Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="1" Content="{DynamicResource LOCCommonLastUpdate}" />
+                    <Label Grid.Column="3" Content="{Binding LastFriendsRefresh, Converter={StaticResource LocalDateTimeConverter}}" />
+                    <Button Grid.Column="5" Content="{DynamicResource LOCPaRefreshFriendsData}" Click="Button_RefreshFriendsData" />
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

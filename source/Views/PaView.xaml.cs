@@ -67,6 +67,7 @@ namespace PlayerActivities.Views
             PART_DataLoad.Visibility = Visibility.Visible;
             PART_Data.Visibility = Visibility.Hidden;
 
+
             GetData();
             GetFriends();
 
@@ -162,6 +163,7 @@ namespace PlayerActivities.Views
             Task.Run(() => 
             {
                 ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
+                ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
                 IsFriendsFinished = true;
                 IsFinish();
             });
@@ -241,6 +243,23 @@ namespace PlayerActivities.Views
             CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
         }
         #endregion
+
+
+        private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
+        {
+            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
+            $"{PluginDatabase.PluginName} - {resources.GetString("LOCCommonProcessing")}",
+            false
+            );
+            globalProgressOptions.IsIndeterminate = true;
+
+            API.Instance.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
+            {
+                PluginDatabase.GetFriends(Plugin, true);
+                ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
+                ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
+            }, globalProgressOptions);
+        }
     }
 
     public class PaViewData : ObservableObject
@@ -248,13 +267,14 @@ namespace PlayerActivities.Views
         private ObservableCollection<ActivityListGrouped> _ItemsSource = new ObservableCollection<ActivityListGrouped>();
         public ObservableCollection<ActivityListGrouped> ItemsSource { get => _ItemsSource; set => SetValue(ref _ItemsSource, value); }
 
-
         private ObservableCollection<PlayerFriends> _FriendsSource = new ObservableCollection<PlayerFriends>();
         public ObservableCollection<PlayerFriends> FriendsSource { get => _FriendsSource; set => SetValue(ref _FriendsSource, value); }
 
-
         private ObservableCollection<ListSource> _FilterSourceItems = new ObservableCollection<ListSource>();
         public ObservableCollection<ListSource> FilterSourceItems { get => _FilterSourceItems; set => SetValue(ref _FilterSourceItems, value); }
+
+        private DateTime _LastFriendsRefresh = DateTime.Now;
+        public DateTime LastFriendsRefresh { get => _LastFriendsRefresh; set => SetValue(ref _LastFriendsRefresh, value); }
     }
 
     public class ListSource : ObservableObject
