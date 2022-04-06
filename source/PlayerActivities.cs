@@ -62,7 +62,7 @@ namespace PlayerActivities
                         FontSize = 20,
                         FontFamily = resources.GetResource("FontIcoFont") as FontFamily
                     },
-                    Title = resources.GetString("LOCSPa"),
+                    Title = resources.GetString("LOCPa"),
                     Activated = () =>
                     {
                         WindowOptions windowOptions = new WindowOptions
@@ -75,7 +75,7 @@ namespace PlayerActivities
                         };
 
                         PaView ViewExtension = new PaView(this);
-                        Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCSPa"), ViewExtension, windowOptions);
+                        Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCPa"), ViewExtension, windowOptions);
                         windowExtension.ResizeMode = ResizeMode.CanResize;
                         windowExtension.ShowDialog();
                     },
@@ -184,6 +184,34 @@ namespace PlayerActivities
             }
 
             List<MainMenuItem> mainMenuItems = new List<MainMenuItem>();
+
+            mainMenuItems.Add(new MainMenuItem
+            {
+                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
+                Description = resources.GetString("LOCPaView"),
+                Action = (mainMenuItem) =>
+                {
+                    WindowOptions windowOptions = new WindowOptions
+                    {
+                        ShowMinimizeButton = false,
+                        ShowMaximizeButton = true,
+                        ShowCloseButton = true,
+                        Width = 1280,
+                        Height = 740
+                    };
+
+                    PaView ViewExtension = new PaView(this);
+                    Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCPa"), ViewExtension, windowOptions);
+                    windowExtension.ResizeMode = ResizeMode.CanResize;
+                    windowExtension.ShowDialog();
+                }
+            });
+
+            mainMenuItems.Add(new MainMenuItem
+            {
+                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
+                Description = "-"
+            });
 
             mainMenuItems.Add(new MainMenuItem
             {
