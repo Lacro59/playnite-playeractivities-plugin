@@ -6,8 +6,9 @@
     <sys:String x:Key="LOCPa">玩家活动</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+    <sys:String x:Key="LOCPaView">View player activities</sys:String>
 
-    
+
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件）</sys:String>
