@@ -6,8 +6,9 @@
     <sys:String x:Key="LOCPa">Spieleraktivitäten</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Daten von Freunden aktualisieren</sys:String>
+    <sys:String x:Key="LOCPaView">View player activities</sys:String>
 
-    
+
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">SuccessStory Daten anzeigen (benötigt SuccessStory Plugin)</sys:String>
