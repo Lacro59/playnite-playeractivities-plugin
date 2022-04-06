@@ -15,6 +15,7 @@
 
     <UserControl.Resources>
         <convertersshared:LocalDateConverter x:Key="LocalDateConverter" />
+        <convertersshared:PlayTimeToStringConverterWithZero x:Key="PlayTimeToStringConverterWithZero" />
     </UserControl.Resources>
 
     <Grid Margin="20">
@@ -373,7 +374,7 @@
                                 <GridViewColumnHeader Content="{DynamicResource LOCPaAchievements}" />
                             </GridViewColumn>
 
-                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.HoursPlayed}">
+                            <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
                                 <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
                             </GridViewColumn>
                         </GridView>

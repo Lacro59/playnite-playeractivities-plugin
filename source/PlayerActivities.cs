@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
+using CommonPluginsStores.Steam;
 using PlayerActivities.Clients;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
@@ -226,8 +227,14 @@ namespace PlayerActivities
                 Description = "Test",
                 Action = (mainMenuItem) => 
                 {
-                    var data = new GogFriends();
-                    data.GetFriends();
+                    //var data = new SteamApi();
+                    //var current = data.CurrentUser;
+
+                    //var data = new GogFriends();
+                    //var Friends = data.GetFriends();
+
+                    //var data = new OriginFriends();
+                    //var Friends = data.GetFriends();
                 }
             });
 #endif

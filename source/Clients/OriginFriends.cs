@@ -1,63 +1,32 @@
-﻿using CommonPlayniteShared.PluginLibrary.OriginLibrary.Models;
-using CommonPlayniteShared.PluginLibrary.OriginLibrary.Services;
-using CommonPluginsShared;
+﻿using CommonPluginsShared;
 using PlayerActivities.Models;
-using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Text;
-using PlayerActivities.Models.Origin;
 using static CommonPluginsShared.PlayniteTools;
-using CommonPluginsShared.Extensions;
+using CommonPluginsStores.Origin;
+using CommonPluginsStores.Models;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace PlayerActivities.Clients
 {
     public class OriginFriends : GenericFriends
     {
-        private string UrlApiFriends = @"https://friends.gs.ea.com/friends/2/users/{0}/friends?start=0&end=100&names=true";
-        private string UrlApiUserInfos = @"https://api2.origin.com/atom/users?userIds={0}";
-
-        private string UrlEncode = @"https://api1.origin.com/gifting/idobfuscate/users/{0}/encodePair";
-        private string UrlAvatar = @"https://api1.origin.com/avatar/user/{0}/avatars?size=2";
-        private string UrlGames = @"https://api3.origin.com/atom/users/{0}/other/{1}/games";
-        private string UrlAchievements = @"https://achievements.gameservices.ea.com/achievements/personas/{0}/all?lang={1}&metadata=true";
-        private string UrlAchGames = @"https://achievements.gameservices.ea.com/achievements/personas/{0}/{1}/all?lang={2}&metadata=true&fullset=true";
-
-        private const string UrlProfileUser = @"https://www.origin.com/profile/user/{0}";
-        private const string UrlStoreGame = @"https://www.origin.com/store{0}";
-        private const string UrlGameInfo = @"https://api2.origin.com/ecommerce2/public/supercat/{0}/no_NO?country=NO";
-
-
-        protected static OriginAccountClient _OriginAPI;
-        internal static OriginAccountClient OriginAPI
+        protected static OriginApi _originApi;
+        internal static OriginApi originApi
         {
             get
             {
-                if (_OriginAPI == null)
+                if (_originApi == null)
                 {
-                    _OriginAPI = new OriginAccountClient(WebViewOffscreen);
+                    _originApi = new OriginApi();
                 }
-                return _OriginAPI;
+                return _originApi;
             }
 
             set
             {
-                _OriginAPI = value;
-            }
-        }
-
-        private AuthTokenResponse _token;
-        private AuthTokenResponse token
-        {
-            get
-            {
-                if (_token == null)
-                {
-                    _token = OriginAPI.GetAccessToken();
-                }
-                return _token;
+                _originApi = value;
             }
         }
 
@@ -72,117 +41,71 @@ namespace PlayerActivities.Clients
         {
             List<PlayerFriends> Friends = new List<PlayerFriends>();
 
-            if (OriginAPI.GetIsUserLoggedIn())
+            if (originApi.IsUserLoggedIn)
             {
                 try
                 {
-                    // Get informations from Origin plugin.
-                    string accessToken = token.access_token;
-                    AccountInfoResponse account = OriginAPI.GetAccountInfo(OriginAPI.GetAccessToken());
-                    long userId = account.pid.pidId;
+                    AccountInfos CurrentUser = originApi.CurrentAccountInfos;
+                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = originApi.CurrentGamesInfos;
 
-                    string Url = string.Format(UrlApiFriends, userId);
-                    Friends FriendsAll = null;
-                    using (WebClient webClient = new WebClient { Encoding = Encoding.UTF8 })
+                    PlayerFriends playerFriendsUs = new PlayerFriends
                     {
-                        try
+                        ClientName = ClientName,
+                        FriendId = CurrentUser.UserId,
+                        FriendPseudo = CurrentUser.Pseudo,
+                        FriendsAvatar = CurrentUser.Avatar,
+                        FriendsLink = CurrentUser.Link,
+                        IsUser = true,
+                        Stats = new PlayerStats
                         {
-                            webClient.Headers.Add("X-AuthToken", accessToken);
-                            webClient.Headers.Add("X-Api-Version", "2");
-                            webClient.Headers.Add("X-Application-Key", "Origin");
-                            webClient.Headers.Add("accept", "application/vnd.origin.v3+json; x-cache/force-write");
+                            GamesOwned = CurrentGamesInfos.Count,
+                            Achievements = CurrentGamesInfos.Sum(x => x.AchievementsUnlocked),
+                            Playtime = CurrentGamesInfos.Sum(x => x.Playtime)
+                        },
+                        Games = CurrentGamesInfos.Select(x => new PlayerGames
+                        {
+                            Achievements = x.AchievementsUnlocked,
+                            Playtime = x.Playtime,
+                            Id = x.Id,
+                            IsCommun = false,
+                            Link = x.Link,
+                            Name = x.Name
+                        }).ToList()
+                    };
+                    Friends.Add(playerFriendsUs);
 
-                            string DownloadString = webClient.DownloadString(Url);
-                            FriendsAll = Serialization.FromJson<Friends>(DownloadString);
-                        }
-                        catch (WebException ex)
+
+                    ObservableCollection<AccountInfos> CurrentFriendsInfos = originApi.CurrentFriendsInfos;
+                    CurrentFriendsInfos.ForEach(y =>
+                    {
+                        ObservableCollection<AccountGameInfos> FriendGamesInfos = originApi.GetAccountGamesInfos(y);
+
+                        PlayerFriends playerFriends = new PlayerFriends
                         {
-                            if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
+                            ClientName = ClientName,
+                            FriendId = y.UserId,
+                            FriendPseudo = y.Pseudo,
+                            FriendsAvatar = y.Avatar,
+                            FriendsLink = y.Link,
+                            IsUser = true,
+                            Stats = new PlayerStats
                             {
-                                HttpWebResponse resp = (HttpWebResponse)ex.Response;
-                                switch (resp.StatusCode)
-                                {
-                                    case HttpStatusCode.NotFound: // HTTP 404
-                                        break;
-                                    default:
-                                        Common.LogError(ex, false, true, PluginDatabase.PluginName);
-                                        break;
-                                }
-
-                                return Friends;
-                            }
-                        }
-                    }
-
-
-                    string userPseudo = string.Empty;
-                    long personaId = 0;
-                    using (WebClient webClient = new WebClient { Encoding = Encoding.UTF8 })
-                    {
-                        try
-                        {
-                            webClient.Headers.Add("AuthToken", accessToken);
-                            webClient.Headers.Add("accept", "application/json");
-                            Url = string.Format(UrlApiUserInfos, userId);
-                            string DownloadString = webClient.DownloadString(Url);
-                            UsersInfos usersInfos = Serialization.FromJson<UsersInfos>(DownloadString);
-
-                            userPseudo = usersInfos?.users?.First()?.eaId;
-                            long.TryParse(usersInfos?.users?.First()?.personaId, out personaId);
-                        }
-                        catch (WebException ex)
-                        {
-                            if (ex.Status == WebExceptionStatus.ProtocolError && ex.Response != null)
+                                GamesOwned = FriendGamesInfos.Count,
+                                Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
+                                Playtime = FriendGamesInfos.Sum(x => x.Playtime)
+                            },
+                            Games = FriendGamesInfos.Select(x => new PlayerGames
                             {
-                                HttpWebResponse resp = (HttpWebResponse)ex.Response;
-                                switch (resp.StatusCode)
-                                {
-                                    case HttpStatusCode.NotFound: // HTTP 404
-                                        break;
-                                    default:
-                                        Common.LogError(ex, false, true, PluginDatabase.PluginName);
-                                        break;
-                                }
-
-                                return Friends;
-                            }
-                        }
-                    }
-
-                    PlayerFriends playerFriendsUs = null;
-                    PlayerFriends playerFriends = null;
-                    using (WebClient webClient = new WebClient { Encoding = Encoding.UTF8 })
-                    {
-                        webClient.Headers.Add("AuthToken", accessToken);
-                        //webClient.Headers.Add("accept", "application/vnd.origin.v3+json; x-cache/force-write");
-                        webClient.Headers.Add("accept", "application/json");
-
-                        // Us
-                        Entry entry = new Entry
-                        {
-                            userId = userId,
-                            displayName = userPseudo,
-                            personaId = personaId
+                                Achievements = x.AchievementsUnlocked,
+                                Playtime = x.Playtime,
+                                Id = x.Id,
+                                IsCommun = false,
+                                Link = x.Link,
+                                Name = x.Name
+                            }).ToList()
                         };
-                        playerFriendsUs = GetPlayerFriends(entry, userId, accessToken);
-                        if (playerFriendsUs != null)
-                        {
-                            playerFriendsUs.IsUser = true;
-                            Friends.Add(playerFriendsUs);
-                        }
-
-                        if (FriendsAll?.entries?.Count > 0)
-                        {
-                            FriendsAll.entries.ForEach(x =>
-                            {
-                                playerFriends = GetPlayerFriends(x, userId, accessToken, playerFriendsUs);
-                                if (playerFriends != null)
-                                {
-                                    Friends.Add(playerFriends);
-                                }
-                            });
-                        }
-                    }
+                        Friends.Add(playerFriends);
+                    });
                 }
                 catch (Exception ex)
                 {
@@ -195,148 +118,6 @@ namespace PlayerActivities.Clients
             }
 
             return Friends;
-        }
-
-
-        private PlayerFriends GetPlayerFriends(Entry entry, long userId, string accessToken, PlayerFriends playerFriendsUs = null)
-        {
-            PlayerFriends playerFriends = null;
-            try
-            {
-                using (WebClient webClient = new WebClient { Encoding = Encoding.UTF8 })
-                {
-                    webClient.Headers.Add("AuthToken", accessToken);
-                    webClient.Headers.Add("accept", "application/json");
-
-                    string FriendId = entry.userId.ToString();
-                    string FriendPseudo = entry.displayName;
-
-                    // Encoded profile userid
-                    string NewUrl = string.Format(UrlEncode, FriendId);
-                    string DownloadString = webClient.DownloadString(NewUrl);
-                    Encoded encoded = Serialization.FromJson<Encoded>(DownloadString);
-
-                    // Avatar
-                    webClient.Headers.Add("accept", "application/json");
-                    NewUrl = string.Format(UrlAvatar, FriendId);
-                    DownloadString = webClient.DownloadString(NewUrl);
-                    AvatarResponse avatarResponse = Serialization.FromJson<AvatarResponse>(DownloadString);
-
-                    string FriendsAvatar = avatarResponse?.users?.First()?.avatar?.link;
-
-                    // Games
-                    OriginProductInfos originProductInfos = null;
-                    try
-                    {
-                        webClient.Headers.Add("accept", "application/json");
-                        NewUrl = string.Format(UrlGames, userId, FriendId);
-                        DownloadString = webClient.DownloadString(NewUrl);
-                        Serialization.TryFromJson<OriginProductInfos>(DownloadString, out originProductInfos);
-                    }
-                    // No data
-                    catch (Exception ex) { }
-
-                    int GamesOwned = originProductInfos?.productInfos?.Count ?? 0;
-                    List<PlayerGames> Games = new List<PlayerGames>();
-                    originProductInfos?.productInfos?.ForEach(x => 
-                    {
-                        NewUrl = string.Format(UrlGameInfo, x.productId);
-                        DownloadString = webClient.DownloadString(NewUrl);
-                        Serialization.TryFromJson<GameStoreDataResponse>(DownloadString, out GameStoreDataResponse gameStoreDataResponse);
-
-                        bool IsCommun = false;
-                        if (playerFriendsUs != null)
-                        {
-                            IsCommun = playerFriendsUs.Games?.Where(y => y.Name.IsEqual(x.displayProductName))?.Count() != 0;
-                        }
-
-                        Games.Add(new PlayerGames 
-                        { 
-                            Id = x.productId,
-                            Name = x.displayProductName,
-                            Link = gameStoreDataResponse?.offerPath != null ? string.Format(UrlStoreGame, gameStoreDataResponse.offerPath) : string.Empty,
-                            IsCommun = IsCommun
-                        });
-                    });
-
-
-                    // Achievements
-                    dynamic originAchievements = null;
-                    int Achievements = 0;
-                    try
-                    {
-                        //webClient.Headers.Add("accept", "application/json");
-                        //NewUrl = string.Format(UrlAchievements, entry.personaId, CodeLang.GetOriginLang(PluginDatabase.PlayniteApi.ApplicationSettings.Language));
-                        //DownloadString = webClient.DownloadString(NewUrl);
-                        //Serialization.TryFromJson<dynamic>(DownloadString, out originAchievements);
-                        //
-                        //foreach(var el in originAchievements)
-                        //{
-                        //    var achs = originAchievements[el.Path]["achievements"];
-                        //    foreach (var ach in achs)
-                        //    {
-                        //        Achievements++;
-                        //    }
-                        //}
-
-                        originProductInfos?.productInfos?.ForEach(x => 
-                        {
-                            try
-                            {
-                                string achId = x?.softwares?.softwareList?.First().achievementSetOverride;
-
-                                webClient.Headers.Add("accept", "application/json");
-                                NewUrl = string.Format(UrlAchGames, entry.personaId, achId, CodeLang.GetOriginLang(PluginDatabase.PlayniteApi.ApplicationSettings.Language));
-                                DownloadString = webClient.DownloadString(NewUrl);
-                                Serialization.TryFromJson<dynamic>(DownloadString, out originAchievements);
-
-                                int gameAchievements = 0;
-                                foreach (var item in originAchievements["achievements"])
-                                {
-                                    if ((string)item.Value["state"]["a_st"] != "ACTIVE")
-                                    {
-                                        Achievements++;
-                                        gameAchievements++;
-                                    }
-                                }
-
-                                var data = Games.Find(y => y.Id.IsEqual(x.productId));
-                                if (data != null)
-                                {
-                                    data.Achievements = gameAchievements;
-                                }
-                            }
-                            // No data
-                            catch (Exception ex) { }
-                        });
-
-                    }
-                    // No data
-                    catch (Exception ex) { }
-
-
-                    playerFriends = new PlayerFriends
-                    {
-                        ClientName = ClientName,
-                        FriendId = FriendId,
-                        FriendPseudo = FriendPseudo,
-                        FriendsAvatar = FriendsAvatar,
-                        FriendsLink = string.Format(UrlProfileUser, encoded.id),
-                        Stats = new PlayerStats
-                        {
-                            GamesOwned = GamesOwned,
-                            Achievements = Achievements
-                        },
-                        Games = Games
-                    };
-                }
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex, false);
-            }
-
-            return playerFriends;
         }
     }
 }

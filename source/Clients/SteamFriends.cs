@@ -18,6 +18,7 @@ using CommonPluginsStores;
 using System.Globalization;
 using PlayerActivities.Models.Steam;
 using CommonPluginsShared.Extensions;
+using CommonPluginsStores.Steam;
 
 namespace PlayerActivities.Clients
 {
@@ -209,7 +210,7 @@ namespace PlayerActivities.Clients
                                     .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
                                 hoursPlayed += hours_forever;
 
-                                playerGames.HoursPlayed = hours_forever;
+                                playerGames.Playtime = (long)(hours_forever * 3600);
                             }
 
                             if (x.availStatLinks.achievements && UsedWebAchdata)
@@ -237,7 +238,7 @@ namespace PlayerActivities.Clients
 
 
                 playerFriends.ClientName = ClientName;
-                playerFriends.FriendId = string.Empty;
+                playerFriends.FriendId = 0;
                 playerFriends.FriendPseudo = pseudo;
                 playerFriends.FriendsAvatar = avatar;
                 playerFriends.FriendsLink = link;
@@ -246,7 +247,7 @@ namespace PlayerActivities.Clients
                     GamesOwned = gamesOwned,
                     GamesCompleted = GamesCompleted,
                     Achievements = achievements,
-                    HoursPlayed = Math.Round(hoursPlayed, 2)
+                    Playtime = (long)(hoursPlayed * 3600)
                 };
                 playerFriends.Games = Games;
             }
