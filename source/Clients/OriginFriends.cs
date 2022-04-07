@@ -55,6 +55,7 @@ namespace PlayerActivities.Clients
                         FriendPseudo = CurrentUser.Pseudo,
                         FriendsAvatar = CurrentUser.Avatar,
                         FriendsLink = CurrentUser.Link,
+                        AcceptedAt = CurrentUser.DateAdded,
                         IsUser = true,
                         Stats = new PlayerStats
                         {

@@ -263,6 +263,9 @@ namespace PlayerActivities
 
                     //var data = new OriginFriends();
                     //var Friends = data.GetFriends();
+
+                    //var data = new SteamFriends();
+                    //var Friends = data.GetFriends();
                 }
             });
 #endif
