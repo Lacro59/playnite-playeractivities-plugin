@@ -1,10 +1,9 @@
 ﻿using CommonPluginsShared;
+using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
-using PlayerActivities.Clients;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
-using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -138,14 +137,15 @@ namespace PlayerActivities.Views
                         {
                             GameContext = x.GameContext,
                             dtString = x.DateActivity.ToString("yyyy-MM-dd"),
-                            Activities = new List<Activity> {
-                            new Activity
+                            Activities = new List<Activity> 
                             {
-                                DateActivity = x.DateActivity,
-                                Value = x.Value,
-                                Type = x.Type
+                                new Activity
+                                {
+                                    DateActivity = x.DateActivity,
+                                    Value = x.Value,
+                                    Type = x.Type
+                                }
                             }
-                        }
                         });
                     }
                 });
@@ -260,6 +260,44 @@ namespace PlayerActivities.Views
                 ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
             }, globalProgressOptions);
         }
+
+
+        private void ListViewExtend_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (sender == null)
+            {
+                return;
+            }
+
+            ListViewExtend lv = sender as ListViewExtend;
+            PlayerFriends pf = lv.SelectedItem as PlayerFriends;
+
+            if (pf == null)
+            {
+                return;
+            }
+
+            PlayerFriends pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
+
+            ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
+            pf.Games.ForEach(x => 
+            {
+                listFriendsInfos.Add(new ListFriendsInfo 
+                { 
+                    Id = x.Id,
+                    Name = x.Name,
+                    Achievements = x.Achievements,
+                    IsCommun = pf.IsUser ? true : x.IsCommun,
+                    Link = x.Link,
+                    Playtime = x.Playtime,
+                    UsAchievements = pf_us?.Games?.Find(y => x.Id == y.Id)?.Achievements ?? 0,
+                    UsPlaytime = pf_us?.Games?.Find(y => x.Id == y.Id)?.Playtime ?? 0
+                });
+            });
+
+            ControlDataContext.FriendsDetailsSource = listFriendsInfos;
+            PART_LvFriendsDetails.Sorting();
+        }
     }
 
     public class PaViewData : ObservableObject
@@ -269,6 +307,9 @@ namespace PlayerActivities.Views
 
         private ObservableCollection<PlayerFriends> _FriendsSource = new ObservableCollection<PlayerFriends>();
         public ObservableCollection<PlayerFriends> FriendsSource { get => _FriendsSource; set => SetValue(ref _FriendsSource, value); }
+
+        private ObservableCollection<ListFriendsInfo> _FriendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
+        public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _FriendsDetailsSource; set => SetValue(ref _FriendsDetailsSource, value); }
 
         private ObservableCollection<ListSource> _FilterSourceItems = new ObservableCollection<ListSource>();
         public ObservableCollection<ListSource> FilterSourceItems { get => _FilterSourceItems; set => SetValue(ref _FilterSourceItems, value); }
@@ -284,5 +325,11 @@ namespace PlayerActivities.Views
 
         private bool _IsCheck;
         public bool IsCheck { get => _IsCheck; set => SetValue(ref _IsCheck, value); }
+    }
+
+    public class ListFriendsInfo : PlayerGames
+    {
+        public int UsAchievements { get; set; }
+        public long UsPlaytime { get; set; }
     }
 }
