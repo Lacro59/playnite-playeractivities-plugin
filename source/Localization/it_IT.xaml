@@ -6,7 +6,7 @@
     <sys:String x:Key="LOCPa">AttivitàGiocatore</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Aggiorna i dati degli amici</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaView">Visualizza attività del giocatore</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
