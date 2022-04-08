@@ -5,8 +5,8 @@
 
     <sys:String x:Key="LOCPa">EventosAtividade</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Atualizar dados de amigos</sys:String>
+    <sys:String x:Key="LOCPaView">Visualizar atividades do jogador</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -15,9 +15,9 @@
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Exibir dados da ScreenshotsVisualizer (plugin necessário para ScreenshotsVisualizer)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Exibir dados HowLongToBeat (é necessário HowLongToBeat plugin)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Ativar amigos Steam</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Ativar amigos GOG</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Ativar amigos Origin</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -40,6 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} anos atrás</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Jogo Possuído</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Jogos Finalizados</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amigos</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Seu 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Conquistas</sys:String>
+
+    <sys:String x:Key="LOCPaCommun">Comum</sys:String>
 
 </ResourceDictionary>
