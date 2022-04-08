@@ -6,7 +6,7 @@
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Оновити дані друзів</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaView">Переглянути активність гравця</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -40,6 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} років тому</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Гра придбана</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Досягнення</sys:String>
+
+    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
 
 </ResourceDictionary>

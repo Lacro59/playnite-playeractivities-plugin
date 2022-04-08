@@ -6,7 +6,7 @@
     <sys:String x:Key="LOCPa">AttivitàGiocatore</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Aggiorna i dati degli amici</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaView">Visualizza attività del giocatore</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -40,6 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} anni fa</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Gioco posseduto</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Giochi completati</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amici 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Il Tuo 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Obiettivi</sys:String>
+
+    <sys:String x:Key="LOCPaCommun">Comune</sys:String>
 
 </ResourceDictionary>
