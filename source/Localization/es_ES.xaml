@@ -40,6 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">Hace {0} años</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Juego poseído</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
+
+    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
 
 </ResourceDictionary>
