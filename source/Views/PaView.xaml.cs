@@ -4,6 +4,7 @@ using CommonPluginsShared.Extensions;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
+using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -118,14 +119,15 @@ namespace PlayerActivities.Views
 
 
                 ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
+                Game GameContext = null;
+                string TimeAgo = string.Empty;
+
                 activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
                 activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
                 {
-                    //var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
-                    var finded = activityListsGrouped.Where(z => z.TimeAgo == x.TimeAgo && z.GameContext == x.GameContext)?.FirstOrDefault();
-                    if (finded != null)
+                    if (ReferenceEquals(GameContext, x.GameContext) && TimeAgo.IsEqual(x.TimeAgo))
                     {
-                        finded.Activities.Add(new Activity
+                        activityListsGrouped.Last().Activities.Add(new Activity
                         {
                             DateActivity = x.DateActivity,
                             Value = x.Value,
@@ -134,12 +136,14 @@ namespace PlayerActivities.Views
                     }
                     else
                     {
+                        GameContext = x.GameContext;
+                        TimeAgo = x.TimeAgo;
                         activityListsGrouped.Add(new ActivityListGrouped
                         {
                             GameContext = x.GameContext,
                             dtString = x.DateActivity.ToString("yyyy-MM-dd"),
                             TimeAgo = x.TimeAgo,
-                            Activities = new List<Activity> 
+                            Activities = new List<Activity>
                             {
                                 new Activity
                                 {
