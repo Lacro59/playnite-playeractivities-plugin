@@ -103,7 +103,7 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
+                                <Border Margin="0,0,0,10" BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
                                     <Grid Margin="5"  Name="PART_Root" Tag="{Binding}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="100" />
