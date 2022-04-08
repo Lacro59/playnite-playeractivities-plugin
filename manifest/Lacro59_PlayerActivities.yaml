@@ -13,3 +13,15 @@ Packages:
       - Added SuccessStory plugin data
       - Added HowLongToBeat plugin data
       - Added ScreenshotsVisualizer plugin data
+  - Version: 0.2
+    RequiredApiVersion: 6.2.2
+    ReleaseDate: 2022-04-08
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v0.2/playnite-playeractivities-plugin_0_2.pext
+    Changelog:
+      - Warning experimental features (maybe playnite crash)
+      - Added new friend data (when exists)
+      - Added friend detail view (when exists)
+      - Updated localizations
+      - Removed automatic refresh of friend data
+      - Added filters on the timeline view
+      - UI tweaks
