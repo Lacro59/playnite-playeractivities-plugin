@@ -20,6 +20,7 @@ namespace PlayerActivities.Models
         public Game GameContext { get; set; }
 
         public string dtString { get; set; }
+        public string TimeAgo { get; set; }
 
         public string SourceIcon => TransformIcon.Get(PlayniteTools.GetSourceName(GameContext.Id));
 

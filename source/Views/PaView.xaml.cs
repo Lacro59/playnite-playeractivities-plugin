@@ -121,7 +121,8 @@ namespace PlayerActivities.Views
                 activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
                 activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
                 {
-                    var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
+                    //var finded = activityListsGrouped.Where(z => z.dtString == x.DateActivity.ToString("yyyy-MM-dd") && z.GameContext == x.GameContext)?.FirstOrDefault();
+                    var finded = activityListsGrouped.Where(z => z.TimeAgo == x.TimeAgo && z.GameContext == x.GameContext)?.FirstOrDefault();
                     if (finded != null)
                     {
                         finded.Activities.Add(new Activity
@@ -137,6 +138,7 @@ namespace PlayerActivities.Views
                         {
                             GameContext = x.GameContext,
                             dtString = x.DateActivity.ToString("yyyy-MM-dd"),
+                            TimeAgo = x.TimeAgo,
                             Activities = new List<Activity> 
                             {
                                 new Activity
