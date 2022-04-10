@@ -40,13 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} років тому</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Гра придбана</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Завершені ігри</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Друзі 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Ваш 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Досягнення</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Загалом</sys:String>
 
 </ResourceDictionary>
