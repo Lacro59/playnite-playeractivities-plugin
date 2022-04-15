@@ -16,8 +16,8 @@
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Mostrar datos de HowLongToBeat (requiere el plugin HowLongToBeat)</sys:String>
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Habilitar amigos de GOG</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Habilitar amigos de Origin</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -40,13 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">Hace {0} años</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Juego poseído</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Juegos completados</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Tu 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Común</sys:String>
 
 </ResourceDictionary>
