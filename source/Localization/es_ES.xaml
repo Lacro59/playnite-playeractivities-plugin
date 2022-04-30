@@ -5,8 +5,8 @@
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Actualizar datos de amigos</sys:String>
+    <sys:String x:Key="LOCPaView">Ver las actividades de juegos</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -15,7 +15,7 @@
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Mostrar datos de ScreenshotsVisualizer (plugin ScreenshotsVisualizer requerido)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Mostrar datos de HowLongToBeat (requiere el plugin HowLongToBeat)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Habilitar amigos de Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Habilitar amigos de GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Habilitar amigos de Origin</sys:String>
 
