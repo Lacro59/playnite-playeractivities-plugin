@@ -47,6 +47,6 @@
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Common</sys:String>
 
 </ResourceDictionary>
