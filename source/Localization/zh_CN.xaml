@@ -5,8 +5,8 @@
 
     <sys:String x:Key="LOCPa">玩家活动</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">刷新好友数据</sys:String>
+    <sys:String x:Key="LOCPaView">查看玩家活动</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -15,9 +15,9 @@
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示截图可视化的数据 (需要截图可视化插件)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示攻关历时的数据 (需要攻关历时插件)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">启用 Steam 好友</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">启用 GOG 好友</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">启用 Origin 好友</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -40,13 +40,13 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} 年前</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">已拥有游戏</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">已完成游戏</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">好友 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">您的 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">信息</sys:String>
 
 </ResourceDictionary>
