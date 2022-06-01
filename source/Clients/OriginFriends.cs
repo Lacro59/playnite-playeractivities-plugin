@@ -19,15 +19,12 @@ namespace PlayerActivities.Clients
             {
                 if (_originApi == null)
                 {
-                    _originApi = new OriginApi();
+                    _originApi = new OriginApi(PluginDatabase.PluginName);
                 }
                 return _originApi;
             }
 
-            set
-            {
-                _originApi = value;
-            }
+            set => _originApi = value;
         }
 
 

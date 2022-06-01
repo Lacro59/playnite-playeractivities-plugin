@@ -31,15 +31,12 @@ namespace PlayerActivities.Clients
             {
                 if (_steamApi == null)
                 {
-                    _steamApi = new SteamApi();
+                    _steamApi = new SteamApi(PluginDatabase.PluginName);
                 }
                 return _steamApi;
             }
 
-            set
-            {
-                _steamApi = value;
-            }
+            set => _steamApi = value;
         }
 
 

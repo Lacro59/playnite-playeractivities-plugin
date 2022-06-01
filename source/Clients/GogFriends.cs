@@ -19,7 +19,7 @@ namespace PlayerActivities.Clients
             {
                 if (_gogApi == null)
                 {
-                    _gogApi = new GogApi();
+                    _gogApi = new GogApi(PluginDatabase.PluginName);
                 }
                 return _gogApi;
             }
