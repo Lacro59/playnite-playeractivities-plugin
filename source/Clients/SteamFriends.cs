@@ -202,6 +202,15 @@ namespace PlayerActivities.Clients
 
                             if (!x.hours_forever.IsNullOrEmpty())
                             {
+                                if(Regex.IsMatch(x.hours_forever, @"\d*,\d{3}"))
+                                {
+                                    x.hours_forever = x.hours_forever.Replace(",", string.Empty);
+                                }
+                                if(Regex.IsMatch(x.hours_forever, @"\d*.\d{3}"))
+                                {
+                                    x.hours_forever = x.hours_forever.Replace(".", string.Empty);
+                                }
+
                                 double.TryParse(x.hours_forever
                                     .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
                                     .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
