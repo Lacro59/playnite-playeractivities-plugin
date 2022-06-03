@@ -77,6 +77,12 @@ namespace PlayerActivities.Views
                 string icon = TransformIcon.Get(x) + " ";
                 ControlDataContext.FilterSourceItems.Add(new ListSource { SourceName = ((icon.Length == 2) ? icon : string.Empty) + x, SourceNameShort = x, IsCheck = false });
             });
+
+
+            if (!PluginDatabase.PluginSettings.Settings.EnableGogFriends && !PluginDatabase.PluginSettings.Settings.EnableOriginFriends && !PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            {
+                PART_BtFriends.IsEnabled = false;
+            }
         }
 
 
@@ -253,18 +259,13 @@ namespace PlayerActivities.Views
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
-            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
-            $"{PluginDatabase.PluginName} - {resources.GetString("LOCCommonProcessing")}",
-            false
-            );
-            globalProgressOptions.IsIndeterminate = true;
-
-            API.Instance.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
+            PluginDatabase.RefreshFriendsDataLoader(Plugin);
+            Task.Run(() =>
             {
-                PluginDatabase.GetFriends(Plugin, true);
+                System.Threading.SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
                 ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
                 ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
-            }, globalProgressOptions);
+            });
         }
 
 

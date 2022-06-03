@@ -82,6 +82,7 @@
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ActivityElement.cs" />
     <Compile Include="Models\ActivityList.cs" />
+    <Compile Include="Models\FriendsDataLoading.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />
     <Compile Include="Models\Gog\ProfileGames.cs" />
@@ -115,6 +116,9 @@
       <DependentUpon>OptionsDownloadData.xaml</DependentUpon>
     </Compile>
     <Compile Include="Services\PlayerActivitiesDatabase.cs" />
+    <Compile Include="Views\PaFriendDataLoading.xaml.cs">
+      <DependentUpon>PaFriendDataLoading.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PaView.xaml.cs">
       <DependentUpon>PaView.xaml</DependentUpon>
     </Compile>
@@ -245,6 +249,10 @@
     <Page Include="playnite-plugincommon\CommonPluginsControls\Views\OptionsDownloadData.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\PaFriendDataLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\PaView.xaml">
       <SubType>Designer</SubType>

@@ -73,8 +73,21 @@ namespace PlayerActivities.Clients
 
 
                     ObservableCollection<AccountInfos> CurrentFriendsInfos = originApi.CurrentFriendsInfos;
+                    if (CurrentFriendsInfos == null)
+                    {
+                        return Friends;
+                    }
+
+                    PluginDatabase.friendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
+
                     CurrentFriendsInfos.ForEach(y =>
                     {
+                        if (PluginDatabase.FriendsDataIsCanceled)
+                        {
+                            return;
+                        }
+
+                        PluginDatabase.friendsDataLoading.FriendName = y.Pseudo;
                         ObservableCollection<AccountGameInfos> FriendGamesInfos = originApi.GetAccountGamesInfos(y);
 
                         PlayerFriends playerFriends = new PlayerFriends
@@ -102,6 +115,8 @@ namespace PlayerActivities.Clients
                                 Name = x.Name
                             }).ToList()
                         };
+
+                        PluginDatabase.friendsDataLoading.ActualCount += 1;
                         Friends.Add(playerFriends);
                     });
                 }

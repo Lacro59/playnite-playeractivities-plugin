@@ -98,10 +98,18 @@ namespace PlayerActivities.Clients
 
 
                     IHtmlCollection<IElement> els = htmlDocument.QuerySelectorAll("a.selectable_overlay");
+                    PluginDatabase.friendsDataLoading.FriendCount = els.Count();
+                    
                     foreach (IElement el in els)
                     {
+                        if (PluginDatabase.FriendsDataIsCanceled)
+                        {
+                            return Friends;
+                        }
+
                         string linkFriends = el.GetAttribute("href");
                         Friends.Add(GetPlayerFriends(linkFriends, playerFriendsUs));
+                        PluginDatabase.friendsDataLoading.ActualCount += 1;
                     }
                 }
                 catch (Exception ex)
@@ -142,6 +150,8 @@ namespace PlayerActivities.Clients
                     avatar = avatars[1].GetAttribute("src");
                 }
                 string pseudo = htmlDocument.QuerySelector("span.actual_persona_name").InnerHtml;
+
+                PluginDatabase.friendsDataLoading.FriendName = pseudo;
 
                 int gamesOwned = 0;
                 int GamesCompleted = 0;
@@ -202,11 +212,11 @@ namespace PlayerActivities.Clients
 
                             if (!x.hours_forever.IsNullOrEmpty())
                             {
-                                if(Regex.IsMatch(x.hours_forever, @"\d*,\d{3}"))
+                                if (Regex.IsMatch(x.hours_forever, @"\d*,\d{3}"))
                                 {
                                     x.hours_forever = x.hours_forever.Replace(",", string.Empty);
                                 }
-                                if(Regex.IsMatch(x.hours_forever, @"\d*.\d{3}"))
+                                if (Regex.IsMatch(x.hours_forever, @"\d*.\d{3}"))
                                 {
                                     x.hours_forever = x.hours_forever.Replace(".", string.Empty);
                                 }

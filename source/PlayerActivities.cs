@@ -229,16 +229,7 @@ namespace PlayerActivities
                 Description = resources.GetString("LOCPaRefreshFriendsData"),
                 Action = (mainMenuItem) =>
                 {
-                    GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
-                    $"{PluginDatabase.PluginName} - {resources.GetString("LOCCommonProcessing")}",
-                    false
-);
-                    globalProgressOptions.IsIndeterminate = true;
-
-                    PlayniteApi.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
-                    {
-                        PluginDatabase.GetFriends(this, true);
-                    }, globalProgressOptions);
+                    PluginDatabase.RefreshFriendsDataLoader(this);
                 }
             });
 

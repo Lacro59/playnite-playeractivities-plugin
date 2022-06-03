@@ -18,6 +18,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using PlayerActivities.Clients;
+using System.Windows;
+using System.Windows.Threading;
+using PlayerActivities.Views;
 
 namespace PlayerActivities.Services
 {
@@ -27,6 +30,19 @@ namespace PlayerActivities.Services
         public string gameActivityPath { get; set; }
         public string screenshotsVisuliazerPath { get; set; }
         public string howLongToBeatPath { get; set; }
+
+
+        private bool _FriendsDataIsDownloaded = true;
+        public bool FriendsDataIsDownloaded { get => _FriendsDataIsDownloaded; set => SetValue(ref _FriendsDataIsDownloaded, value); }
+
+        private bool _FriendsDataIsCanceled = false;
+        public bool FriendsDataIsCanceled { get => _FriendsDataIsCanceled; set => SetValue(ref _FriendsDataIsCanceled, value); }
+
+        Window windowFriendsDataLoading = null;
+        Stopwatch stopWatchFriendsDataLoading = new Stopwatch();
+
+        private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
+        public FriendsDataLoading friendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
 
         private HltbUserStats _hltbUserStats;
@@ -434,20 +450,35 @@ namespace PlayerActivities.Services
                 List<PlayerFriends> gogs = new List<PlayerFriends>();
                 if (PluginSettings.Settings.EnableGogFriends)
                 {
+                    friendsDataLoading.FriendName = string.Empty;
+                    friendsDataLoading.ActualCount = 0;
+                    friendsDataLoading.FriendCount = 0;
+                    friendsDataLoading.SourceName = "Gog";
+
                     GogFriends gogFriends = new GogFriends();
                     gogs = gogFriends.GetFriends();
                 }
 
                 List<PlayerFriends> steams = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableSteamFriends)
+                if (PluginSettings.Settings.EnableSteamFriends && !FriendsDataIsCanceled)
                 {
+                    friendsDataLoading.FriendName = string.Empty;
+                    friendsDataLoading.ActualCount = 0;
+                    friendsDataLoading.FriendCount = 0;
+                    friendsDataLoading.SourceName = "Steam";
+
                     SteamFriends steamFriends = new SteamFriends();
                     steams = steamFriends.GetFriends();
                 }
 
                 List<PlayerFriends> origin = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableOriginFriends)
+                if (PluginSettings.Settings.EnableOriginFriends && !FriendsDataIsCanceled)
                 {
+                    friendsDataLoading.FriendName = string.Empty;
+                    friendsDataLoading.ActualCount = 0;
+                    friendsDataLoading.FriendCount = 0;
+                    friendsDataLoading.SourceName = "Origin";
+
                     OriginFriends originFriends = new OriginFriends();
                     origin = originFriends.GetFriends();
                 }
@@ -480,6 +511,56 @@ namespace PlayerActivities.Services
             }
 
             return playerFriends;
+        }
+
+        public async Task RefreshFriendsDataLoader(PlayerActivities plugin)
+        {
+            FriendsDataIsDownloaded = false;
+            await Task.Run(() =>
+            {
+                stopWatchFriendsDataLoading = new Stopwatch();
+                stopWatchFriendsDataLoading.Start();
+
+                Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
+                Database.SetGameInfo<Activity>(PlayniteApi);
+
+                WindowOptions windowOptions = new WindowOptions
+                {
+                    ShowMinimizeButton = false,
+                    ShowMaximizeButton = false,
+                    ShowCloseButton = false,
+                    CanBeResizable = false
+                };
+
+                Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                {
+                    PaFriendDataLoading view = new PaFriendDataLoading();
+                    windowFriendsDataLoading = PlayniteUiHelper.CreateExtensionWindow(API.Instance, resources.GetString("LOCCommonGettingData"), view, windowOptions);
+                    windowFriendsDataLoading.ShowDialog();
+                }));
+
+                GetFriends(plugin, true);
+                FriendsDataLoaderClose();
+            });
+        }
+
+        private void FriendsDataLoaderClose()
+        {
+            if (windowFriendsDataLoading != null)
+            {
+                Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                {
+                    windowFriendsDataLoading.Close();
+                }));
+
+                stopWatchFriendsDataLoading.Stop();
+                TimeSpan ts = stopWatchFriendsDataLoading.Elapsed;
+                logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
+                    + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
+
+                FriendsDataIsCanceled = false;
+                FriendsDataIsDownloaded = true;
+            }
         }
     }
 }

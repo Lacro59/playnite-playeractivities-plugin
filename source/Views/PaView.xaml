@@ -470,7 +470,7 @@
 
                     <Label Grid.Column="1" Content="{DynamicResource LOCCommonLastUpdate}" />
                     <Label Grid.Column="3" Content="{Binding LastFriendsRefresh, Converter={StaticResource LocalDateTimeConverter}}" />
-                    <Button Grid.Column="5" Content="{DynamicResource LOCPaRefreshFriendsData}" Click="Button_RefreshFriendsData" />
+                    <Button Name="PART_BtFriends" Grid.Column="5" Content="{DynamicResource LOCPaRefreshFriendsData}" Click="Button_RefreshFriendsData" />
                 </Grid>
             </Grid>
         </Grid>
