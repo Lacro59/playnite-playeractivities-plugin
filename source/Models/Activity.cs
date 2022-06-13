@@ -30,10 +30,10 @@ namespace PlayerActivities.Models
                 int months = DateActivity.GetMonthsBetween();
                 int days = DateActivity.GetDaysBetween();
 
-                if (years > 0)
-                {
-                    return years == 1 ? string.Format(resources.GetString("LOCPaYearAgo"), years) : string.Format(resources.GetString("LOCPaYearsAgo"), years);
-                }
+                //if (years > 0)
+                //{
+                //    return years == 1 ? string.Format(resources.GetString("LOCPaYearAgo"), years) : string.Format(resources.GetString("LOCPaYearsAgo"), years);
+                //}
                 if (months > 0)
                 {
                     return months == 1 ? string.Format(resources.GetString("LOCPaMonthAgo"), months) : string.Format(resources.GetString("LOCPaMonthsAgo"), months);
