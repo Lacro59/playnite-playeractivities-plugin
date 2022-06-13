@@ -33,7 +33,7 @@ namespace PlayerActivities
 
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
-        {        
+        {
             // Custom theme button
             EventManager.RegisterClassHandler(typeof(Button), Button.ClickEvent, new RoutedEventHandler(OnCustomThemeButtonClick));
 

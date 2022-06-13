@@ -73,7 +73,8 @@
 
                 <!-- Player time line -->
                 <Grid Name="PART_GridContener" Grid.Row="2">
-                    <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" 
+                    <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
                              Name="PART_LbTimeLine"
                              ItemsSource="{Binding ItemsSource}" BorderThickness="0"
                              Width="{Binding ElementName=PART_GridContener, Path=ActualWidth}"
@@ -127,201 +128,203 @@
                                                               MaxHeight="100"
                                                               VerticalAlignment="Top" HorizontalAlignment="Center" />
 
-                                        <ItemsControl Grid.Column="2" Name="PART_ItemsControl" ItemsSource="{Binding ActivitiesOrdered}">
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <Grid Name="PART" Tag="{Binding}" Margin="0,0,0,20">
+                                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" MaxHeight="550">
+                                            <ItemsControl Name="PART_ItemsControl" ItemsSource="{Binding ActivitiesOrdered}" >
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Grid Name="PART" Tag="{Binding}" Margin="0,0,0,10">
 
-                                                        <!-- AchievementsUnlocked  -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsUnlocked}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
+                                                            <!-- AchievementsUnlocked  -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsUnlocked}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
 
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="auto" />
-                                                                <RowDefinition Height="5" />
-                                                                <RowDefinition Height="auto" />
-                                                            </Grid.RowDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="auto" />
+                                                                    <RowDefinition Height="5" />
+                                                                    <RowDefinition Height="auto" />
+                                                                </Grid.RowDefinitions>
 
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
-                                                               FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                       FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
 
-                                                            <controls:SuccessStoryPluginCompactUnlocked Grid.Row="2" Grid.ColumnSpan="7"
-                                                                                        GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                        DateUnlocked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
-                                                        </Grid>
+                                                                <controls:SuccessStoryPluginCompactUnlocked Grid.Row="2" Grid.ColumnSpan="7"
+                                                                                            GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                                                                                            DateUnlocked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
+                                                            </Grid>
 
-                                                        <!-- AchievementsGoal  -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsGoal}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
+                                                            <!-- AchievementsGoal  -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsGoal}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
 
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
 
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
-                                                               FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                        </Grid>
-
-                                                        <!-- ScreenshotsTaked  -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaked}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
-
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
-                                                            <Grid.RowDefinitions>
-                                                                <RowDefinition Height="auto" />
-                                                                <RowDefinition Height="5" />
-                                                                <RowDefinition Height="auto" />
-                                                            </Grid.RowDefinitions>
-
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
                                                                    FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaked}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                            </Grid>
 
-                                                            <controls:ScreeshotsVisualizerPluginListScreenshots Grid.Row="2" Grid.ColumnSpan="7"
-                                                                                        GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                        DateTaked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
+                                                            <!-- ScreenshotsTaked  -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaked}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
+
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="auto" />
+                                                                    <RowDefinition Height="5" />
+                                                                    <RowDefinition Height="auto" />
+                                                                </Grid.RowDefinitions>
+
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                       FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaked}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
+
+                                                                <controls:ScreeshotsVisualizerPluginListScreenshots Grid.Row="2" Grid.ColumnSpan="7"
+                                                                                            GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                                                                                            DateTaked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
+                                                            </Grid>
+
+                                                            <!-- PlaytimeFirst  -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeFirst}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
+
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                       FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource LOCPaPlaytimeFirst}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                            </Grid>
+
+                                                            <!-- PlaytimeGoal -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeGoal}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
+
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                       FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                            </Grid>
+
+                                                            <!-- HowLongToBeatCompleted -->
+                                                            <Grid>
+                                                                <Grid.Style>
+                                                                    <Style TargetType="Grid">
+                                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.HowLongToBeatCompleted}">
+                                                                                <Setter Property="Visibility" Value="Visible" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
+
+                                                                <Grid.ColumnDefinitions>
+                                                                    <ColumnDefinition Width="auto" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="*" />
+                                                                    <ColumnDefinition Width="10" />
+                                                                    <ColumnDefinition Width="auto" />
+                                                                </Grid.ColumnDefinitions>
+
+                                                                <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
+                                                                       FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                                                                <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource LOCPaHowLongToBeatCompleted}" />
+                                                                <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
+                                                                       Content="{Binding TimeAgo}" Foreground="Gray" />
+                                                            </Grid>
+
                                                         </Grid>
-
-                                                        <!-- PlaytimeFirst  -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeFirst}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
-
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
-                                                                   FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource LOCPaPlaytimeFirst}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                        </Grid>
-
-                                                        <!-- PlaytimeGoal -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeGoal}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
-
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
-                                                                   FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                        </Grid>
-
-                                                        <!-- HowLongToBeatCompleted -->
-                                                        <Grid>
-                                                            <Grid.Style>
-                                                                <Style TargetType="Grid">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.HowLongToBeatCompleted}">
-                                                                            <Setter Property="Visibility" Value="Visible" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </Grid.Style>
-
-                                                            <Grid.ColumnDefinitions>
-                                                                <ColumnDefinition Width="auto" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="*" />
-                                                                <ColumnDefinition Width="10" />
-                                                                <ColumnDefinition Width="auto" />
-                                                            </Grid.ColumnDefinitions>
-
-                                                            <Label Grid.Row="0" Grid.Column="0" Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" 
-                                                                   FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                            <Label Grid.Row="0" Grid.Column="2" Content="{DynamicResource LOCPaHowLongToBeatCompleted}" />
-                                                            <Label Grid.Row="0" Grid.Column="4" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" 
-                                                                   Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                        </Grid>
-
-                                                    </Grid>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
                                     </Grid>
                                 </Border>
                             </DataTemplate>
