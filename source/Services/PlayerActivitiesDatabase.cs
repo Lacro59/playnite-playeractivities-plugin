@@ -226,10 +226,7 @@ namespace PlayerActivities.Services
                             });
                         });
 
-                        if (PluginSettings.Settings.IsFirstRun)
-                        {
-                            AddOrUpdate(playerActivitiesData);
-                        }
+                        AddOrUpdate(playerActivitiesData);
                     }
                 }
             }
@@ -289,10 +286,7 @@ namespace PlayerActivities.Services
                             });
                         });
 
-                        if (PluginSettings.Settings.IsFirstRun)
-                        {
-                            AddOrUpdate(playerActivitiesData);
-                        }
+                        AddOrUpdate(playerActivitiesData);
                     }
                 }
             }
@@ -365,10 +359,7 @@ namespace PlayerActivities.Services
                             });
                         });
 
-                        if (PluginSettings.Settings.IsFirstRun)
-                        {
-                            AddOrUpdate(playerActivitiesData);
-                        }
+                        AddOrUpdate(playerActivitiesData);
                     }
                 }
             }
@@ -431,10 +422,7 @@ namespace PlayerActivities.Services
                             }
                         }
 
-                        if (PluginSettings.Settings.IsFirstRun)
-                        {
-                            AddOrUpdate(playerActivitiesData);
-                        }
+                        AddOrUpdate(playerActivitiesData);
                     }
                 }
             }
