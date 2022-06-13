@@ -411,15 +411,18 @@ namespace PlayerActivities.Services
                         if (hltbUserStats != null)
                         {
                             List<TitleList> titleLists = hltbUserStats.TitlesList.FindAll(x => x.Id == obj.GetData().Id).ToList();
-                            DateTime? dt = titleLists[0]?.Completion;
-                            if (dt != null)
+                            titleLists.ForEach(x => 
                             {
-                                playerActivitiesData.Items.Add(new Activity
+                                DateTime? dt = x.Completion;
+                                if (dt != null)
                                 {
-                                    DateActivity = (DateTime)dt,
-                                    Type = ActivityType.HowLongToBeatCompleted
-                                });
-                            }
+                                    playerActivitiesData.Items.Add(new Activity
+                                    {
+                                        DateActivity = (DateTime)dt,
+                                        Type = ActivityType.HowLongToBeatCompleted
+                                    });
+                                }
+                            });
                         }
 
                         AddOrUpdate(playerActivitiesData);
