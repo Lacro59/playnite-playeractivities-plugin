@@ -24,7 +24,7 @@ namespace PlayerActivities.Models
 
         public string SourceIcon => TransformIcon.Get(PlayniteTools.GetSourceName(GameContext.Id));
 
-        public string CoverImage => API.Instance.Database.GetFullFilePath(GameContext.CoverImage);
+        public string CoverImage => GameContext.CoverImage == null ? string.Empty : API.Instance.Database.GetFullFilePath(GameContext.CoverImage);
 
         public List<Activity> Activities { get; set; } = new List<Activity>();
 

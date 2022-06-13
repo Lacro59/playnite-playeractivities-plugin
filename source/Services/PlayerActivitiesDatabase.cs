@@ -415,7 +415,7 @@ namespace PlayerActivities.Services
                         if (hltbUserStats != null)
                         {
                             List<TitleList> titleLists = hltbUserStats.TitlesList.FindAll(x => x.Id == obj.GetData().Id).ToList();
-                            DateTime? dt = titleLists.Find(x => x.GameStatuses[0].Status == StatusType.Completed)?.Completion;
+                            DateTime? dt = titleLists[0]?.Completion;
                             if (dt != null)
                             {
                                 playerActivitiesData.Items.Add(new Activity
