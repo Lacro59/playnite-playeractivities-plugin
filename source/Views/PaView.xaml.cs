@@ -131,9 +131,10 @@ namespace PlayerActivities.Views
                 activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
                 activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
                 {
-                    if (ReferenceEquals(GameContext, x.GameContext) && TimeAgo.IsEqual(x.TimeAgo))
+                    var finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && z.TimeAgo.IsEqual(x.TimeAgo));
+                    if (finded.Count() > 0)
                     {
-                        activityListsGrouped.Last().Activities.Add(new Activity
+                        finded.First().Activities.Add(new Activity
                         {
                             DateActivity = x.DateActivity,
                             Value = x.Value,
@@ -161,6 +162,13 @@ namespace PlayerActivities.Views
                         });
                     }
                 });
+
+                // Order grouped activities
+                activityListsGrouped.ForEach(x => 
+                {
+                    x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
+                });
+
 
                 ControlDataContext.ItemsSource = activityListsGrouped;
 
