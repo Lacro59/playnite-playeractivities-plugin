@@ -25,3 +25,14 @@ Packages:
       - Removed automatic refresh of friend data
       - Added filters on the timeline view
       - UI tweaks
+  - Version: 0.2.1
+    RequiredApiVersion: 6.2.2
+    ReleaseDate: 2022-06-15
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v0.2.1/playnite-playeractivities-plugin_0_2_1.pext
+    Changelog:
+      - Warning experimental features (maybe playnite crash)
+      - Fixed issues with HowLongToBeat plugin data
+      - Fixed issues with friends data
+      - Fixed many issues and crashes
+      - Updated localizations
+      - UI tweaks
