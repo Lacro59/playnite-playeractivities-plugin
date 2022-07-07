@@ -5,47 +5,47 @@
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">フレンドの情報を更新</sys:String>
     <sys:String x:Key="LOCPaView">View player activities</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">SuccessStory の情報を表示 (要: SuccessStory プラグイン)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">ScreenshotsVisualizer の情報を表示 (要: ScreenshotsVisualizer プラグイン)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">HowLongToBeat の情報を表示 (要: HowLongToBeat プラグイン)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Steam フレンドを有効にする</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">GOG フレンドを有効にする</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Origin フレンドを有効にする</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">このゲームを初めてプレイしました。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">{0} 時間のプレイに達しました。</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} 個の実績を解除しました。</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">実績解除率が {0} %に達しました。</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">{0} 枚のスクリーンショットを撮影しました。</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">ゲームを完全にクリアしました。</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0}日前</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0}日前</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0}ヶ月前</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0}ヶ月前</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0}年前</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0}年前</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">所有済みのゲーム</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">クリア済みのゲーム</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">フレンド 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">あなた 🕑</sys:String>
+    <sys:String x:Key="LOCPaAchievements">実績</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Commun</sys:String>
 
