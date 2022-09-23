@@ -39,6 +39,11 @@ namespace PlayerActivities.Views
 
         private bool TimeLineFilter(object item)
         {
+            if (item == null)
+            {
+                return false;
+            }
+
             ActivityListGrouped el = item as ActivityListGrouped;
             
             bool txtFilter = el.GameContext.Name.Contains(TextboxSearch.Text, StringComparison.InvariantCultureIgnoreCase);
