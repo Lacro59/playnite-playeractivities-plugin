@@ -36,3 +36,12 @@ Packages:
       - Fixed many issues and crashes
       - Updated localizations
       - UI tweaks
+  - Version: 1.0
+    RequiredApiVersion: 6.4.0
+    ReleaseDate: 2022-09-23
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v1.0/playnite-playeractivities-plugin_1_0.pext
+    Changelog:
+      - Playnite 10 only
+      - Warning experimental features (maybe playnite crash)
+      - Updated localizations
+      - Fixed minor bugs
