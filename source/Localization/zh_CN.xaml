@@ -3,15 +3,15 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">玩家活动</sys:String>
+    <sys:String x:Key="LOCPa">玩家活</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">刷新好友数据</sys:String>
-    <sys:String x:Key="LOCPaView">查看玩家活动</sys:String>
+    <sys:String x:Key="LOCPaView">查看玩家活</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件）</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示截图可视化的数据 (需要截图可视化插件)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示攻关历时的数据 (需要攻关历时插件)</sys:String>
     
@@ -22,15 +22,15 @@
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">这是您第一次游玩。</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">您已经游玩过 {0} 小时。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">这是您第一次游</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">您已经游玩过 {0} 小时</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">您已经解锁了 {0} 个成就。</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">您已经达成 {0}% 的成就。</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">您已经解锁了 {0} 个成就</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">您已经达成 {0}% 的成就</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">您已截取 {0} 张截图。</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">您已截取 {0} 张截图</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">您已完成此游戏。</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">您已完成此游戏</sys:String>
 
     <sys:String x:Key="LOCPaDayAgo">{0} 天前</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} 天前</sys:String>
@@ -47,6 +47,6 @@
     <sys:String x:Key="LOCPaYourPlaytime">您的 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">信息</sys:String>
+    <sys:String x:Key="LOCPaCommun">信</sys:String>
 
 </ResourceDictionary>
