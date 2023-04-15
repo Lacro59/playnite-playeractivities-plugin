@@ -136,14 +136,14 @@ namespace PlayerActivities.Clients
 
                 //string webData = Web.DownloadStringData(link, cookies).GetAwaiter().GetResult();
                 string webData = string.Empty;
-                using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+                using (IWebView WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
                 {
                     WebViewOffscreen.NavigateAndWait(link);
                     webData = WebViewOffscreen.GetPageSource();
                 }
                 IHtmlDocument htmlDocument = parser.Parse(webData);
 
-                var avatars = htmlDocument.QuerySelectorAll("div.playerAvatarAutoSizeInner img");
+                IHtmlCollection<IElement> avatars = htmlDocument.QuerySelectorAll("div.playerAvatarAutoSizeInner img");
                 string avatar = avatars[0].GetAttribute("src");
                 if (avatars.Count() > 1)
                 {
@@ -153,10 +153,8 @@ namespace PlayerActivities.Clients
 
                 PluginDatabase.friendsDataLoading.FriendName = pseudo;
 
-                int gamesOwned = 0;
-                int GamesCompleted = 0;
                 string gamesOwnedUrl = string.Empty;
-                int achievements = 0;
+                int gamesOwned = 0;
                 double hoursPlayed = 0;
 
                 IHtmlCollection<IElement> items = htmlDocument.QuerySelectorAll("div.profile_item_links div");
@@ -166,18 +164,18 @@ namespace PlayerActivities.Clients
                     if (a?.GetAttribute("href")?.Contains("games", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
                         gamesOwnedUrl = a.GetAttribute("href");
-                        int.TryParse(a.QuerySelector("span.profile_count_link_total").InnerHtml.Trim(), out gamesOwned);
+                        int.TryParse(a.QuerySelector("span.profile_count_link_total").InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out gamesOwned);
                         break;
                     }
                 }
 
                 IElement itemAch = htmlDocument.QuerySelector("div.achievement_showcase div.showcase_stat div.value");
-                int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out achievements);
+                int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out int achievements);
 
                 bool UsedWebAchdata = achievements == 0;
 
                 IElement itemCompleted = htmlDocument.QuerySelector("div.achievement_showcase a.showcase_stat div.value");
-                int.TryParse(itemCompleted?.InnerHtml?.Trim(), out GamesCompleted);
+                int.TryParse(itemCompleted?.InnerHtml?.Trim(), out int GamesCompleted);
 
                 List<PlayerGames> Games = new List<PlayerGames>();
                 if (!gamesOwnedUrl.IsNullOrEmpty())
@@ -191,64 +189,67 @@ namespace PlayerActivities.Clients
                     
                     string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}];");
                     Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
-                    
-                    using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+
+                    if (FriendsAppsAll != null)
                     {
-                        FriendsAppsAll.ForEach(x =>
+                        using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
                         {
-                            bool IsCommun = false;
-                            if (playerFriendsUs != null)
+                            FriendsAppsAll.ForEach(x =>
                             {
-                                IsCommun = playerFriendsUs.Games?.Where(y => y.Id.IsEqual(x.appid.ToString()))?.Count() != 0;
-                            }
-
-                            PlayerGames playerGames = new PlayerGames
-                            {
-                                Id = x.appid.ToString(),
-                                Name = x.name,
-                                Link = string.Format(UrlStoreGame, x.appid),
-                                IsCommun = IsCommun
-                            };
-
-                            if (!x.hours_forever.IsNullOrEmpty())
-                            {
-                                if (Regex.IsMatch(x.hours_forever, @"\d*,\d{3}"))
+                                bool IsCommun = false;
+                                if (playerFriendsUs != null)
                                 {
-                                    x.hours_forever = x.hours_forever.Replace(",", string.Empty);
-                                }
-                                if (Regex.IsMatch(x.hours_forever, @"\d*.\d{3}"))
-                                {
-                                    x.hours_forever = x.hours_forever.Replace(".", string.Empty);
+                                    IsCommun = playerFriendsUs.Games?.Where(y => y.Id.IsEqual(x.appid.ToString()))?.Count() != 0;
                                 }
 
-                                double.TryParse(x.hours_forever
-                                    .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
-                                    .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
-                                hoursPlayed += hours_forever;
-
-                                playerGames.Playtime = (long)(hours_forever * 3600);
-                            }
-
-                            if (x.availStatLinks.achievements && UsedWebAchdata)
-                            {
-                                string urlPlayerAch = link + string.Format(UrlAch, x.appid);
-                                WebViewOffscreen.NavigateAndWait(urlPlayerAch);
-                                webData = WebViewOffscreen.GetPageSource();
-
-                                htmlDocument = parser.Parse(webData);
-                                IHtmlCollection<IElement> data = htmlDocument.QuerySelectorAll("#topSummaryAchievements div");
-                                if (data.Count() > 0 && data[0] != null)
+                                PlayerGames playerGames = new PlayerGames
                                 {
-                                    Regex regex = new Regex(@"(\d+)");
-                                    int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
-                                    achievements += achCount;
+                                    Id = x.appid.ToString(),
+                                    Name = x.name,
+                                    Link = string.Format(UrlStoreGame, x.appid),
+                                    IsCommun = IsCommun
+                                };
 
-                                    playerGames.Achievements = achCount;
+                                if (!x.hours_forever.IsNullOrEmpty())
+                                {
+                                    if (Regex.IsMatch(x.hours_forever, @"\d*,\d{3}"))
+                                    {
+                                        x.hours_forever = x.hours_forever.Replace(",", string.Empty);
+                                    }
+                                    if (Regex.IsMatch(x.hours_forever, @"\d*.\d{3}"))
+                                    {
+                                        x.hours_forever = x.hours_forever.Replace(".", string.Empty);
+                                    }
+
+                                    double.TryParse(x.hours_forever
+                                        .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
+                                        .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
+                                    hoursPlayed += hours_forever;
+
+                                    playerGames.Playtime = (long)(hours_forever * 3600);
                                 }
-                            }
 
-                            Games.Add(playerGames);
-                        });
+                                if (x.availStatLinks.achievements && UsedWebAchdata)
+                                {
+                                    string urlPlayerAch = link + string.Format(UrlAch, x.appid);
+                                    WebViewOffscreen.NavigateAndWait(urlPlayerAch);
+                                    webData = WebViewOffscreen.GetPageSource();
+
+                                    htmlDocument = parser.Parse(webData);
+                                    IHtmlCollection<IElement> data = htmlDocument.QuerySelectorAll("#topSummaryAchievements div");
+                                    if (data.Count() > 0 && data[0] != null)
+                                    {
+                                        Regex regex = new Regex(@"(\d+)");
+                                        int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
+                                        achievements += achCount;
+
+                                        playerGames.Achievements = achCount;
+                                    }
+                                }
+
+                                Games.Add(playerGames);
+                            });
+                        }
                     }
                 }
 
@@ -278,8 +279,8 @@ namespace PlayerActivities.Clients
 
         private bool IsConnected()
         {
-            try 
-            { 
+            try
+            {
                 string ProfileById = $"https://steamcommunity.com/profiles/{SteamId}";
                 string ProfileByName = $"https://steamcommunity.com/id/{SteamUser}";
 
