@@ -39,7 +39,7 @@
     <sys:String x:Key="LOCPaYearAgo">il y a {0} an</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">il y a {0} ans</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Jeu possédé</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Jeu posséd</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Jeux terminés</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
