@@ -32,7 +32,7 @@
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Ви пройшли гру.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} день тому</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} день том</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} днів тому</sys:String>
     <sys:String x:Key="LOCPaMonthAgo">{0} місяць тому</sys:String>
     <sys:String x:Key="LOCPaMonthsAgo">{0} місяців тому</sys:String>
