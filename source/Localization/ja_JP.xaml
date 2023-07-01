@@ -6,7 +6,7 @@
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData"></sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaView">プレイヤーのアクティビティを表示</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -22,29 +22,29 @@
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst"></sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">{0} 時間のプレイに達しまし</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">このゲームを初めてプレイしました。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">{0} 時間のプレイに達しました。</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} 個の実績を解除しまし</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">実績解除率が {0} %に達しまし</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} 個の実績を解除しました。</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">実績解除率が {0} %に達しました。</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">{0} 枚のスクリーンショットを撮影しまし</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">{0} 枚のスクリーンショットを撮影しました。</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted"></sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">ゲームを完全にクリアしました。</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0}日前</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0}日前</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0}ヶ月前</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0}ヶ月前</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0}年前</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0}年前</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} 日前</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} 日前</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} ヶ月前</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} ヶ月前</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} 年前</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} 年前</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">所有済みのゲー</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted"></sys:String>
+    <sys:String x:Key="LOCPaGameOwned">所有済みのゲーム</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">クリア済みのゲーム</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime"></sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime"></sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">フレンド 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">あなた 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">実績</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Commun</sys:String>
