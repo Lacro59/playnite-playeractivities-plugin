@@ -1,4 +1,6 @@
-﻿using Playnite.SDK;
+﻿using CommonPluginsShared;
+using PlayerActivities.Services;
+using Playnite.SDK;
 using Playnite.SDK.Controls;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
@@ -12,6 +14,47 @@ using System.Windows.Controls;
 
 namespace PlayerActivities.Controls
 {
+    public class SuccessStoryPlugin
+    {
+        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
+
+        private static Plugin _plugin;
+        private static Plugin Plugin
+        {
+            get
+            {
+                if (_plugin == null)
+                {
+                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
+                }
+                return _plugin;
+            }
+        }
+
+        public static bool IsInstalled => Plugin != null;
+
+        public static void SuccessStoryView(Game game)
+        {
+            if (game == null || Plugin == null)
+            {
+                return;
+            }
+
+            try
+            {
+                IEnumerable<GameMenuItem> pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs { Games = new List<Game> { game }, IsGlobalSearchRequest = false });
+                if (pluginMenus.Count() > 0)
+                {
+                    pluginMenus.First().Action.Invoke(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, true, PluginDatabase.PluginName);
+            }
+        }
+    }
+
     public class SuccessStoryControl : ContentControl
     {
         private static Plugin _plugin;
@@ -29,7 +72,7 @@ namespace PlayerActivities.Controls
 
         private PluginUserControl control;
 
-        public static bool SuccessStoryIsInstalled => Plugin != null;
+        public static bool IsInstalled => Plugin != null;
 
 
         #region Properties

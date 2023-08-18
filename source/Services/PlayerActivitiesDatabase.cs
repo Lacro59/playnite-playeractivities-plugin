@@ -21,6 +21,7 @@ using PlayerActivities.Clients;
 using System.Windows;
 using System.Windows.Threading;
 using PlayerActivities.Views;
+using System.Collections.ObjectModel;
 
 namespace PlayerActivities.Services
 {
@@ -121,7 +122,7 @@ namespace PlayerActivities.Services
 
 
         #region Plugin data
-        public void InitializePluginData(bool forced = false)
+        public void InitializePluginData(bool forced = false, Guid Id = default(Guid))
         {
             GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
                 $"{PluginName} - {resources.GetString("LOCCommonProcessing")}",
@@ -138,25 +139,28 @@ namespace PlayerActivities.Services
                 {
                     Database.ForEach(y =>
                     {
-                        y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
-                        y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
-                        y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
-                        y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                        if (Id == default(Guid) || y.Game?.Id == Id)
+                        {
+                            y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                        }
                     });
                 }
 
-                FirstScanSuccessStory();
-                FirstScanScreenshotsVisualizer();
+                FirstScanSuccessStory(Id);
+                FirstScanScreenshotsVisualizer(Id);
                 if (!forced)
                 {
-                    FirstScanGameActivity();
+                    FirstScanGameActivity(Id);
                 }
-                FirstScanHowLongToBeat();
+                FirstScanHowLongToBeat(Id);
             }, globalProgressOptions);
         }
 
 
-        public void FirstScanSuccessStory()
+        public void FirstScanSuccessStory(Guid Id = default(Guid))
         {
             if (Directory.Exists(successStoryPath))
             {
@@ -165,7 +169,10 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
                         {
-                            SetAchievements(fileId);
+                            if (Id == default(Guid) || fileId == Id)
+                            {
+                                SetAchievements(fileId);
+                            }
                         }
                     });
             }
@@ -237,7 +244,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanScreenshotsVisualizer()
+        public void FirstScanScreenshotsVisualizer(Guid Id = default(Guid))
         {
             if (Directory.Exists(successStoryPath))
             {
@@ -246,7 +253,10 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
                         {
-                            SetScreenshots(fileId);
+                            if (Id == default(Guid) || fileId == Id)
+                            {
+                                SetScreenshots(fileId);
+                            }
                         }
                     });
             }
@@ -297,7 +307,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanGameActivity()
+        public void FirstScanGameActivity(Guid Id = default(Guid))
         {
             if (Directory.Exists(successStoryPath))
             {
@@ -306,7 +316,10 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            SetGameActivity(fileId);
+                            if (Id == default(Guid) || fileId == Id)
+                            {
+                                SetGameActivity(fileId);
+                            }
                         }
                     });
             }
@@ -370,7 +383,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanHowLongToBeat()
+        public void FirstScanHowLongToBeat(Guid Id = default(Guid))
         {
             if (Directory.Exists(howLongToBeatPath))
             {
@@ -379,7 +392,10 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            SetHowLongToBeat(fileId);
+                            if (Id == default(Guid) || fileId == Id)
+                            {
+                                SetHowLongToBeat(fileId);
+                            }
                         }
                     });
             }
@@ -428,6 +444,90 @@ namespace PlayerActivities.Services
             {
                 Common.LogError(ex, false);
             }
+        }
+
+
+        public ObservableCollection<ActivityListGrouped> GetActivitiesData()
+        {
+            ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
+            Database.ForEach(x =>
+            {
+                x.Items.ForEach(y =>
+                {
+                    activityLists.Add(new ActivityList
+                    {
+                        GameContext = x.Game,
+                        DateActivity = y.DateActivity,
+                        Type = y.Type,
+                        Value = y.Value
+                    });
+                });
+            });
+
+
+            // Options
+            List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
+            if (PluginSettings.Settings.EnableHowLongToBeatData)
+            {
+                activityTypes.Add(ActivityType.HowLongToBeatCompleted);
+            }
+            if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
+            {
+                activityTypes.Add(ActivityType.ScreenshotsTaked);
+            }
+            if (PluginSettings.Settings.EnableSuccessStoryData)
+            {
+                activityTypes.Add(ActivityType.AchievementsGoal);
+                activityTypes.Add(ActivityType.AchievementsUnlocked);
+            }
+
+
+            ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
+            Game GameContext = null;
+            string TimeAgo = string.Empty;
+
+            activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
+            activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
+            {
+                IEnumerable<ActivityListGrouped> finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && z.TimeAgo.IsEqual(x.TimeAgo));
+                if (finded.Count() > 0)
+                {
+                    finded.First().Activities.Add(new Activity
+                    {
+                        DateActivity = x.DateActivity,
+                        Value = x.Value,
+                        Type = x.Type
+                    });
+                }
+                else
+                {
+                    GameContext = x.GameContext;
+                    TimeAgo = x.TimeAgo;
+                    activityListsGrouped.Add(new ActivityListGrouped
+                    {
+                        GameContext = x.GameContext,
+                        dtString = x.DateActivity.ToString("yyyy-MM-dd"),
+                        TimeAgo = x.TimeAgo,
+                        Activities = new List<Activity>
+                            {
+                                new Activity
+                                {
+                                    DateActivity = x.DateActivity,
+                                    Value = x.Value,
+                                    Type = x.Type
+                                }
+                            }
+                    });
+                }
+            });
+
+            // Order grouped activities
+            activityListsGrouped.ForEach(x =>
+            {
+                x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
+            });
+
+            return activityListsGrouped;
         }
         #endregion
 

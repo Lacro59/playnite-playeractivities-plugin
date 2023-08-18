@@ -1,4 +1,6 @@
-﻿using Playnite.SDK;
+﻿using CommonPluginsShared;
+using PlayerActivities.Services;
+using Playnite.SDK;
 using Playnite.SDK.Controls;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
@@ -12,7 +14,48 @@ using System.Windows.Controls;
 
 namespace PlayerActivities.Controls
 {
-    public class ScreeshotsVisualizerControl : ContentControl
+    public class ScreenshotsVisualizerPlugin
+    {
+        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
+
+        private static Plugin _plugin;
+        private static Plugin Plugin
+        {
+            get
+            {
+                if (_plugin == null)
+                {
+                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
+                }
+                return _plugin;
+            }
+        }
+
+        public static bool IsInstalled => Plugin != null;
+
+        public static void ScreenshotsVisualizerView(Game game)
+        {
+            if (game == null || Plugin == null)
+            {
+                return;
+            }
+
+            try
+            {
+                IEnumerable<GameMenuItem> pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs { Games = new List<Game> { game }, IsGlobalSearchRequest = false });
+                if (pluginMenus.Count() > 0)
+                {
+                    pluginMenus.First().Action.Invoke(null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, true, PluginDatabase.PluginName);
+            }
+        }
+    }
+
+    public class ScreenshotsVisualizerControl : ContentControl
     {
         private static Plugin _plugin;
         private static Plugin Plugin
@@ -29,7 +72,7 @@ namespace PlayerActivities.Controls
 
         private PluginUserControl control;
 
-        public static bool ScreeshotsVisualizerIsInstalled => Plugin != null;
+        public static bool IsInstalled => Plugin != null;
 
 
         #region Properties
@@ -42,7 +85,7 @@ namespace PlayerActivities.Controls
         public static readonly DependencyProperty GameContextProperty = DependencyProperty.Register(
             nameof(GameContext),
             typeof(Game),
-            typeof(ScreeshotsVisualizerControl),
+            typeof(ScreenshotsVisualizerControl),
             new FrameworkPropertyMetadata(null, ControlsPropertyChangedCallback));
 
         public DateTime DateTaked
@@ -54,7 +97,7 @@ namespace PlayerActivities.Controls
         public static readonly DependencyProperty DateTakedProperty = DependencyProperty.Register(
             nameof(DateTaked),
             typeof(DateTime),
-            typeof(ScreeshotsVisualizerControl),
+            typeof(ScreenshotsVisualizerControl),
             new FrameworkPropertyMetadata(DateTime.Now, ControlsPropertyChangedCallback));
         #endregion
 
@@ -63,7 +106,7 @@ namespace PlayerActivities.Controls
         // When a control properties is changed
         internal static void ControlsPropertyChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            if (sender is ScreeshotsVisualizerControl obj && e.NewValue != e.OldValue && e.NewValue is DateTime)
+            if (sender is ScreenshotsVisualizerControl obj && e.NewValue != e.OldValue && e.NewValue is DateTime)
             {
                 if (obj.control != null)
                 {
@@ -75,7 +118,7 @@ namespace PlayerActivities.Controls
         #endregion
 
 
-        public ScreeshotsVisualizerControl(string controlName)
+        public ScreenshotsVisualizerControl(string controlName)
         {
             if (Plugin == null)
             {
@@ -98,9 +141,9 @@ namespace PlayerActivities.Controls
     }
 
 
-    public class ScreeshotsVisualizerPluginListScreenshots : ScreeshotsVisualizerControl
+    public class ScreenshotsVisualizerPluginListScreenshots : ScreenshotsVisualizerControl
     {
-        public ScreeshotsVisualizerPluginListScreenshots() : base("PluginListScreenshots")
+        public ScreenshotsVisualizerPluginListScreenshots() : base("PluginListScreenshots")
         {
 
         }

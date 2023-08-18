@@ -77,7 +77,8 @@
     <Compile Include="Clients\GogFriends.cs" />
     <Compile Include="Clients\OriginFriends.cs" />
     <Compile Include="Clients\SteamFriends.cs" />
-    <Compile Include="Controls\ScreeshotsVisualizerControl.cs" />
+    <Compile Include="Controls\HowLongToBeatControl.cs" />
+    <Compile Include="Controls\ScreenshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ActivityElement.cs" />

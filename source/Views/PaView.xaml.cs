@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
+using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
@@ -32,7 +33,7 @@ namespace PlayerActivities.Views
         private PlayerActivities Plugin;
         private PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
 
-        private PaViewData ControlDataContext = new PaViewData();
+        internal static PaViewData ControlDataContext = new PaViewData();
 
         private List<string> SearchSources = new List<string>();
 
@@ -96,87 +97,7 @@ namespace PlayerActivities.Views
         {
             Task.Run(() =>
             {
-                ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
-                PluginDatabase.Database.ForEach(x =>
-                {
-                    x.Items.ForEach(y =>
-                    {
-                        activityLists.Add(new ActivityList
-                        {
-                            GameContext = x.Game,
-                            DateActivity = y.DateActivity,
-                            Type = y.Type,
-                            Value = y.Value
-                        });
-                    });
-                });
-
-
-                // Options
-                List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
-                if (PluginDatabase.PluginSettings.Settings.EnableHowLongToBeatData)
-                {
-                    activityTypes.Add(ActivityType.HowLongToBeatCompleted);
-                }
-                if (PluginDatabase.PluginSettings.Settings.EnableScreenshotsVisualizerData)
-                {
-                    activityTypes.Add(ActivityType.ScreenshotsTaked);
-                }
-                if (PluginDatabase.PluginSettings.Settings.EnableSuccessStoryData)
-                {
-                    activityTypes.Add(ActivityType.AchievementsGoal);
-                    activityTypes.Add(ActivityType.AchievementsUnlocked);
-                }
-
-
-                ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
-                Game GameContext = null;
-                string TimeAgo = string.Empty;
-
-                activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
-                activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
-                {
-                    var finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && z.TimeAgo.IsEqual(x.TimeAgo));
-                    if (finded.Count() > 0)
-                    {
-                        finded.First().Activities.Add(new Activity
-                        {
-                            DateActivity = x.DateActivity,
-                            Value = x.Value,
-                            Type = x.Type
-                        });
-                    }
-                    else
-                    {
-                        GameContext = x.GameContext;
-                        TimeAgo = x.TimeAgo;
-                        activityListsGrouped.Add(new ActivityListGrouped
-                        {
-                            GameContext = x.GameContext,
-                            dtString = x.DateActivity.ToString("yyyy-MM-dd"),
-                            TimeAgo = x.TimeAgo,
-                            Activities = new List<Activity>
-                            {
-                                new Activity
-                                {
-                                    DateActivity = x.DateActivity,
-                                    Value = x.Value,
-                                    Type = x.Type
-                                }
-                            }
-                        });
-                    }
-                });
-
-                // Order grouped activities
-                activityListsGrouped.ForEach(x => 
-                {
-                    x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
-                });
-
-
-                ControlDataContext.ItemsSource = activityListsGrouped;
-
+                ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
 
                 IsDataFinished = true;
                 IsFinish();
@@ -322,6 +243,8 @@ namespace PlayerActivities.Views
 
     public class PaViewData : ObservableObject
     {
+        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
+
         private ObservableCollection<ActivityListGrouped> _ItemsSource = new ObservableCollection<ActivityListGrouped>();
         public ObservableCollection<ActivityListGrouped> ItemsSource { get => _ItemsSource; set => SetValue(ref _ItemsSource, value); }
 
@@ -336,6 +259,81 @@ namespace PlayerActivities.Views
 
         private DateTime _LastFriendsRefresh = DateTime.Now;
         public DateTime LastFriendsRefresh { get => _LastFriendsRefresh; set => SetValue(ref _LastFriendsRefresh, value); }
+
+
+        #region Menus
+        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            API.Instance.StartGame(game.Id);
+        });
+
+        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            API.Instance.InstallGame(game.Id);
+        });
+
+        public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            API.Instance.MainView.SelectGame(game.Id);
+            API.Instance.MainView.SwitchToLibraryView();
+        });
+
+        public RelayCommand<Game> RefreshGameDataCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            PluginDatabase.InitializePluginData(true, game.Id);
+            PaView.ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
+        });
+
+        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            SuccessStoryPlugin.SuccessStoryView(game);
+        });
+
+        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            HowLongToBeatPlugin.HowLongToBeatView(game);
+        });
+
+        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) =>
+        {
+            if (game == null)
+            {
+                return;
+            }
+
+            ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game);
+        });
+        #endregion
     }
 
     public class ListSource : ObservableObject
