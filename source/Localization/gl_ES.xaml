@@ -5,48 +5,58 @@
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Actualizar os datos dos amigos</sys:String>
+    <sys:String x:Key="LOCPaView">Ver actividades dos xogadores</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Mostrar datos de SuccessStory (cómpre o complemento de SuccessStory)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Mostrar datos de ScreenshotsVisualizer (cómpre o complemento de ScreenshotsVisualizer)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Mostrar datos de HowLongToBeat (cómpre o complemento de HowLongToBeat)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Enable Origin friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Activar amigos de Steam</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Activar amigos de GOG</sys:String>
+    <sys:String x:Key="LOCPaEnableOriginFriends">Activar amigos de Origin</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">Xogaches por primeira vez.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">Chegaches a {0} horas de xogo.</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">Conseguiches {0} logros.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">Conseguiches o {0} % dos logros.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">Fixeches {0} capturas de pantalla.</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">Completaches o xogo.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">Hai {0} día</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">Hai {0} días</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">Hai {0} mes</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">Hai {0} meses</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">Hai {0} ano</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">Hai {0} anos</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Xogo en propiedade</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Xogos completados</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">O teu 🕑</sys:String>
+    <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Común</sys:String>
+
+
+    <!-- Menus -->
+
+    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
 
 </ResourceDictionary>
