@@ -41,12 +41,22 @@
     
     <sys:String x:Key="LOCPaGameOwned">Juego poseído</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Juegos completados</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕑</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Tu 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Común</sys:String>
+
+
+    <!-- Menus -->
+
+    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
 
 </ResourceDictionary>
