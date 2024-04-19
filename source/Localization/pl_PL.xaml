@@ -41,8 +41,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Posiadane gry</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Ukończone gry</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Znajomi </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Twoje </sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Osiągnięcia</sys:String>
@@ -52,11 +52,11 @@
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Pokaż grę w bibliotece</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Odśwież dane gry</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Wyświetl dane HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Wyświetl dane SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Wyświetl dane ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
