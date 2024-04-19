@@ -41,8 +41,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Oyuna sahipsiniz</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Tamamlanan oyunlar</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Siz </sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Arkadaşlar 🕑</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>
@@ -52,11 +52,11 @@
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Oyunu kütüphanede göster</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Oyun verilerini yenile</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">YenmekNeKadarSürdü verilerini göster</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">BaşarıHikayesi verilerini göster</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">EkranGörüntüsüGörsel verilerini göster</sys:String>
 
 </ResourceDictionary>
