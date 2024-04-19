@@ -52,11 +52,11 @@
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Mostrar jogo na biblioteca</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Atualizar dados de jogo</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Visualizar dados do HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Visualizar dados do SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Visualizar dados do ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
