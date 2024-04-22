@@ -155,7 +155,7 @@
                         <ComboBox Grid.Column="6" Name="FilterSource" ItemsSource="{Binding FilterSourceItems}" IsEditable="True" IsReadOnly="True">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <CheckBox Name="chkSource" Checked="chkSource_Checked" Unchecked="chkSource_Unchecked" Tag="{Binding SourceNameShort}"
+                                    <CheckBox Name="chkSource" Checked="ChkSource_Checked" Unchecked="ChkSource_Unchecked" Tag="{Binding SourceNameShort}"
                                               Content="{Binding SourceName}" IsChecked="{Binding isCheck, Mode=TwoWay}" FontFamily="{DynamicResource CommonFont}">
                                     </CheckBox>
                                 </DataTemplate>
