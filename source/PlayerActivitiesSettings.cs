@@ -11,10 +11,10 @@ namespace PlayerActivities
     public class PlayerActivitiesSettings : ObservableObject
     {
         #region Settings variables
-        public bool MenuInExtensions { get; set; } = true; 
+        public bool MenuInExtensions { get; set; } = true;
 
-        public DateTime LastFriendsRefresh { get; set; } = DateTime.Now; 
-        
+        public DateTime LastFriendsRefresh { get; set; } = DateTime.Now;
+
         public bool EnableIntegrationButtonHeader { get; set; } = false;
         public bool EnableIntegrationButtonSide { get; set; } = true;
 
@@ -44,15 +44,7 @@ namespace PlayerActivities
         private PlayerActivitiesSettings editingClone { get; set; }
 
         private PlayerActivitiesSettings settings;
-        public PlayerActivitiesSettings Settings
-        {
-            get => settings;
-            set
-            {
-                settings = value;
-                OnPropertyChanged();
-            }
-        }
+        public PlayerActivitiesSettings Settings { get => settings; set => SetValue(ref settings, value); }
 
 
 
@@ -62,17 +54,10 @@ namespace PlayerActivities
             Plugin = plugin;
 
             // Load saved settings.
-            var savedSettings = plugin.LoadPluginSettings<PlayerActivitiesSettings>();
+            PlayerActivitiesSettings savedSettings = plugin.LoadPluginSettings<PlayerActivitiesSettings>();
 
             // LoadPluginSettings returns null if not saved data is available.
-            if (savedSettings != null)
-            {
-                Settings = savedSettings;
-            }
-            else
-            {
-                Settings = new PlayerActivitiesSettings();
-            }
+            Settings = savedSettings ?? new PlayerActivitiesSettings();
         }
 
         // Code executed when settings view is opened and user starts editing values.
@@ -97,8 +82,8 @@ namespace PlayerActivities
 
             if (API.Instance.ApplicationInfo.Mode == ApplicationMode.Desktop)
             {
-                Plugin.topPanelItem.Visible = Settings.EnableIntegrationButtonHeader;
-                Plugin.paViewSidebar.Visible = Settings.EnableIntegrationButtonSide;
+                Plugin.TopPanelItem.Visible = Settings.EnableIntegrationButtonHeader;
+                Plugin.SidebarItem.Visible = Settings.EnableIntegrationButtonSide;
             }
 
             this.OnPropertyChanged();

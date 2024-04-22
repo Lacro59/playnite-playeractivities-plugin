@@ -2,6 +2,7 @@
 using CommonPluginsStores.Gog;
 using CommonPluginsStores.Models;
 using PlayerActivities.Models;
+using Playnite.SDK;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,19 +13,11 @@ namespace PlayerActivities.Clients
 {
     public class GogFriends : GenericFriends
     {
-        private static GogApi _gogApi;
-        internal static GogApi gogApi
+        private static GogApi gogApi;
+        internal static GogApi GogApi
         {
-            get
-            {
-                if (_gogApi == null)
-                {
-                    _gogApi = new GogApi(PluginDatabase.PluginName);
-                }
-                return _gogApi;
-            }
-
-            set => _gogApi = value;
+            get => gogApi ?? new GogApi(PluginDatabase.PluginName);
+            set => gogApi = value;
         }
 
 
@@ -38,12 +31,12 @@ namespace PlayerActivities.Clients
         {
             List<PlayerFriends> Friends = new List<PlayerFriends>();
 
-            if (gogApi.IsUserLoggedIn)
+            if (GogApi.IsUserLoggedIn)
             {
                 try
                 {
-                    AccountInfos CurrentUser = gogApi.CurrentAccountInfos;
-                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = gogApi.CurrentGamesInfos;
+                    AccountInfos CurrentUser = GogApi.CurrentAccountInfos;
+                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = GogApi.CurrentGamesInfos;
 
                     PlayerFriends playerFriendsUs = new PlayerFriends
                     {
@@ -72,13 +65,13 @@ namespace PlayerActivities.Clients
                     Friends.Add(playerFriendsUs);
 
 
-                    ObservableCollection<AccountInfos> CurrentFriendsInfos = gogApi.CurrentFriendsInfos;
+                    ObservableCollection<AccountInfos> CurrentFriendsInfos = GogApi.CurrentFriendsInfos;
                     if (CurrentFriendsInfos == null)
                     {
                         return Friends;
                     }
 
-                    PluginDatabase.friendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
+                    PluginDatabase.FriendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
 
                     CurrentFriendsInfos.ForEach(y => 
                     {
@@ -87,8 +80,8 @@ namespace PlayerActivities.Clients
                             return;
                         }
 
-                        PluginDatabase.friendsDataLoading.FriendName = y.Pseudo;
-                        ObservableCollection<AccountGameInfos> FriendGamesInfos = gogApi.GetAccountGamesInfos(y);
+                        PluginDatabase.FriendsDataLoading.FriendName = y.Pseudo;
+                        ObservableCollection<AccountGameInfos> FriendGamesInfos = GogApi.GetAccountGamesInfos(y);
 
                         PlayerFriends playerFriends = new PlayerFriends
                         {
@@ -117,7 +110,7 @@ namespace PlayerActivities.Clients
 
                         };
 
-                        PluginDatabase.friendsDataLoading.ActualCount += 1;
+                        PluginDatabase.FriendsDataLoading.ActualCount += 1;
                         Friends.Add(playerFriends);
                     });
                 }
@@ -128,7 +121,7 @@ namespace PlayerActivities.Clients
             }
             else
             {
-                ShowNotificationPluginNoAuthenticate(string.Format(resources.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.GogLibrary);
+                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.GogLibrary);
             }
 
             return Friends;

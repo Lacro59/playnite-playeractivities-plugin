@@ -9,17 +9,8 @@ namespace PlayerActivities.Models
 {
     public class PlayerActivitiesData : PluginDataBaseGame<Activity>
     {
-        private List<Activity> _Items = new List<Activity>();
-        public override List<Activity> Items
-        {
-            get => _Items;
-
-            set
-            {
-                _Items = value;
-                OnPropertyChanged();
-            }
-        }
+        private List<Activity> items = new List<Activity>();
+        public override List<Activity> Items { get => items; set => SetValue(ref items, value); }
 
 
         public bool IsFirst()

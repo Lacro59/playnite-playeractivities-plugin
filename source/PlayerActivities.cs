@@ -26,10 +26,11 @@ namespace PlayerActivities
 {
     public class PlayerActivities : PluginExtended<PlayerActivitiesSettingsViewModel, PlayerActivitiesDatabase>
     {
-        public override Guid Id { get; } = Guid.Parse("3dbe2ee4-d6c9-4c09-b377-7a086369603e");
+        public override Guid Id => Guid.Parse("3dbe2ee4-d6c9-4c09-b377-7a086369603e");
 
-        internal TopPanelItem topPanelItem;
-        internal PaViewSidebar paViewSidebar;
+        internal TopPanelItem TopPanelItem { get; set; }
+        internal SidebarItem SidebarItem { get; set; }
+        internal SidebarItemControl SidebarItemControl { get; set; }
 
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
@@ -54,35 +55,8 @@ namespace PlayerActivities
             // Initialize top & side bar
             if (API.Instance.ApplicationInfo.Mode == ApplicationMode.Desktop)
             {
-                topPanelItem = new TopPanelItem()
-                {
-                    Icon = new TextBlock
-                    {
-                        Text = "\ueea5",
-                        FontSize = 20,
-                        FontFamily = resources.GetResource("FontIcoFont") as FontFamily
-                    },
-                    Title = resources.GetString("LOCPa"),
-                    Activated = () =>
-                    {
-                        WindowOptions windowOptions = new WindowOptions
-                        {
-                            ShowMinimizeButton = false,
-                            ShowMaximizeButton = true,
-                            ShowCloseButton = true,
-                            Width = 1280,
-                            Height = 740
-                        };
-
-                        PaView ViewExtension = new PaView(this);
-                        Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCPa"), ViewExtension, windowOptions);
-                        windowExtension.ResizeMode = ResizeMode.CanResize;
-                        windowExtension.ShowDialog();
-                    },
-                    Visible = PluginSettings.Settings.EnableIntegrationButtonHeader
-                };
-
-                paViewSidebar = new PaViewSidebar(this);
+                TopPanelItem = new PaTopPanelItem(this);
+                SidebarItem = new PaViewSidebar(this);
             }
         }
 
@@ -100,7 +74,7 @@ namespace PlayerActivities
         // Button on top panel
         public override IEnumerable<TopPanelItem> GetTopPanelItems()
         {
-            yield return topPanelItem;
+            yield return TopPanelItem;
         }
 
         // List custom controls
@@ -109,36 +83,9 @@ namespace PlayerActivities
             return null;
         }
 
-        // SidebarItem
-        public class PaViewSidebar : SidebarItem
-        {
-            public PaViewSidebar(PlayerActivities plugin)
-            {
-                Type = SiderbarItemType.View;
-                Title = resources.GetString("LOCPa");
-                Icon = new TextBlock
-                {
-                    Text = "\ueea5",
-                    FontFamily = resources.GetResource("FontIcoFont") as FontFamily
-                };
-                Opened = () =>
-                {
-                    SidebarItemControl sidebarItemControl = new SidebarItemControl(PluginDatabase.PlayniteApi);
-                    sidebarItemControl.SetTitle(resources.GetString("LOCPa"));
-                    sidebarItemControl.AddContent(new PaView(plugin));
-
-                    return sidebarItemControl;
-                };
-                Visible = plugin.PluginSettings.Settings.EnableIntegrationButtonSide;
-            }
-        }
-
         public override IEnumerable<SidebarItem> GetSidebarItems()
         {
-            return new List<SidebarItem>
-            {
-                paViewSidebar
-            };
+            yield return SidebarItem;
         }
         #endregion
 
@@ -149,7 +96,7 @@ namespace PlayerActivities
         {
             Game GameMenu = args.Games.First();
             List<Guid> Ids = args.Games.Select(x => x.Id).ToList();
-            Models.PlayerActivitiesData playerActivities = PluginDatabase.Get(GameMenu);
+            PlayerActivitiesData playerActivities = PluginDatabase.Get(GameMenu);
 
             List<GameMenuItem> gameMenuItems = new List<GameMenuItem>();
 
@@ -157,12 +104,12 @@ namespace PlayerActivities
 #if DEBUG
             gameMenuItems.Add(new GameMenuItem
             {
-                MenuSection = resources.GetString("LOCPa"),
+                MenuSection = ResourceProvider.GetString("LOCPa"),
                 Description = "-"
             });
             gameMenuItems.Add(new GameMenuItem
             {
-                MenuSection = resources.GetString("LOCPa"),
+                MenuSection = ResourceProvider.GetString("LOCPa"),
                 Description = "Test",
                 Action = (mainMenuItem) =>
                 {
@@ -187,8 +134,8 @@ namespace PlayerActivities
 
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
-                Description = resources.GetString("LOCPaView"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
+                Description = ResourceProvider.GetString("LOCPaView"),
                 Action = (mainMenuItem) =>
                 {
                     WindowOptions windowOptions = new WindowOptions
@@ -196,27 +143,27 @@ namespace PlayerActivities
                         ShowMinimizeButton = false,
                         ShowMaximizeButton = true,
                         ShowCloseButton = true,
+                        CanBeResizable = true,
                         Width = 1280,
                         Height = 740
                     };
 
                     PaView ViewExtension = new PaView(this);
-                    Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(PlayniteApi, resources.GetString("LOCPa"), ViewExtension, windowOptions);
-                    windowExtension.ResizeMode = ResizeMode.CanResize;
+                    Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(ResourceProvider.GetString("LOCPa"), ViewExtension, windowOptions);
                     windowExtension.ShowDialog();
                 }
             });
 
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
                 Description = "-"
             });
 
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
-                Description = resources.GetString("LOCCommonRefreshAllData"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
+                Description = ResourceProvider.GetString("LOCCommonRefreshAllData"),
                 Action = (mainMenuItem) =>
                 {
                     PluginDatabase.InitializePluginData(true);
@@ -225,11 +172,11 @@ namespace PlayerActivities
 
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
-                Description = resources.GetString("LOCPaRefreshFriendsData"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
+                Description = ResourceProvider.GetString("LOCPaRefreshFriendsData"),
                 Action = (mainMenuItem) =>
                 {
-                    PluginDatabase.RefreshFriendsDataLoader(this);
+                    Task.Run(() => PluginDatabase.RefreshFriendsDataLoader(this));
                 }
             });
 
@@ -237,26 +184,16 @@ namespace PlayerActivities
 #if DEBUG
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
                 Description = "-"
             });
             mainMenuItems.Add(new MainMenuItem
             {
-                MenuSection = MenuInExtensions + resources.GetString("LOCPa"),
+                MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
                 Description = "Test",
                 Action = (mainMenuItem) => 
                 {
-                    //var data = new SteamApi();
-                    //var current = data.CurrentUser;
 
-                    //var data = new GogFriends();
-                    //var Friends = data.GetFriends();
-
-                    //var data = new OriginFriends();
-                    //var Friends = data.GetFriends();
-
-                    //var data = new SteamFriends();
-                    //var Friends = data.GetFriends();
                 }
             });
 #endif

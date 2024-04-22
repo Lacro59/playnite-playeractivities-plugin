@@ -23,7 +23,7 @@ namespace PlayerActivities.Views
     public partial class PaFriendDataLoading : UserControl
     {
         private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
-        private FriendsDataLoading ControlDataContext = PluginDatabase.friendsDataLoading;
+        private FriendsDataLoading ControlDataContext = PluginDatabase.FriendsDataLoading;
 
 
         public PaFriendDataLoading()

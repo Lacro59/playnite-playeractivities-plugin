@@ -7,24 +7,17 @@ using CommonPluginsStores.Origin;
 using CommonPluginsStores.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Playnite.SDK;
 
 namespace PlayerActivities.Clients
 {
     public class OriginFriends : GenericFriends
     {
-        protected static OriginApi _originApi;
-        internal static OriginApi originApi
+        protected static OriginApi originApi;
+        internal static OriginApi OriginApi
         {
-            get
-            {
-                if (_originApi == null)
-                {
-                    _originApi = new OriginApi(PluginDatabase.PluginName);
-                }
-                return _originApi;
-            }
-
-            set => _originApi = value;
+            get => originApi ?? new OriginApi(PluginDatabase.PluginName);
+            set => originApi = value;
         }
 
 
@@ -38,12 +31,12 @@ namespace PlayerActivities.Clients
         {
             List<PlayerFriends> Friends = new List<PlayerFriends>();
 
-            if (originApi.IsUserLoggedIn)
+            if (OriginApi.IsUserLoggedIn)
             {
                 try
                 {
-                    AccountInfos CurrentUser = originApi.CurrentAccountInfos;
-                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = originApi.CurrentGamesInfos;
+                    AccountInfos CurrentUser = OriginApi.CurrentAccountInfos;
+                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = OriginApi.CurrentGamesInfos;
 
                     PlayerFriends playerFriendsUs = new PlayerFriends
                     {
@@ -72,13 +65,13 @@ namespace PlayerActivities.Clients
                     Friends.Add(playerFriendsUs);
 
 
-                    ObservableCollection<AccountInfos> CurrentFriendsInfos = originApi.CurrentFriendsInfos;
+                    ObservableCollection<AccountInfos> CurrentFriendsInfos = OriginApi.CurrentFriendsInfos;
                     if (CurrentFriendsInfos == null)
                     {
                         return Friends;
                     }
 
-                    PluginDatabase.friendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
+                    PluginDatabase.FriendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
 
                     CurrentFriendsInfos.ForEach(y =>
                     {
@@ -87,8 +80,8 @@ namespace PlayerActivities.Clients
                             return;
                         }
 
-                        PluginDatabase.friendsDataLoading.FriendName = y.Pseudo;
-                        ObservableCollection<AccountGameInfos> FriendGamesInfos = originApi.GetAccountGamesInfos(y);
+                        PluginDatabase.FriendsDataLoading.FriendName = y.Pseudo;
+                        ObservableCollection<AccountGameInfos> FriendGamesInfos = OriginApi.GetAccountGamesInfos(y);
 
                         PlayerFriends playerFriends = new PlayerFriends
                         {
@@ -116,7 +109,7 @@ namespace PlayerActivities.Clients
                             }).ToList()
                         };
 
-                        PluginDatabase.friendsDataLoading.ActualCount += 1;
+                        PluginDatabase.FriendsDataLoading.ActualCount += 1;
                         Friends.Add(playerFriends);
                     });
                 }
@@ -127,7 +120,7 @@ namespace PlayerActivities.Clients
             }
             else
             {
-                ShowNotificationPluginNoAuthenticate(string.Format(resources.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.OriginLibrary);
+                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.OriginLibrary);
             }
 
             return Friends;

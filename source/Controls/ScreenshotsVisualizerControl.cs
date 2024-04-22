@@ -16,20 +16,8 @@ namespace PlayerActivities.Controls
 {
     public class ScreenshotsVisualizerPlugin
     {
-        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
-
-        private static Plugin _plugin;
-        private static Plugin Plugin
-        {
-            get
-            {
-                if (_plugin == null)
-                {
-                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
-                }
-                return _plugin;
-            }
-        }
+        private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
+        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
 
         public static bool IsInstalled => Plugin != null;
 
@@ -57,20 +45,9 @@ namespace PlayerActivities.Controls
 
     public class ScreenshotsVisualizerControl : ContentControl
     {
-        private static Plugin _plugin;
-        private static Plugin Plugin
-        {
-            get
-            {
-                if (_plugin == null)
-                {
-                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
-                }
-                return _plugin;
-            }
-        }
+        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488")) ?? null;
 
-        private PluginUserControl control;
+        private PluginUserControl Control { get; }
 
         public static bool IsInstalled => Plugin != null;
 
@@ -78,8 +55,8 @@ namespace PlayerActivities.Controls
         #region Properties
         public Game GameContext
         {
-            get { return (Game)GetValue(GameContextProperty); }
-            set { SetValue(GameContextProperty, value); }
+            get => (Game)GetValue(GameContextProperty);
+            set => SetValue(GameContextProperty, value);
         }
 
         public static readonly DependencyProperty GameContextProperty = DependencyProperty.Register(
@@ -90,8 +67,8 @@ namespace PlayerActivities.Controls
 
         public DateTime DateTaked
         {
-            get { return (DateTime)GetValue(DateTakedProperty); }
-            set { SetValue(DateTakedProperty, value); }
+            get => (DateTime)GetValue(DateTakedProperty);
+            set => SetValue(DateTakedProperty, value);
         }
 
         public static readonly DependencyProperty DateTakedProperty = DependencyProperty.Register(
@@ -108,10 +85,11 @@ namespace PlayerActivities.Controls
         {
             if (sender is ScreenshotsVisualizerControl obj && e.NewValue != e.OldValue && e.NewValue is DateTime)
             {
-                if (obj.control != null)
+                if (obj.Control != null)
                 {
-                    obj.control.Tag = (DateTime)e.NewValue;
-                    obj.control.GameContextChanged(null, obj.GameContext);
+                    obj.Control.Tag = (DateTime)e.NewValue;
+                    obj.Control.GameContext = obj.GameContext;
+                    obj.Control.GameContextChanged(null, obj.GameContext);
                 }
             }
         }
@@ -125,18 +103,18 @@ namespace PlayerActivities.Controls
                 return;
             }
 
-            control = Plugin.GetGameViewControl(new GetGameViewControlArgs
+            Control = Plugin.GetGameViewControl(new GetGameViewControlArgs
             {
                 Name = controlName,
                 Mode = ApplicationMode.Desktop,
             }) as PluginUserControl;
 
-            if (control == null)
+            if (Control == null)
             {
                 return;
             }
 
-            Content = control;
+            Content = Control;
         }
     }
 

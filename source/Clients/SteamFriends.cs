@@ -24,28 +24,18 @@ namespace PlayerActivities.Clients
 {
     public class SteamFriends : GenericFriends
     {
-        protected static SteamApi _steamApi;
-        internal static SteamApi steamApi
+        protected static SteamApi steamApi;
+        internal static SteamApi SteamApi
         {
-            get
-            {
-                if (_steamApi == null)
-                {
-                    _steamApi = new SteamApi(PluginDatabase.PluginName);
-                }
-                return _steamApi;
-            }
-
-            set => _steamApi = value;
+            get => steamApi ?? new SteamApi(PluginDatabase.PluginName);
+            set => steamApi = value;
         }
 
-
-        private const string UrlProfil = @"https://steamcommunity.com/my/profile";
-        private const string UrlProfilById = @"https://steamcommunity.com/profiles/{0}/friends";
-        private const string UrlProfilByName = @"https://steamcommunity.com/id/{0}/friends";
-        private const string UrlAch = @"/stats/{0}/?tab=achievements";
-        private const string UrlStoreGame = @"https://store.steampowered.com/app/{0}";
-
+        private static string UrlProfil => @"https://steamcommunity.com/my/profile";
+        private static string UrlProfilById => @"https://steamcommunity.com/profiles/{0}/friends";
+        private static string UrlProfilByName => @"https://steamcommunity.com/id/{0}/friends";
+        private static string UrlAch => @"/stats/{0}/?tab=achievements";
+        private static string UrlStoreGame => @"https://store.steampowered.com/app/{0}";
 
         private static string SteamId { get; set; } = string.Empty;
         private static string SteamUser { get; set; } = string.Empty;
@@ -57,7 +47,7 @@ namespace PlayerActivities.Clients
             {
                 dynamic SteamConfig = Serialization.FromJsonFile<dynamic>(PluginDatabase.Paths.PluginUserDataPath + "\\..\\CB91DFC9-B977-43BF-8E70-55F46E410FAB\\config.json");
                 SteamId = (string)SteamConfig["UserId"];
-                SteamUser = steamApi.GetSteamUsers()?.First()?.PersonaName;
+                SteamUser = SteamApi.GetSteamUsers()?.First()?.PersonaName;
             }
         }
 
@@ -87,7 +77,7 @@ namespace PlayerActivities.Clients
                     avatarElement = htmlDocument.QuerySelector("div.friends_header_avatar img");
                     if (avatarElement == null)
                     {
-                        logger.Warn("No friends find");
+                        Logger.Warn("No friends find");
                         return Friends;
                     }
 
@@ -98,7 +88,7 @@ namespace PlayerActivities.Clients
 
 
                     IHtmlCollection<IElement> els = htmlDocument.QuerySelectorAll("a.selectable_overlay");
-                    PluginDatabase.friendsDataLoading.FriendCount = els.Count();
+                    PluginDatabase.FriendsDataLoading.FriendCount = els.Count();
                     
                     foreach (IElement el in els)
                     {
@@ -109,7 +99,7 @@ namespace PlayerActivities.Clients
 
                         string linkFriends = el.GetAttribute("href");
                         Friends.Add(GetPlayerFriends(linkFriends, playerFriendsUs));
-                        PluginDatabase.friendsDataLoading.ActualCount += 1;
+                        PluginDatabase.FriendsDataLoading.ActualCount += 1;
                     }
                 }
                 catch (Exception ex)
@@ -119,7 +109,7 @@ namespace PlayerActivities.Clients
             }
             else
             {
-                ShowNotificationPluginNoAuthenticate(string.Format(resources.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.SteamLibrary);
+                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.SteamLibrary);
             }
 
             return Friends;
@@ -136,7 +126,7 @@ namespace PlayerActivities.Clients
 
                 //string webData = Web.DownloadStringData(link, cookies).GetAwaiter().GetResult();
                 string webData = string.Empty;
-                using (IWebView WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+                using (IWebView WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
                 {
                     WebViewOffscreen.NavigateAndWait(link);
                     webData = WebViewOffscreen.GetPageSource();
@@ -151,7 +141,7 @@ namespace PlayerActivities.Clients
                 }
                 string pseudo = htmlDocument.QuerySelector("span.actual_persona_name").InnerHtml;
 
-                PluginDatabase.friendsDataLoading.FriendName = pseudo;
+                PluginDatabase.FriendsDataLoading.FriendName = pseudo;
 
                 string gamesOwnedUrl = string.Empty;
                 int gamesOwned = 0;
@@ -181,7 +171,7 @@ namespace PlayerActivities.Clients
                 if (!gamesOwnedUrl.IsNullOrEmpty())
                 {
                     //webData = Web.DownloadStringData(gamesOwnedUrl, cookies).GetAwaiter().GetResult();
-                    using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+                    using (var WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
                     {
                         WebViewOffscreen.NavigateAndWait(gamesOwnedUrl);
                         webData = WebViewOffscreen.GetPageSource();
@@ -192,7 +182,7 @@ namespace PlayerActivities.Clients
 
                     if (FriendsAppsAll != null)
                     {
-                        using (var WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView())
+                        using (var WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
                         {
                             FriendsAppsAll.ForEach(x =>
                             {

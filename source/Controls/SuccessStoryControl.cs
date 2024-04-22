@@ -16,20 +16,8 @@ namespace PlayerActivities.Controls
 {
     public class SuccessStoryPlugin
     {
-        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
-
-        private static Plugin _plugin;
-        private static Plugin Plugin
-        {
-            get
-            {
-                if (_plugin == null)
-                {
-                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
-                }
-                return _plugin;
-            }
-        }
+        private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
+        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
 
         public static bool IsInstalled => Plugin != null;
 
@@ -57,20 +45,9 @@ namespace PlayerActivities.Controls
 
     public class SuccessStoryControl : ContentControl
     {
-        private static Plugin _plugin;
-        private static Plugin Plugin
-        {
-            get
-            {
-                if (_plugin == null)
-                {
-                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
-                }
-                return _plugin;
-            }
-        }
+        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
 
-        private PluginUserControl control;
+        private PluginUserControl Control { get; }
 
         public static bool IsInstalled => Plugin != null;
 
@@ -78,8 +55,8 @@ namespace PlayerActivities.Controls
         #region Properties
         public Game GameContext
         {
-            get { return (Game)GetValue(GameContextProperty); }
-            set { SetValue(GameContextProperty, value); }
+            get => (Game)GetValue(GameContextProperty);
+            set => SetValue(GameContextProperty, value);
         }
 
         public static readonly DependencyProperty GameContextProperty = DependencyProperty.Register(
@@ -90,8 +67,8 @@ namespace PlayerActivities.Controls
 
         public DateTime DateUnlocked
         {
-            get { return (DateTime)GetValue(DateUnlockedProperty); }
-            set { SetValue(DateUnlockedProperty, value); }
+            get => (DateTime)GetValue(DateUnlockedProperty);
+            set => SetValue(DateUnlockedProperty, value);
         }
 
         public static readonly DependencyProperty DateUnlockedProperty = DependencyProperty.Register(
@@ -108,10 +85,11 @@ namespace PlayerActivities.Controls
         {
             if (sender is SuccessStoryControl obj && e.NewValue != e.OldValue && e.NewValue is DateTime)
             {
-                if (obj.control != null)
+                if (obj.Control != null)
                 {
-                    obj.control.Tag = (DateTime)e.NewValue;
-                    obj.control.GameContextChanged(null, obj.GameContext);
+                    obj.Control.Tag = (DateTime)e.NewValue;
+                    obj.Control.GameContext = obj.GameContext;
+                    obj.Control.GameContextChanged(null, obj.GameContext);
                 }
             }
         }
@@ -125,18 +103,18 @@ namespace PlayerActivities.Controls
                 return;
             }
 
-            control = Plugin.GetGameViewControl(new GetGameViewControlArgs
+            Control = Plugin.GetGameViewControl(new GetGameViewControlArgs
             {
                 Name = controlName,
                 Mode = ApplicationMode.Desktop,
             }) as PluginUserControl;
 
-            if (control == null)
+            if (Control == null)
             {
                 return;
             }
 
-            Content = control;
+            Content = Control;
         }
     }
 

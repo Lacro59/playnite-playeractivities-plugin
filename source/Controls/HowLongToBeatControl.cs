@@ -16,20 +16,8 @@ namespace PlayerActivities.Controls
 {
     public class HowLongToBeatPlugin
     {
-        private static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
-
-        private static Plugin _plugin;
-        private static Plugin Plugin
-        {
-            get
-            {
-                if (_plugin == null)
-                {
-                    _plugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("e08cd51f-9c9a-4ee3-a094-fde03b55492f")) ?? null;
-                }
-                return _plugin;
-            }
-        }
+        private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
+        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("e08cd51f-9c9a-4ee3-a094-fde03b55492f")) ?? null;
 
         public static bool IsInstalled => Plugin != null;
 

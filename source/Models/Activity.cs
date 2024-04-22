@@ -13,18 +13,15 @@ namespace PlayerActivities.Models
 {
     public class Activity
     {
-        private static IResourceProvider resources = new ResourceProvider();
-
-
         public DateTime DateActivity { get; set; } = DateTime.Now.ToUniversalTime();
         public ActivityType Type { get; set; }
 
         public ulong Value { get; set; }
 
         [DontSerialize]
-        public string TimeAgo 
-        { 
-            get 
+        public string TimeAgo
+        {
+            get
             {
                 int years = DateActivity.GetYearsBetween();
                 int months = DateActivity.GetMonthsBetween();
@@ -32,19 +29,19 @@ namespace PlayerActivities.Models
 
                 //if (years > 0)
                 //{
-                //    return years == 1 ? string.Format(resources.GetString("LOCPaYearAgo"), years) : string.Format(resources.GetString("LOCPaYearsAgo"), years);
+                //    return years == 1 ? string.Format(ResourceProvider.GetString("LOCPaYearAgo"), years) : string.Format(ResourceProvider.GetString("LOCPaYearsAgo"), years);
                 //}
                 if (months > 0)
                 {
-                    return months == 1 ? string.Format(resources.GetString("LOCPaMonthAgo"), months) : string.Format(resources.GetString("LOCPaMonthsAgo"), months);
+                    return months == 1 ? string.Format(ResourceProvider.GetString("LOCPaMonthAgo"), months) : string.Format(ResourceProvider.GetString("LOCPaMonthsAgo"), months);
                 }
                 if (days >= 0)
                 {
-                    return days >= 0 ? string.Format(resources.GetString("LOCPaDayAgo"), days) : string.Format(resources.GetString("LOCPaDaysAgo"), days);
+                    return days >= 0 ? string.Format(ResourceProvider.GetString("LOCPaDayAgo"), days) : string.Format(ResourceProvider.GetString("LOCPaDaysAgo"), days);
                 }
 
                 return string.Empty;
-            } 
+            }
         }
 
 

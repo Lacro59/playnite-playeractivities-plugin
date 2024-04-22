@@ -5,6 +5,7 @@ using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
 using Playnite.SDK.Data;
+using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,41 +19,19 @@ namespace PlayerActivities.Clients
 {
     public abstract class GenericFriends
     {
-        internal static readonly ILogger logger = LogManager.GetLogger();
-        internal static readonly IResourceProvider resources = new ResourceProvider();
+        internal static ILogger Logger => LogManager.GetLogger();
 
-
-        protected static IWebView _WebViewOffscreen;
-        internal static IWebView WebViewOffscreen
-        {
-            get
-            {
-                if (_WebViewOffscreen == null)
-                {
-                    _WebViewOffscreen = PluginDatabase.PlayniteApi.WebViews.CreateOffscreenView();
-                }
-                return _WebViewOffscreen;
-            }
-
-            set
-            {
-                _WebViewOffscreen = value;
-            }
-        }
-
-
-        internal static PlayerActivitiesDatabase PluginDatabase = PlayerActivities.PluginDatabase;
+        internal static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
 
         protected string ClientName { get; }
 
-        internal readonly string cookiesPath;
+        internal string CookiesPath { get; }
 
 
-        public GenericFriends(string ClientName)
+        public GenericFriends(string clientName)
         {
-            this.ClientName = ClientName;
-
-            cookiesPath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, CommonPlayniteShared.Common.Paths.GetSafePathName($"{ClientName}.json"));
+            ClientName = clientName;
+            CookiesPath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, CommonPlayniteShared.Common.Paths.GetSafePathName($"{ClientName}.json"));
         }
 
 
@@ -62,7 +41,7 @@ namespace PlayerActivities.Clients
         #region Errors
         public virtual void ShowNotificationPluginNoAuthenticate(string Message, ExternalPlugin PluginSource)
         {
-            PluginDatabase.PlayniteApi.Notifications.Add(new NotificationMessage(
+            API.Instance.Notifications.Add(new NotificationMessage(
                 $"{PluginDatabase.PluginName}-{ClientName.RemoveWhiteSpace()}-noauthenticate",
                 $"{PluginDatabase.PluginName}\r\n{Message}",
                 NotificationType.Error,
@@ -70,7 +49,7 @@ namespace PlayerActivities.Clients
                 {
                     try
                     {
-                        var plugin = API.Instance.Addons.Plugins.Find(x => x.Id == PlayniteTools.GetPluginId(PluginSource));
+                        Plugin plugin = API.Instance.Addons.Plugins.Find(x => x.Id == PlayniteTools.GetPluginId(PluginSource));
                         if (plugin != null)
                         {
                             plugin.OpenSettingsView();
@@ -89,13 +68,13 @@ namespace PlayerActivities.Clients
         #region Cookies
         internal List<HttpCookie> GetCookies()
         {
-            if (File.Exists(cookiesPath))
+            if (File.Exists(CookiesPath))
             {
                 try
                 {
                     return Serialization.FromJson<List<HttpCookie>>(
                         Encryption.DecryptFromFile(
-                            cookiesPath,
+                            CookiesPath,
                             Encoding.UTF8,
                             WindowsIdentity.GetCurrent().User.Value));
                 }
@@ -110,9 +89,9 @@ namespace PlayerActivities.Clients
 
         internal void SetCookies(List<HttpCookie> httpCookies)
         {
-            FileSystem.CreateDirectory(Path.GetDirectoryName(cookiesPath));
+            FileSystem.CreateDirectory(Path.GetDirectoryName(CookiesPath));
             Encryption.EncryptToFile(
-                cookiesPath,
+                CookiesPath,
                 Serialization.ToJson(httpCookies),
                 Encoding.UTF8,
                 WindowsIdentity.GetCurrent().User.Value);

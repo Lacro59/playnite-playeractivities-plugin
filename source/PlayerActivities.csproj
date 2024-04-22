@@ -116,6 +116,8 @@
     <Compile Include="playnite-plugincommon\CommonPluginsControls\Views\OptionsDownloadData.xaml.cs">
       <DependentUpon>OptionsDownloadData.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Services\PaTopPanelItem.cs" />
+    <Compile Include="Services\PaViewSidebar.cs" />
     <Compile Include="Services\PlayerActivitiesDatabase.cs" />
     <Compile Include="Views\PaFriendDataLoading.xaml.cs">
       <DependentUpon>PaFriendDataLoading.xaml</DependentUpon>

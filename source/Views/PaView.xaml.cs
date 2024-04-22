@@ -193,10 +193,10 @@ namespace PlayerActivities.Views
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
-            PluginDatabase.RefreshFriendsDataLoader(Plugin);
+            Task.Run(() => PluginDatabase.RefreshFriendsDataLoader(Plugin));
             Task.Run(() =>
             {
-                System.Threading.SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
+                SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
                 ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
                 ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
             });

@@ -8,16 +8,16 @@ namespace PlayerActivities.Models
 {
     public class FriendsDataLoading : ObservableObject
     {
-        private string _SourceName = string.Empty;
-        public string SourceName { get => _SourceName; set => SetValue(ref _SourceName, value); }
+        private string sourceName = string.Empty;
+        public string SourceName { get => sourceName; set => SetValue(ref sourceName, value); }
     
-        private string _FriendName = string.Empty;
-        public string FriendName { get => _FriendName; set => SetValue(ref _FriendName, value); }
+        private string friendName = string.Empty;
+        public string FriendName { get => friendName; set => SetValue(ref friendName, value); }
 
-        private int _ActualCount = 0;
-        public int ActualCount { get => _ActualCount; set => SetValue(ref _ActualCount, value); }
+        private int actualCount = 0;
+        public int ActualCount { get => actualCount; set => SetValue(ref actualCount, value); }
 
-        private int _FriendCount = 0;
-        public int FriendCount { get => _FriendCount; set => SetValue(ref _FriendCount, value); }
+        private int friendCount = 0;
+        public int FriendCount { get => friendCount; set => SetValue(ref friendCount, value); }
     }
 }
