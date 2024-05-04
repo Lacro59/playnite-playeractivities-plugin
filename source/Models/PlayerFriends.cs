@@ -1,4 +1,6 @@
-﻿using CommonPluginsShared;
+﻿using CommonPlayniteShared.Commands;
+using CommonPluginsShared;
+using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
@@ -26,6 +28,8 @@ namespace PlayerActivities.Models
         public PlayerStats Stats { get; set; }
 
         public List<PlayerGames> Games { get; set; } = new List<PlayerGames>();
+
+        public RelayCommand<object> NavigateUrl { get; } = new RelayCommand<object>((url) => GlobalCommands.NavigateUrl(url));
     }
 
 

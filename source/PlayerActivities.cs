@@ -32,6 +32,8 @@ namespace PlayerActivities
         internal SidebarItem SidebarItem { get; set; }
         internal SidebarItemControl SidebarItemControl { get; set; }
 
+        public static SteamApi SteamApi { get; set; }
+
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
         {
@@ -314,6 +316,13 @@ namespace PlayerActivities
                 PluginDatabase.InitializePluginData();
                 PluginSettings.Settings.IsFirstRun = false;
                 this.SavePluginSettings(PluginSettings.Settings);
+            }
+
+            SteamApi = new SteamApi(PluginDatabase.PluginName);
+            SteamApi.SetLanguage(API.Instance.ApplicationSettings.Language);
+            if (PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            {
+                _ = SteamApi.CurrentUser;
             }
         }
 

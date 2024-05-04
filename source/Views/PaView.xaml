@@ -10,7 +10,8 @@
              xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" 
              xmlns:controls2="clr-namespace:CommonPluginsControls.Controls" 
              xmlns:playnitecontrols="clr-namespace:CommonPluginsControls.PlayniteControls" 
-             xmlns:plugins="clr-namespace:CommonPluginsShared.Plugins" xmlns:converters="clr-namespace:CommonPlayniteShared.Converters"
+             xmlns:plugins="clr-namespace:CommonPluginsShared.Plugins" 
+             xmlns:converters="clr-namespace:CommonPlayniteShared.Converters"
              mc:Ignorable="d" d:DesignHeight="740" d:DesignWidth="1280"
              d:DataContext="{d:DesignInstance Type=local:PaViewData}">
 
@@ -453,7 +454,7 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock ToolTip="{Binding FriendsLink}">
-                                                <Hyperlink Tag="{Binding FriendsLink}" Click="Hyperlink_Click">
+                                                <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding FriendsLink}">
                                                     <controls2:TextBlockTrimmed Text="{Binding FriendPseudo}" Style="{DynamicResource ListExtendStyleTextBlock}" />
                                                 </Hyperlink>
                                             </TextBlock>
@@ -515,7 +516,7 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock ToolTip="{Binding Link}">
-                                                <Hyperlink Tag="{Binding Link}" Click="Hyperlink_Click">
+                                                <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding Link}">
                                                     <controls2:TextBlockTrimmed Text="{Binding Name}" Style="{DynamicResource ListExtendStyleTextBlock}" />
                                                 </Hyperlink>
                                             </TextBlock>

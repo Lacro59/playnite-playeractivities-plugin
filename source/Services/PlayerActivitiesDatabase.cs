@@ -598,10 +598,6 @@ namespace PlayerActivities.Services
                         Common.LogError(ex, false);
                     }
                 }
-                else
-                {
-                    return GetFriends(plugin, true);
-                }
             }
 
             return playerFriends;
@@ -626,14 +622,14 @@ namespace PlayerActivities.Services
                     CanBeResizable = false
                 };
 
-                Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                _ = Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                 {
                     PaFriendDataLoading view = new PaFriendDataLoading();
                     WindowFriendsDataLoading = PlayniteUiHelper.CreateExtensionWindow(ResourceProvider.GetString("LOCCommonGettingData"), view, windowOptions);
-                    WindowFriendsDataLoading.ShowDialog();
+                    _ = WindowFriendsDataLoading.ShowDialog();
                 }));
 
-                GetFriends(plugin, true);
+                _ = GetFriends(plugin, true);
                 FriendsDataLoaderClose();
             });
         }

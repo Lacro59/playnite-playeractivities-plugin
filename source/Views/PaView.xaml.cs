@@ -1,4 +1,5 @@
-﻿using CommonPluginsShared;
+﻿using CommonPlayniteShared.Commands;
+using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
 using PlayerActivities.Controls;
@@ -95,7 +96,6 @@ namespace PlayerActivities.Views
         private void Database_ItemUpdated(object sender, ItemUpdatedEventArgs<PlayerActivitiesData> e)
         {
             GetData();
-            GetFriends();
         }
 
 
@@ -115,6 +115,7 @@ namespace PlayerActivities.Views
         {
             _ = Task.Run(() =>
             {
+                _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
                 ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
                 ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
                 IsFriendsFinished = true;
@@ -134,7 +135,7 @@ namespace PlayerActivities.Views
 
                 _ = Task.Run(() =>
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(3000);
 
                     this.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                     {
@@ -145,19 +146,6 @@ namespace PlayerActivities.Views
             }
         }
         #endregion
-
-
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _ = Process.Start(((Hyperlink)sender).Tag.ToString());
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex, false);
-            }
-        }
 
 
         #region Filter
@@ -200,12 +188,9 @@ namespace PlayerActivities.Views
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
-            Task.Run(() => PluginDatabase.RefreshFriendsDataLoader(Plugin));
-            Task.Run(() =>
-            {
-                SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
-                ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
-                ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
+            _ = Task.Run(() => {
+                PluginDatabase.RefreshFriendsDataLoader(Plugin).GetAwaiter().GetResult();
+                GetFriends();
             });
         }
 
@@ -356,5 +341,7 @@ namespace PlayerActivities.Views
     {
         public int UsAchievements { get; set; }
         public long UsPlaytime { get; set; }
+
+        public RelayCommand<object> NavigateUrl { get; } = new RelayCommand<object>((url) => GlobalCommands.NavigateUrl(url));
     }
 }

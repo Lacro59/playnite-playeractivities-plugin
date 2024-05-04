@@ -20,6 +20,8 @@ namespace PlayerActivities.Views
         public PlayerActivitiesSettingsView()
         {
             InitializeComponent();
+
+            SteamPanel.SteamApi = PlayerActivities.SteamApi;
         }
     }
 }

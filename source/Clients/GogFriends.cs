@@ -1,4 +1,5 @@
 ﻿using CommonPluginsShared;
+using CommonPluginsStores;
 using CommonPluginsStores.Gog;
 using CommonPluginsStores.Models;
 using PlayerActivities.Models;
@@ -13,12 +14,10 @@ namespace PlayerActivities.Clients
 {
     public class GogFriends : GenericFriends
     {
-        private static GogApi gogApi;
-        internal static GogApi GogApi
-        {
-            get => gogApi ?? new GogApi(PluginDatabase.PluginName);
-            set => gogApi = value;
-        }
+        private static readonly Lazy<GogApi> gogApi = new Lazy<GogApi>(() => new GogApi(PluginDatabase.PluginName));
+        internal static GogApi GogApi => gogApi.Value;
+
+        internal override StoreApi StoreApi => GogApi;
 
 
         public GogFriends() : base("GOG")

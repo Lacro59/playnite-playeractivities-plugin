@@ -5,7 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:pcmd="clr-namespace:CommonPluginsShared"
              xmlns:AttachedProperties="clr-namespace:CommonPluginsShared.Controls"
-             xmlns:PlayerActivities="clr-namespace:PlayerActivities"
+             xmlns:PlayerActivities="clr-namespace:PlayerActivities" 
+             xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
@@ -47,8 +48,6 @@
             </ScrollViewer>
         </TabItem>
 
-
-
         <TabItem Header="{DynamicResource LOCCommonIntegration}">
             <ScrollViewer>
                 <StackPanel Margin="0,10,0,0">
@@ -89,6 +88,10 @@
                     </Grid>
                 </StackPanel>
             </ScrollViewer>
+        </TabItem>
+
+        <TabItem Header="{DynamicResource LOCLibraries}">
+            <Steam:PanelView x:Name="SteamPanel" />
         </TabItem>
     </TabControl>
 </UserControl>

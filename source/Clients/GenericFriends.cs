@@ -1,6 +1,7 @@
 ﻿using CommonPlayniteShared.Common;
 using CommonPluginsShared;
 using CommonPluginsShared.Extensions;
+using CommonPluginsStores.Gog;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using Playnite.SDK;
@@ -22,6 +23,10 @@ namespace PlayerActivities.Clients
         internal static ILogger Logger => LogManager.GetLogger();
 
         internal static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
+
+        internal virtual CommonPluginsStores.StoreApi StoreApi { get; set; }
+
+        protected bool? CachedIsConnectedResult { get; set; }
 
         protected string ClientName { get; }
 
@@ -52,7 +57,8 @@ namespace PlayerActivities.Clients
                         Plugin plugin = API.Instance.Addons.Plugins.Find(x => x.Id == PlayniteTools.GetPluginId(PluginSource));
                         if (plugin != null)
                         {
-                            plugin.OpenSettingsView();
+                            StoreApi.ResetIsUserLoggedIn();
+                            _ = plugin.OpenSettingsView();
                         }
                     }
                     catch (Exception ex)

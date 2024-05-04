@@ -24,12 +24,8 @@ namespace PlayerActivities.Clients
 {
     public class SteamFriends : GenericFriends
     {
-        protected static SteamApi steamApi;
-        internal static SteamApi SteamApi
-        {
-            get => steamApi ?? new SteamApi(PluginDatabase.PluginName);
-            set => steamApi = value;
-        }
+        private SteamApi SteamApi => PlayerActivities.SteamApi;
+        internal override StoreApi StoreApi => SteamApi;
 
         private static string UrlProfil => @"https://steamcommunity.com/my/profile";
         private static string UrlProfilById => @"https://steamcommunity.com/profiles/{0}/friends";
@@ -58,7 +54,7 @@ namespace PlayerActivities.Clients
 
             if (IsConnected())
             {
-                try 
+                try
                 {
                     HtmlParser parser = new HtmlParser();
                     List<HttpCookie> cookies = GetCookies();
@@ -154,35 +150,35 @@ namespace PlayerActivities.Clients
                     if (a?.GetAttribute("href")?.Contains("games", StringComparison.InvariantCultureIgnoreCase) ?? false)
                     {
                         gamesOwnedUrl = a.GetAttribute("href");
-                        int.TryParse(a.QuerySelector("span.profile_count_link_total").InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out gamesOwned);
+                        _ = int.TryParse(a.QuerySelector("span.profile_count_link_total").InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out gamesOwned);
                         break;
                     }
                 }
 
                 IElement itemAch = htmlDocument.QuerySelector("div.achievement_showcase div.showcase_stat div.value");
-                int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out int achievements);
+                _ = int.TryParse(itemAch?.InnerHtml?.Replace(",", string.Empty)?.Replace(".", string.Empty)?.Trim(), out int achievements);
 
                 bool UsedWebAchdata = achievements == 0;
 
                 IElement itemCompleted = htmlDocument.QuerySelector("div.achievement_showcase a.showcase_stat div.value");
-                int.TryParse(itemCompleted?.InnerHtml?.Trim(), out int GamesCompleted);
+                _ = int.TryParse(itemCompleted?.InnerHtml?.Trim(), out int GamesCompleted);
 
                 List<PlayerGames> Games = new List<PlayerGames>();
                 if (!gamesOwnedUrl.IsNullOrEmpty())
                 {
                     //webData = Web.DownloadStringData(gamesOwnedUrl, cookies).GetAwaiter().GetResult();
-                    using (var WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
+                    using (IWebView WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
                     {
                         WebViewOffscreen.NavigateAndWait(gamesOwnedUrl);
                         webData = WebViewOffscreen.GetPageSource();
                     }
                     
                     string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}];");
-                    Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
+                    _ = Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
 
                     if (FriendsAppsAll != null)
                     {
-                        using (var WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
+                        using (IWebView WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
                         {
                             FriendsAppsAll.ForEach(x =>
                             {
@@ -211,7 +207,7 @@ namespace PlayerActivities.Clients
                                         x.hours_forever = x.hours_forever.Replace(".", string.Empty);
                                     }
 
-                                    double.TryParse(x.hours_forever
+                                    _ = double.TryParse(x.hours_forever
                                         .Replace(".", CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator)
                                         .Replace(",", CultureInfo.CurrentUICulture.NumberFormat.NumberDecimalSeparator), out double hours_forever);
                                     hoursPlayed += hours_forever;
@@ -230,7 +226,7 @@ namespace PlayerActivities.Clients
                                     if (data.Count() > 0 && data[0] != null)
                                     {
                                         Regex regex = new Regex(@"(\d+)");
-                                        int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
+                                        _ = int.TryParse(regex.Matches(data[0].InnerHtml)?[0]?.Value?.Trim(), out int achCount);
                                         achievements += achCount;
 
                                         playerGames.Achievements = achCount;
@@ -269,58 +265,15 @@ namespace PlayerActivities.Clients
 
         private bool IsConnected()
         {
-            try
+            if (CachedIsConnectedResult == null)
             {
-                string ProfileById = $"https://steamcommunity.com/profiles/{SteamId}";
-                string ProfileByName = $"https://steamcommunity.com/id/{SteamUser}";
-
-                return IsProfileConnected(ProfileById) || IsProfileConnected(ProfileByName);
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex, false, true, PluginDatabase.PluginName);
-                return false;
-            }
-        }
-
-        private bool IsProfileConnected(string profilePageUrl)
-        {
-            try
-            {
-                List<HttpCookie> cookies = GetCookies();
-                string ResultWeb = Web.DownloadStringData(profilePageUrl, cookies).GetAwaiter().GetResult();
-
-                //this finds the Games link on the right side of the profile page. If that's public then so are achievements.
-                IHtmlDocument HtmlDoc = new HtmlParser().Parse(ResultWeb);
-                AngleSharp.Dom.IElement gamesPageLink = HtmlDoc.QuerySelector(@".profile_item_links a[href$=""/games/?tab=all""]");
-                if (gamesPageLink != null && cookies?.Count > 0)
+                if (SteamApi.IsConfigured())
                 {
-                    return true;
+                    CachedIsConnectedResult = SteamApi.IsUserLoggedIn;
                 }
-
-                using (IWebView WebViewOffscreen = API.Instance.WebViews.CreateOffscreenView())
-                {
-                    WebViewOffscreen.NavigateAndWait(profilePageUrl);
-                    ResultWeb = WebViewOffscreen.GetPageSource();
-                    cookies = WebViewOffscreen.GetCookies()?.Where(x => x?.Domain?.Contains("steam") ?? false)?.ToList() ?? new List<HttpCookie>();
-                }
-
-                //this finds the Games link on the right side of the profile page. If that's public then so are achievements.
-                HtmlDoc = new HtmlParser().Parse(ResultWeb);
-                gamesPageLink = HtmlDoc.QuerySelector(@".profile_item_links a[href$=""/games/?tab=all""]");
-                if (gamesPageLink != null && cookies?.Count > 0)
-                {
-                    SetCookies(cookies);
-                    return true;
-                }
-
-                return false;
             }
-            catch (WebException ex)
-            {
-                Common.LogError(ex, false, true, PluginDatabase.PluginName);
-                return false;
-            }
+
+            return CachedIsConnectedResult ?? false;
         }
     }
 }

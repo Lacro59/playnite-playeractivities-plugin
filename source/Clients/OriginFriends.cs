@@ -8,17 +8,16 @@ using CommonPluginsStores.Models;
 using System.Collections.ObjectModel;
 using System.Linq;
 using Playnite.SDK;
+using CommonPluginsStores;
 
 namespace PlayerActivities.Clients
 {
     public class OriginFriends : GenericFriends
     {
-        protected static OriginApi originApi;
-        internal static OriginApi OriginApi
-        {
-            get => originApi ?? new OriginApi(PluginDatabase.PluginName);
-            set => originApi = value;
-        }
+        private static readonly Lazy<OriginApi> originApi = new Lazy<OriginApi>(() => new OriginApi(PluginDatabase.PluginName));
+        internal static OriginApi OriginApi => originApi.Value;
+
+        internal override StoreApi StoreApi => OriginApi;
 
 
         public OriginFriends() : base("Origin")

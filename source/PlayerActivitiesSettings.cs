@@ -40,7 +40,7 @@ namespace PlayerActivities
 
     public class PlayerActivitiesSettingsViewModel : ObservableObject, ISettings
     {
-        private readonly PlayerActivities Plugin;
+        private PlayerActivities Plugin { get; }
         private PlayerActivitiesSettings editingClone { get; set; }
 
         private PlayerActivitiesSettings settings;
@@ -77,6 +77,13 @@ namespace PlayerActivities
         // This method should save settings made to Option1 and Option2.
         public void EndEdit()
         {
+            PlayerActivities.SteamApi.Save();
+            PlayerActivities.SteamApi.CurrentUser = null;
+            if (Settings.EnableSteamFriends)
+            {
+                _ = PlayerActivities.SteamApi.CurrentUser;
+            }
+
             Plugin.SavePluginSettings(Settings);
             PlayerActivities.PluginDatabase.PluginSettings = this;
 
