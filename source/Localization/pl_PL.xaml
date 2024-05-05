@@ -32,22 +32,22 @@
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Ukończyłeś grę.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} dzień temu</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} dni temu</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} miesiąc temu</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} miesięcy temu</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} rok temu</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} lat temu</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">Posiadane gry</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Ukończone gry</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Znajomi </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Twoje </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Znajomi 🕑</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Twój 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Osiągnięcia</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Wspólny</sys:String>
 
 
     <!-- Menus -->
