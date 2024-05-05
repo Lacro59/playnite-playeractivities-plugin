@@ -3,7 +3,7 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
+    <sys:String x:Key="LOCPa">Actividades del jugador</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Actualizar datos de amigos</sys:String>
     <sys:String x:Key="LOCPaView">Ver las actividades de juegos</sys:String>
@@ -52,8 +52,8 @@
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Mostrar juego en la biblioteca</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Actualizar datos del juego</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
