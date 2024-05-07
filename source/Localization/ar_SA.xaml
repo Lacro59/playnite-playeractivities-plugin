@@ -8,6 +8,8 @@
     <sys:String x:Key="LOCPaRefreshFriendsData">تحديث بيانات الأصدقاء</sys:String>
     <sys:String x:Key="LOCPaView">عرض أنشطة اللاع</sys:String>
 
+    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
+
 
     <!-- PlayerActivitiesSettingsView -->
 
@@ -18,6 +20,8 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">تمكين أصدقاء Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">تمكين أصدقاء GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">تمكين أصدقاء Origin</sys:String>
+
+    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -41,8 +45,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">لعبة مملو</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">الألعاب المكتم</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">الأصدقاء 🕑</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">أنت🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
