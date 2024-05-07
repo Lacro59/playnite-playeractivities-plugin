@@ -33,8 +33,6 @@ namespace PlayerActivities.Controls
 
         public PluginActivities()
         {
-            AlwaysShow = true;
-
             InitializeComponent();
             this.DataContext = ControlDataContext;
 

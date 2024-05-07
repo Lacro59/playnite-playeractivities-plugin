@@ -662,7 +662,7 @@ namespace PlayerActivities.Services
 
         public override void SetThemesResources(Game game)
         {
-            PluginSettings.Settings.HasData = Database.Where(x => x.Game.Id == game.Id)?.Count() > 0;
+            PluginSettings.Settings.HasData = Database.Get(game.Id)?.HasData ?? false;
         }
     }
 }

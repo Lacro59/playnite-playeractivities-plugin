@@ -214,7 +214,18 @@ namespace PlayerActivities
         #region Game event
         public override void OnGameSelected(OnGameSelectedEventArgs args)
         {
-
+            try
+            {
+                if (args.NewValue?.Count == 1 && PluginDatabase.IsLoaded)
+                {
+                    PluginDatabase.GameContext = args.NewValue[0];
+                    PluginDatabase.SetThemesResources(PluginDatabase.GameContext);
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, true, PluginDatabase.PluginName);
+            }
         }
 
         // Add code to be executed when game is finished installing.
