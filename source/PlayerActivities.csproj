@@ -78,6 +78,9 @@
     <Compile Include="Clients\OriginFriends.cs" />
     <Compile Include="Clients\SteamFriends.cs" />
     <Compile Include="Controls\HowLongToBeatControl.cs" />
+    <Compile Include="Controls\PluginActivities.xaml.cs">
+      <DependentUpon>PluginActivities.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ScreenshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
     <Compile Include="Models\Activity.cs" />
@@ -245,6 +248,10 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <Page Include="Controls\PluginActivities.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="playnite-plugincommon\CommonPluginsControls\Controls\TextBlockTrimmed.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

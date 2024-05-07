@@ -18,6 +18,8 @@ namespace PlayerActivities
         public bool EnableIntegrationButtonHeader { get; set; } = false;
         public bool EnableIntegrationButtonSide { get; set; } = true;
 
+        private bool enableIntegrationActivities = true;
+        public bool EnableIntegrationActivities { get => enableIntegrationActivities; set => SetValue(ref enableIntegrationActivities, value); }
 
         public bool EnableSteamFriends { get; set; } = false;
         public bool EnableGogFriends { get; set; } = false;
@@ -41,7 +43,7 @@ namespace PlayerActivities
     public class PlayerActivitiesSettingsViewModel : ObservableObject, ISettings
     {
         private PlayerActivities Plugin { get; }
-        private PlayerActivitiesSettings editingClone { get; set; }
+        private PlayerActivitiesSettings EditingClone { get; set; }
 
         private PlayerActivitiesSettings settings;
         public PlayerActivitiesSettings Settings { get => settings; set => SetValue(ref settings, value); }
@@ -63,14 +65,14 @@ namespace PlayerActivities
         // Code executed when settings view is opened and user starts editing values.
         public void BeginEdit()
         {
-            editingClone = Serialization.GetClone(Settings);
+            EditingClone = Serialization.GetClone(Settings);
         }
 
         // Code executed when user decides to cancel any changes made since BeginEdit was called.
         // This method should revert any changes made to Option1 and Option2.
         public void CancelEdit()
         {
-            Settings = editingClone;
+            Settings = EditingClone;
         }
 
         // Code executed when user decides to confirm changes made since BeginEdit was called.

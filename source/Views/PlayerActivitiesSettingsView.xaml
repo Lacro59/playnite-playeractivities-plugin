@@ -56,6 +56,8 @@
                             <RowDefinition Height="auto" />
                             <RowDefinition Height="10" />
                             <RowDefinition Height="auto" />
+                            <RowDefinition Height="10" />
+                            <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
 
                         <Expander Grid.Row="0" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
@@ -82,6 +84,20 @@
                             <Expander.Header>
                                 <CheckBox IsChecked="{Binding Settings.EnableIntegrationButtonSide}">
                                     <Label Content="{DynamicResource LOCCommonIntegrationButtonSide}" />
+                                </CheckBox>
+                            </Expander.Header>
+                        </Expander>
+
+                        <Expander Grid.Row="4" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
+                            <Expander.Style>
+                                <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
+                                    <Setter Property="Background" Value="Transparent" />
+                                </Style>
+                            </Expander.Style>
+
+                            <Expander.Header>
+                                <CheckBox IsChecked="{Binding Settings.EnableIntegrationActivities}">
+                                    <Label Content="{DynamicResource LOCPaIntegrationActivities}" />
                                 </CheckBox>
                             </Expander.Header>
                         </Expander>

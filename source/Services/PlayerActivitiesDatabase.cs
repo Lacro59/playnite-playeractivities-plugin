@@ -39,8 +39,8 @@ namespace PlayerActivities.Services
         private bool friendsDataIsCanceled = false;
         public bool FriendsDataIsCanceled { get => friendsDataIsCanceled; set => SetValue(ref friendsDataIsCanceled, value); }
 
-        Window WindowFriendsDataLoading { get; set; } = null;
-        Stopwatch StopWatchFriendsDataLoading { get; set; } = new Stopwatch();
+        private Window WindowFriendsDataLoading { get; set; } = null;
+        private Stopwatch StopWatchFriendsDataLoading { get; set; } = new Stopwatch();
 
         private FriendsDataLoading friendsDataLoading = new FriendsDataLoading();
         public FriendsDataLoading FriendsDataLoading { get => friendsDataLoading; set => SetValue(ref friendsDataLoading, value); }
@@ -167,10 +167,10 @@ namespace PlayerActivities.Services
         {
             if (Directory.Exists(SuccessStoryPath))
             {
-                Parallel.ForEach(Directory.EnumerateFiles(SuccessStoryPath, "*.json"),
+                _ = Parallel.ForEach(Directory.EnumerateFiles(SuccessStoryPath, "*.json"),
                     (objectFile) =>
                     {
-                        if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
+                        if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
                             if (Id == default || fileId == Id)
                             {
@@ -221,7 +221,7 @@ namespace PlayerActivities.Services
                             ulong Progression = (ulong)Math.Ceiling((double)(Unlocked * 100 / obj.Items.Count()));
                             AchievementsGoals.ForEach(z =>
                             {
-                                if (Progression >= z 
+                                if (Progression >= z
                                     && playerActivitiesData.Items.Find(y => y.DateActivity == DateActivity && y.Type == ActivityType.AchievementsGoal) == null
                                     && playerActivitiesData.Items.Find(y => y.Type == ActivityType.AchievementsGoal && y.Value == z) == null)
                                 {
@@ -247,11 +247,11 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanScreenshotsVisualizer(Guid Id = default(Guid))
+        public void FirstScanScreenshotsVisualizer(Guid Id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
             {
-                Parallel.ForEach(Directory.EnumerateFiles(ScreenshotsVisuliazerPath, "*.json"),
+                _ = Parallel.ForEach(Directory.EnumerateFiles(ScreenshotsVisuliazerPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
@@ -310,11 +310,11 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanGameActivity(Guid Id = default(Guid))
+        public void FirstScanGameActivity(Guid Id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
             {
-                Parallel.ForEach(Directory.EnumerateFiles(GameActivityPath, "*.json"),
+                _ = Parallel.ForEach(Directory.EnumerateFiles(GameActivityPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
@@ -361,7 +361,7 @@ namespace PlayerActivities.Services
                             ElapsedSeconds += x.ElapsedSeconds;
                             PlaytimeGoals.ForEach(y =>
                             {
-                                if (ElapsedSeconds >= 3600 * y 
+                                if (ElapsedSeconds >= 3600 * y
                                         && playerActivitiesData.Items.Find(z => z.Type == ActivityType.PlaytimeGoal && z.Value == y) == null)
                                 {
                                     playerActivitiesData.Items.Add(new Activity
@@ -386,16 +386,16 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanHowLongToBeat(Guid Id = default(Guid))
+        public void FirstScanHowLongToBeat(Guid Id = default)
         {
             if (Directory.Exists(HowLongToBeatPath))
             {
-                Parallel.ForEach(Directory.EnumerateFiles(HowLongToBeatPath, "*.json"),
+                _ = Parallel.ForEach(Directory.EnumerateFiles(HowLongToBeatPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (Id == default(Guid) || fileId == Id)
+                            if (Id == default || fileId == Id)
                             {
                                 SetHowLongToBeat(fileId);
                             }
@@ -450,7 +450,13 @@ namespace PlayerActivities.Services
         }
 
 
-        public ObservableCollection<ActivityListGrouped> GetActivitiesData()
+        public ObservableCollection<ActivityListGrouped> GetActivitiesData(Guid Id)
+        {
+            ObservableCollection<ActivityListGrouped> data = GetActivitiesData(false);
+            return data.Where(x => x.GameContext.Id == Id)?.ToObservable();
+        }
+
+        public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
         {
             ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
             Database.ForEach(x =>
@@ -492,7 +498,7 @@ namespace PlayerActivities.Services
             activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
             activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
             {
-                IEnumerable<ActivityListGrouped> finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && z.TimeAgo.IsEqual(x.TimeAgo));
+                IEnumerable<ActivityListGrouped> finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && (!grouped || z.TimeAgo.IsEqual(x.TimeAgo)));
                 if (finded.Count() > 0)
                 {
                     finded.First().Activities.Add(new Activity
@@ -527,7 +533,7 @@ namespace PlayerActivities.Services
             // Order grouped activities
             activityListsGrouped.ForEach(x =>
             {
-                x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
+                _ = x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
             });
 
             return activityListsGrouped;
@@ -578,7 +584,7 @@ namespace PlayerActivities.Services
                 }
 
                 playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
-                
+
                 PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
                 plugin.SavePluginSettings(PluginSettings.Settings);
 
@@ -638,7 +644,7 @@ namespace PlayerActivities.Services
         {
             if (WindowFriendsDataLoading != null)
             {
-                Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                _ = Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                 {
                     WindowFriendsDataLoading.Close();
                 }));

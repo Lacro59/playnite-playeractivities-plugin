@@ -3,6 +3,7 @@ using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
 using CommonPluginsStores.Steam;
 using PlayerActivities.Clients;
+using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using PlayerActivities.Views;
@@ -43,7 +44,7 @@ namespace PlayerActivities
             // Custom elements integration
             AddCustomElementSupport(new AddCustomElementSupportArgs
             {
-                ElementList = new List<string> {  },
+                ElementList = new List<string> { "PluginActivities" },
                 SourceName = "PlayerActivities"
             });
 
@@ -82,6 +83,11 @@ namespace PlayerActivities
         // List custom controls
         public override Control GetGameViewControl(GetGameViewControlArgs args)
         {
+            if (args.Name == "PluginActivities")
+            {
+                return new PluginActivities();
+            }
+
             return null;
         }
 
