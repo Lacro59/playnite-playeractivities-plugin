@@ -8,6 +8,8 @@
     <sys:String x:Key="LOCPaRefreshFriendsData">Odśwież dane znajomych</sys:String>
     <sys:String x:Key="LOCPaView">Wyświetl aktywności</sys:String>
 
+    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
+
 
     <!-- PlayerActivitiesSettingsView -->
 
@@ -18,6 +20,8 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">Pokaż znajomych ze Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Pokaż znajomych z GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Pokaż znajomych z Origin</sys:String>
+
+    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -41,8 +45,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Posiadane gry</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Ukończone gry</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Znajomi </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Twoje </sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Znajomi 🕑</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Twój 🕑</sys:String>
     <sys:String x:Key="LOCPaAchievements">Osiągnięcia</sys:String>
