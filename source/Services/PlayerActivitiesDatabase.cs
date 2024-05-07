@@ -356,7 +356,7 @@ namespace PlayerActivities.Services
                         // Playtime goal
                         List<ulong> PlaytimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
                         ulong ElapsedSeconds = 0;
-                        obj.Items.OrderBy(x => x.DateSession).ForEach(x => 
+                        obj.Items.OrderBy(x => x.DateSession).ForEach(x =>
                         {
                             ElapsedSeconds += x.ElapsedSeconds;
                             PlaytimeGoals.ForEach(y =>
@@ -425,7 +425,7 @@ namespace PlayerActivities.Services
                         if (HltbUserStats != null)
                         {
                             List<TitleList> titleLists = HltbUserStats.TitlesList.FindAll(x => x.Id == obj.GetData().Id).ToList();
-                            titleLists.ForEach(x => 
+                            titleLists.ForEach(x =>
                             {
                                 DateTime? dt = x.Completion;
                                 if (dt != null)
@@ -657,6 +657,12 @@ namespace PlayerActivities.Services
                 FriendsDataIsCanceled = false;
                 FriendsDataIsDownloaded = true;
             }
+        }
+
+
+        public override void SetThemesResources(Game game)
+        {
+            PluginSettings.Settings.HasData = Database.Where(x => x.Game.Id == game.Id)?.Count() > 0;
         }
     }
 }

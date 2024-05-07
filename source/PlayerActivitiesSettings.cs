@@ -37,6 +37,9 @@ namespace PlayerActivities
         // Playnite serializes settings object to a JSON object and saves it as text file.
         // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
         #region Variables exposed
+        private bool hasData = false;
+        [DontSerialize]
+        public bool HasData { get => hasData; set => SetValue(ref hasData, value); }
         #endregion
     }
 
