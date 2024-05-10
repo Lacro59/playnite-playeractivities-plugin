@@ -47,8 +47,8 @@
     <sys:String x:Key="LOCPaGameCompleted">已完成游戏</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">好友 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">您的 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
     <sys:String x:Key="LOCPaCommun">信</sys:String>
