@@ -47,8 +47,8 @@
     <sys:String x:Key="LOCPaGameCompleted">Juegos completados</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Tu 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Común</sys:String>
