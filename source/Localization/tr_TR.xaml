@@ -45,10 +45,10 @@
     
     <sys:String x:Key="LOCPaGameOwned">Oyuna sahipsiniz</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Tamamlanan oyunlar</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar </sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Sizin </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Arkadaşlar 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Ortak</sys:String>
