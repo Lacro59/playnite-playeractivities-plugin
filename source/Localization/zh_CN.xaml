@@ -8,6 +8,8 @@
     <sys:String x:Key="LOCPaRefreshFriendsData">刷新好友数据</sys:String>
     <sys:String x:Key="LOCPaView">查看玩家活</sys:String>
 
+    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
+
 
     <!-- PlayerActivitiesSettingsView -->
 
@@ -18,6 +20,8 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">启用 Steam 好友</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">启用 GOG 好友</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">启用 Origin 好友</sys:String>
+
+    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -43,10 +47,20 @@
     <sys:String x:Key="LOCPaGameCompleted">已完成游戏</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">好友 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">您的 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
     <sys:String x:Key="LOCPaCommun">信</sys:String>
+
+
+    <!-- Menus -->
+
+    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
 
 </ResourceDictionary>

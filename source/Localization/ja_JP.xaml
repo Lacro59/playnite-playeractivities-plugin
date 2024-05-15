@@ -6,7 +6,9 @@
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData"></sys:String>
-    <sys:String x:Key="LOCPaView">プレイヤーのアクティビティを表示</sys:String>
+    <sys:String x:Key="LOCPaView"></sys:String>
+
+    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -19,10 +21,12 @@
     <sys:String x:Key="LOCPaEnableGogFriends">GOG フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Origin フレンドを有効にする</sys:String>
 
+    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
+
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">このゲームを初めてプレイしました。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst"></sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">{0} 時間のプレイに達しました。</sys:String>
     
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} 個の実績を解除しました。</sys:String>
@@ -30,7 +34,7 @@
 
     <sys:String x:Key="LOCPaScreenshotsTaked">{0} 枚のスクリーンショットを撮影しました。</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">ゲームを完全にクリアしました。</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted"></sys:String>
 
     <sys:String x:Key="LOCPaDayAgo">{0} 日前</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} 日前</sys:String>
@@ -40,13 +44,23 @@
     <sys:String x:Key="LOCPaYearsAgo">{0} 年前</sys:String>
     
     <sys:String x:Key="LOCPaGameOwned">所有済みのゲーム</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">クリア済みのゲーム</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted"></sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">フレンド 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">あなた 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">実績</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">コモン</sys:String>
+    <sys:String x:Key="LOCPaCommun"></sys:String>
+
+
+    <!-- Menus -->
+
+    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
 
 </ResourceDictionary>

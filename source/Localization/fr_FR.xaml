@@ -8,6 +8,8 @@
     <sys:String x:Key="LOCPaRefreshFriendsData">Rafraîchir les données des amis</sys:String>
     <sys:String x:Key="LOCPaView">Voir les activités du joueur</sys:String>
 
+    <sys:String x:Key="LOCPaActivities">Activités du joueur</sys:String>
+
 
     <!-- PlayerActivitiesSettingsView -->
 
@@ -18,6 +20,8 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">Activer les amis Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Activer les amis GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Activer les amis Origin</sys:String>
+
+    <sys:String x:Key="LOCPaIntegrationActivities">Afficher les activités du jeu</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -43,10 +47,20 @@
     <sys:String x:Key="LOCPaGameCompleted">Jeux terminés</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Amis 🕑</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Votre 🕑</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">🕒 des amis</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Votre 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Succès</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+
+
+    <!-- Menus -->
+
+    <sys:String x:Key="LOCPaShowGameInLibrary">Afficher le jeu dans la bibliothèque</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Actualiser les données du jeu</sys:String>
+
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Voir les données HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Afficher les données SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Afficher les données ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
