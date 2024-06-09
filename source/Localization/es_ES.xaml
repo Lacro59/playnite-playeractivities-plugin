@@ -59,8 +59,8 @@
     <sys:String x:Key="LOCPaShowGameInLibrary">Mostrar juego en la biblioteca</sys:String>
     <sys:String x:Key="LOCPaRefreshGameData">Actualizar datos del juego</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Ver datos de HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Ver datos de SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Ver datos de ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
