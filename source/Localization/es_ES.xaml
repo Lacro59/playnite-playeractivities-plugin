@@ -8,7 +8,7 @@
     <sys:String x:Key="LOCPaRefreshFriendsData">Actualizar datos de amigos</sys:String>
     <sys:String x:Key="LOCPaView">Ver las actividades de juegos</sys:String>
 
-    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
+    <sys:String x:Key="LOCPaActivities">Actividades del jugador</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
@@ -21,7 +21,7 @@
     <sys:String x:Key="LOCPaEnableGogFriends">Habilitar amigos de GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Habilitar amigos de Origin</sys:String>
 
-    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
+    <sys:String x:Key="LOCPaIntegrationActivities">Mostrar actividades del juego</sys:String>
 
     
     <!-- ActivitiesView -->
@@ -45,10 +45,10 @@
     
     <sys:String x:Key="LOCPaGameOwned">Juego poseído</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Juegos completados</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Amigos</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Tus </sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Tu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
     <sys:String x:Key="LOCPaCommun">Común</sys:String>
@@ -59,8 +59,8 @@
     <sys:String x:Key="LOCPaShowGameInLibrary">Mostrar juego en la biblioteca</sys:String>
     <sys:String x:Key="LOCPaRefreshGameData">Actualizar datos del juego</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Ver datos de HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Ver datos de SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Ver datos de ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
