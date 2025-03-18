@@ -333,7 +333,7 @@ namespace PlayerActivities
             }
 
             // StoreAPI intialization
-            if (PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            if (PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled)
             {
                 SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.CheckDlc);
                 SteamApi.SetLanguage(API.Instance.ApplicationSettings.Language);
@@ -341,7 +341,7 @@ namespace PlayerActivities
                 _ = SteamApi.CurrentAccountInfos;
             }
 
-            if (PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.Settings.EnableGogFriends)
+            if (PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled)
             {
                 GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.CheckDlc);
                 GogApi.SetLanguage(API.Instance.ApplicationSettings.Language);

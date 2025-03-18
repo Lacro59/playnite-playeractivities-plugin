@@ -110,12 +110,14 @@
         <TabItem Header="{DynamicResource LOCLibraries}">
             <StackPanel Margin="10">
 
-                <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10" ForceAuth="True"
-                                     UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
-                                     UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+                <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10"
+                                 ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                 UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                 UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
-                <Gog:PanelView x:Name="GogPanel" ForceAuth="True"
-                                   UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+                <Gog:PanelView x:Name="GogPanel" 
+                               ForceAuth="True"
+                               UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
             </StackPanel>
         </TabItem>
     </TabControl>

@@ -34,7 +34,7 @@ namespace PlayerActivities
         public bool EnableHowLongToBeatData { get; set; } = true;
 
 
-        public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
+        public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = false, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         #endregion
 
@@ -65,6 +65,9 @@ namespace PlayerActivities
 
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
+
+            // TODO TEMP
+            Settings.SteamStoreSettings.ForceAuth = false;
         }
 
         // Code executed when settings view is opened and user starts editing values.

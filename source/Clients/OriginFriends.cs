@@ -90,7 +90,7 @@ namespace PlayerActivities.Clients
                             FriendsAvatar = y.Avatar,
                             FriendsLink = y.Link,
                             AcceptedAt = y.DateAdded,
-                            IsUser = true,
+                            IsUser = false,
                             Stats = new PlayerStats
                             {
                                 GamesOwned = FriendGamesInfos.Count,
