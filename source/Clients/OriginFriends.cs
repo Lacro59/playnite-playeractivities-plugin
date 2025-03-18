@@ -40,7 +40,7 @@ namespace PlayerActivities.Clients
                     PlayerFriends playerFriendsUs = new PlayerFriends
                     {
                         ClientName = ClientName,
-                        FriendId = CurrentUser.UserId,
+                        FriendId = long.Parse(CurrentUser.UserId),
                         FriendPseudo = CurrentUser.Pseudo,
                         FriendsAvatar = CurrentUser.Avatar,
                         FriendsLink = CurrentUser.Link,
@@ -85,7 +85,7 @@ namespace PlayerActivities.Clients
                         PlayerFriends playerFriends = new PlayerFriends
                         {
                             ClientName = ClientName,
-                            FriendId = y.UserId,
+                            FriendId = long.Parse(y.UserId),
                             FriendPseudo = y.Pseudo,
                             FriendsAvatar = y.Avatar,
                             FriendsLink = y.Link,

@@ -21,7 +21,8 @@ namespace PlayerActivities.Views
         {
             InitializeComponent();
 
-            SteamPanel.SteamApi = PlayerActivities.SteamApi;
+            SteamPanel.StoreApi = PlayerActivities.SteamApi;
+            GogPanel.StoreApi = PlayerActivities.GogApi;
         }
     }
 }

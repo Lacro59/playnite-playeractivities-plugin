@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
+using CommonPluginsStores.Gog;
 using CommonPluginsStores.Steam;
 using PlayerActivities.Clients;
 using PlayerActivities.Controls;
@@ -34,6 +35,7 @@ namespace PlayerActivities
         internal SidebarItemControl SidebarItemControl { get; set; }
 
         public static SteamApi SteamApi { get; set; }
+        public static GogApi GogApi { get; set; }
 
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
@@ -83,12 +85,7 @@ namespace PlayerActivities
         // List custom controls
         public override Control GetGameViewControl(GetGameViewControlArgs args)
         {
-            if (args.Name == "PluginActivities")
-            {
-                return new PluginActivities();
-            }
-
-            return null;
+            return args.Name == "PluginActivities" ? new PluginActivities() : null;
         }
 
         public override IEnumerable<SidebarItem> GetSidebarItems()
@@ -199,7 +196,7 @@ namespace PlayerActivities
             {
                 MenuSection = MenuInExtensions + ResourceProvider.GetString("LOCPa"),
                 Description = "Test",
-                Action = (mainMenuItem) => 
+                Action = (mainMenuItem) =>
                 {
 
                 }
@@ -287,7 +284,7 @@ namespace PlayerActivities
 
                     // Playtime goal
                     List<ulong> PlaytimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
-                    PlaytimeGoals.ForEach(x => 
+                    PlaytimeGoals.ForEach(x =>
                     {
                         if (args.Game.Playtime >= 3600 * x && playerActivities.Items.Find(z => z.Type == ActivityType.PlaytimeGoal && z.Value == x) == null)
                         {
@@ -335,11 +332,22 @@ namespace PlayerActivities
                 this.SavePluginSettings(PluginSettings.Settings);
             }
 
-            SteamApi = new SteamApi(PluginDatabase.PluginName);
-            SteamApi.SetLanguage(API.Instance.ApplicationSettings.Language);
-            if (PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            // StoreAPI intialization
+            if (PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
             {
-                _ = SteamApi.CurrentUser;
+                SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.CheckDlc);
+                SteamApi.SetLanguage(API.Instance.ApplicationSettings.Language);
+                SteamApi.StoreSettings = PluginDatabase.PluginSettings.Settings.SteamStoreSettings;
+                _ = SteamApi.CurrentAccountInfos;
+            }
+
+            if (PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.Settings.EnableGogFriends)
+            {
+                GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.CheckDlc);
+                GogApi.SetLanguage(API.Instance.ApplicationSettings.Language);
+                GogApi.SetForceAuth(true);
+                GogApi.StoreSettings = PluginDatabase.PluginSettings.Settings.GogStoreSettings;
+                _ = GogApi.CurrentAccountInfos;
             }
         }
 

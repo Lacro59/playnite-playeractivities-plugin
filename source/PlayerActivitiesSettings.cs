@@ -1,4 +1,6 @@
-﻿using Playnite.SDK;
+﻿using CommonPluginsShared.Plugins;
+using CommonPluginsStores;
+using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
@@ -8,18 +10,16 @@ using System.Threading.Tasks;
 
 namespace PlayerActivities
 {
-    public class PlayerActivitiesSettings : ObservableObject
+    public class PlayerActivitiesSettings : PluginSettings
     {
         #region Settings variables
-        public bool MenuInExtensions { get; set; } = true;
-
         public DateTime LastFriendsRefresh { get; set; } = DateTime.Now;
 
         public bool EnableIntegrationButtonHeader { get; set; } = false;
         public bool EnableIntegrationButtonSide { get; set; } = true;
 
-        private bool enableIntegrationActivities = true;
-        public bool EnableIntegrationActivities { get => enableIntegrationActivities; set => SetValue(ref enableIntegrationActivities, value); }
+        private bool _enableIntegrationActivities = true;
+        public bool EnableIntegrationActivities { get => _enableIntegrationActivities; set => SetValue(ref _enableIntegrationActivities, value); }
 
         public bool EnableSteamFriends { get; set; } = false;
         public bool EnableGogFriends { get; set; } = false;
@@ -32,14 +32,16 @@ namespace PlayerActivities
         public bool EnableSuccessStoryData { get; set; } = true;
         public bool EnableScreenshotsVisualizerData { get; set; } = true;
         public bool EnableHowLongToBeatData { get; set; } = true;
+
+
+        public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
+        public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         #endregion
 
         // Playnite serializes settings object to a JSON object and saves it as text file.
         // If you want to exclude some property from being saved then use `JsonDontSerialize` ignore attribute.
         #region Variables exposed
-        private bool hasData = false;
-        [DontSerialize]
-        public bool HasData { get => hasData; set => SetValue(ref hasData, value); }
+
         #endregion
     }
 
@@ -48,8 +50,8 @@ namespace PlayerActivities
         private PlayerActivities Plugin { get; }
         private PlayerActivitiesSettings EditingClone { get; set; }
 
-        private PlayerActivitiesSettings settings;
-        public PlayerActivitiesSettings Settings { get => settings; set => SetValue(ref settings, value); }
+        private PlayerActivitiesSettings _settings;
+        public PlayerActivitiesSettings Settings { get => _settings; set => SetValue(ref _settings, value); }
 
 
 
@@ -82,11 +84,21 @@ namespace PlayerActivities
         // This method should save settings made to Option1 and Option2.
         public void EndEdit()
         {
-            PlayerActivities.SteamApi.Save();
-            PlayerActivities.SteamApi.CurrentUser = null;
-            if (Settings.EnableSteamFriends)
+            // StoreAPI intialization
+            PlayerActivities.SteamApi.StoreSettings = Settings.SteamStoreSettings;
+            if (Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends)
             {
-                _ = PlayerActivities.SteamApi.CurrentUser;
+                PlayerActivities.SteamApi.SaveCurrentUser();
+                PlayerActivities.SteamApi.CurrentAccountInfos = null;
+                _ = PlayerActivities.SteamApi.CurrentAccountInfos;
+            }
+
+            PlayerActivities.GogApi.StoreSettings = Settings.GogStoreSettings;
+            if (Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends)
+            {
+                PlayerActivities.GogApi.SaveCurrentUser();
+                PlayerActivities.GogApi.CurrentAccountInfos = null;
+                _ = PlayerActivities.GogApi.CurrentAccountInfos;
             }
 
             Plugin.SavePluginSettings(Settings);

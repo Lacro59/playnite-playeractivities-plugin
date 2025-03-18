@@ -7,6 +7,7 @@
              xmlns:AttachedProperties="clr-namespace:CommonPluginsShared.Controls"
              xmlns:PlayerActivities="clr-namespace:PlayerActivities" 
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
+             xmlns:Gog="clr-namespace:CommonPluginsControls.Stores.Gog"
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
@@ -107,7 +108,15 @@
         </TabItem>
 
         <TabItem Header="{DynamicResource LOCLibraries}">
-            <Steam:PanelView x:Name="SteamPanel" />
+            <StackPanel Margin="10">
+
+                <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10" ForceAuth="True"
+                                     UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                     UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+                <Gog:PanelView x:Name="GogPanel" ForceAuth="True"
+                                   UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+            </StackPanel>
         </TabItem>
     </TabControl>
 </UserControl>

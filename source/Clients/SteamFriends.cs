@@ -85,7 +85,7 @@ namespace PlayerActivities.Clients
 
                     IHtmlCollection<IElement> els = htmlDocument.QuerySelectorAll("a.selectable_overlay");
                     PluginDatabase.FriendsDataLoading.FriendCount = els.Count();
-                    
+
                     foreach (IElement el in els)
                     {
                         if (PluginDatabase.FriendsDataIsCanceled)
@@ -172,7 +172,7 @@ namespace PlayerActivities.Clients
                         WebViewOffscreen.NavigateAndWait(gamesOwnedUrl);
                         webData = WebViewOffscreen.GetPageSource();
                     }
-                    
+
                     string JsonDataString = Tools.GetJsonInString(webData, "rgGames = ", "var rgChangingGames = ", "}];");
                     _ = Serialization.TryFromJson(JsonDataString, out List<FriendsApps> FriendsAppsAll);
 

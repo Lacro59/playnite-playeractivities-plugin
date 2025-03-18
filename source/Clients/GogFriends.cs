@@ -14,9 +14,7 @@ namespace PlayerActivities.Clients
 {
     public class GogFriends : GenericFriends
     {
-        private static readonly Lazy<GogApi> gogApi = new Lazy<GogApi>(() => new GogApi(PluginDatabase.PluginName));
-        internal static GogApi GogApi => gogApi.Value;
-
+        private GogApi GogApi => PlayerActivities.GogApi;
         internal override StoreApi StoreApi => GogApi;
 
 
@@ -40,7 +38,7 @@ namespace PlayerActivities.Clients
                     PlayerFriends playerFriendsUs = new PlayerFriends
                     {
                         ClientName = ClientName,
-                        FriendId = CurrentUser.UserId,
+                        FriendId = long.Parse(CurrentUser.UserId),
                         FriendPseudo = CurrentUser.Pseudo,
                         FriendsAvatar = CurrentUser.Avatar,
                         FriendsLink = CurrentUser.Link,
@@ -51,8 +49,8 @@ namespace PlayerActivities.Clients
                             Achievements = CurrentGamesInfos.Sum(x => x.AchievementsUnlocked),
                             Playtime = CurrentGamesInfos.Sum(x => x.Playtime)
                         },
-                        Games = CurrentGamesInfos.Select(x => new PlayerGames 
-                        { 
+                        Games = CurrentGamesInfos.Select(x => new PlayerGames
+                        {
                             Achievements = x.AchievementsUnlocked,
                             Playtime = x.Playtime,
                             Id = x.Id,
@@ -72,7 +70,7 @@ namespace PlayerActivities.Clients
 
                     PluginDatabase.FriendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
 
-                    CurrentFriendsInfos.ForEach(y => 
+                    CurrentFriendsInfos.ForEach(y =>
                     {
                         if (PluginDatabase.FriendsDataIsCanceled)
                         {
@@ -85,7 +83,7 @@ namespace PlayerActivities.Clients
                         PlayerFriends playerFriends = new PlayerFriends
                         {
                             ClientName = ClientName,
-                            FriendId = y.UserId,
+                            FriendId = long.Parse(y.UserId),
                             FriendPseudo = y.Pseudo,
                             FriendsAvatar = y.Avatar,
                             FriendsLink = y.Link,
