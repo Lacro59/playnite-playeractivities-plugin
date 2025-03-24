@@ -72,7 +72,7 @@ namespace PlayerActivities.Views
 
             PART_DataLoad.Visibility = Visibility.Visible;
             PART_Data.Visibility = Visibility.Hidden;
-
+            PART_DataRerefsh.Visibility = Visibility.Collapsed;
 
             GetData();
             GetFriends();
@@ -127,7 +127,7 @@ namespace PlayerActivities.Views
         {
             if (IsDataFinished && IsFriendsFinished)
             {
-                _ = this.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                 {
                     PART_DataLoad.Visibility = Visibility.Hidden;
                     PART_Data.Visibility = Visibility.Visible;
@@ -137,11 +137,11 @@ namespace PlayerActivities.Views
                 {
                     Thread.Sleep(3000);
 
-                    this.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    _ = (Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                     {
                         CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
                         view.Filter = TimeLineFilter;
-                    }));
+                    })));
                 });
             }
         }
@@ -188,9 +188,19 @@ namespace PlayerActivities.Views
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
+            PART_BtFriends.IsEnabled = false;
+            PART_DataRerefsh.Visibility = Visibility.Visible;
+            ControlDataContext.FriendsDataLoading = PluginDatabase.FriendsDataLoading;
+
             _ = Task.Run(() => {
-                PluginDatabase.RefreshFriendsDataLoader(Plugin).GetAwaiter().GetResult();
+                PluginDatabase.RefreshFriends(Plugin);
                 GetFriends();
+
+                _ = (Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                {
+                    PART_BtFriends.IsEnabled = true;
+                    PART_DataRerefsh.Visibility = Visibility.Collapsed;
+                })));
             });
         }
 
@@ -237,20 +247,23 @@ namespace PlayerActivities.Views
     {
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
 
-        private ObservableCollection<ActivityListGrouped> itemsSource = new ObservableCollection<ActivityListGrouped>();
-        public ObservableCollection<ActivityListGrouped> ItemsSource { get => itemsSource; set => SetValue(ref itemsSource, value); }
+        private ObservableCollection<ActivityListGrouped> _itemsSource = new ObservableCollection<ActivityListGrouped>();
+        public ObservableCollection<ActivityListGrouped> ItemsSource { get => _itemsSource; set => SetValue(ref _itemsSource, value); }
 
-        private ObservableCollection<PlayerFriends> friendsSource = new ObservableCollection<PlayerFriends>();
-        public ObservableCollection<PlayerFriends> FriendsSource { get => friendsSource; set => SetValue(ref friendsSource, value); }
+        private ObservableCollection<PlayerFriends> _friendsSource = new ObservableCollection<PlayerFriends>();
+        public ObservableCollection<PlayerFriends> FriendsSource { get => _friendsSource; set => SetValue(ref _friendsSource, value); }
 
-        private ObservableCollection<ListFriendsInfo> friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
-        public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => friendsDetailsSource; set => SetValue(ref friendsDetailsSource, value); }
+        private ObservableCollection<ListFriendsInfo> _friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
+        public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _friendsDetailsSource; set => SetValue(ref _friendsDetailsSource, value); }
 
-        private ObservableCollection<ListSource> filterSourceItems = new ObservableCollection<ListSource>();
-        public ObservableCollection<ListSource> FilterSourceItems { get => filterSourceItems; set => SetValue(ref filterSourceItems, value); }
+        private ObservableCollection<ListSource> _filterSourceItems = new ObservableCollection<ListSource>();
+        public ObservableCollection<ListSource> FilterSourceItems { get => _filterSourceItems; set => SetValue(ref _filterSourceItems, value); }
 
-        private DateTime lastFriendsRefresh = DateTime.Now;
-        public DateTime LastFriendsRefresh { get => lastFriendsRefresh; set => SetValue(ref lastFriendsRefresh, value); }
+        private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
+        public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
+
+        private DateTime _lastFriendsRefresh = DateTime.Now;
+        public DateTime LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
 
 
         #region Menus

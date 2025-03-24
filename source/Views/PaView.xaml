@@ -497,6 +497,25 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
+                    <DockPanel Margin="0,0,10,0" Name="PART_DataRerefsh">
+                        <Label Content="{Binding FriendsDataLoading.SourceName, FallbackValue=SourceName}" />
+                        <Grid Margin="10,0,0,0">
+                            <ProgressBar Maximum="{Binding FriendsDataLoading.FriendCount}" Value="{Binding FriendsDataLoading.ActualCount}" Name="PART_Pb" Grid.Row="2" Height="30">
+                                <ProgressBar.Style>
+                                    <Style TargetType="ProgressBar" BasedOn="{StaticResource {x:Type ProgressBar}}">
+                                        <Setter Property="IsIndeterminate" Value="false" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=PART_Pb, Path=Maximum}" Value="0">
+                                                <Setter Property="IsIndeterminate" Value="True" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ProgressBar.Style>
+                            </ProgressBar>
+                            <Label Grid.Row="2" HorizontalAlignment="Center" Content="{Binding FriendsDataLoading.FriendName, FallbackValue=FriendName}" />
+                        </Grid>
+                    </DockPanel>
+                    
                     <Label Grid.Column="1" Content="{DynamicResource LOCCommonLastUpdate}" />
                     <Label Grid.Column="3" Content="{Binding LastFriendsRefresh, Converter={StaticResource LocalDateTimeConverter}}" />
                     <Button Name="PART_BtFriends" Grid.Column="5" Content="{DynamicResource LOCPaRefreshFriendsData}" Click="Button_RefreshFriendsData" />

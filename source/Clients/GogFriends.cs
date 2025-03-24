@@ -100,7 +100,7 @@ namespace PlayerActivities.Clients
                                 Achievements = x.AchievementsUnlocked,
                                 Playtime = x.Playtime,
                                 Id = x.Id,
-                                IsCommun = false,
+                                IsCommun = x.IsCommun,
                                 Link = x.Link,
                                 Name = x.Name
                             }).ToList()

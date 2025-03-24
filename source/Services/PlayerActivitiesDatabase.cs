@@ -640,6 +640,20 @@ namespace PlayerActivities.Services
             });
         }
 
+        public void RefreshFriends(PlayerActivities plugin)
+        {
+            FriendsDataIsDownloaded = false;
+
+            StopWatchFriendsDataLoading = new Stopwatch();
+            StopWatchFriendsDataLoading.Start();
+
+            Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
+            Database.SetGameInfo<Activity>();
+
+            _ = GetFriends(plugin, true);
+            FriendsDataLoaderClose();
+        }
+
         private void FriendsDataLoaderClose()
         {
             if (WindowFriendsDataLoading != null)
@@ -648,15 +662,15 @@ namespace PlayerActivities.Services
                 {
                     WindowFriendsDataLoading.Close();
                 }));
-
-                StopWatchFriendsDataLoading.Stop();
-                TimeSpan ts = StopWatchFriendsDataLoading.Elapsed;
-                Logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
-                    + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
-
-                FriendsDataIsCanceled = false;
-                FriendsDataIsDownloaded = true;
             }
+
+            StopWatchFriendsDataLoading.Stop();
+            TimeSpan ts = StopWatchFriendsDataLoading.Elapsed;
+            Logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
+                + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
+
+            FriendsDataIsCanceled = false;
+            FriendsDataIsDownloaded = true;
         }
 
 

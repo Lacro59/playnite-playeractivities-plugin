@@ -1,23 +1,11 @@
-﻿using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
-using CommonPluginsShared;
+﻿using CommonPluginsShared;
 using PlayerActivities.Models;
 using Playnite.SDK;
-using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using static CommonPluginsShared.PlayniteTools;
 using CommonPluginsStores;
-using System.Globalization;
-using PlayerActivities.Models.Steam;
-using CommonPluginsShared.Extensions;
 using CommonPluginsStores.Steam;
 using CommonPluginsStores.Models;
 using System.Collections.ObjectModel;
@@ -112,11 +100,10 @@ namespace PlayerActivities.Clients
                                 Achievements = x.AchievementsUnlocked,
                                 Playtime = x.Playtime,
                                 Id = x.Id,
-                                IsCommun = false,
+                                IsCommun = x.IsCommun,
                                 Link = x.Link,
                                 Name = x.Name
                             }).ToList()
-
                         };
 
                         PluginDatabase.FriendsDataLoading.ActualCount += 1;
