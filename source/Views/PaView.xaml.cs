@@ -87,7 +87,7 @@ namespace PlayerActivities.Views
             });
 
 
-            if (!PluginDatabase.PluginSettings.Settings.EnableGogFriends && !PluginDatabase.PluginSettings.Settings.EnableOriginFriends && !PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            if (!PluginDatabase.PluginSettings.Settings.EnableEpicFriends && !PluginDatabase.PluginSettings.Settings.EnableGogFriends && !PluginDatabase.PluginSettings.Settings.EnableOriginFriends && !PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
             {
                 PART_BtFriends.IsEnabled = false;
             }

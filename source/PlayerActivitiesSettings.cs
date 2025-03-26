@@ -23,6 +23,7 @@ namespace PlayerActivities
 
         public bool EnableSteamFriends { get; set; } = false;
         public bool EnableGogFriends { get; set; } = false;
+        public bool EnableEpicFriends { get; set; } = false;
         public bool EnableOriginFriends { get; set; } = false;
 
 
@@ -36,6 +37,7 @@ namespace PlayerActivities
 
         public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = false, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
+        public StoreSettings EpicStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         #endregion
 
         // Playnite serializes settings object to a JSON object and saves it as text file.
@@ -102,6 +104,14 @@ namespace PlayerActivities
                 PlayerActivities.GogApi.SaveCurrentUser();
                 PlayerActivities.GogApi.CurrentAccountInfos = null;
                 _ = PlayerActivities.GogApi.CurrentAccountInfos;
+            }
+
+            PlayerActivities.EpicApi.StoreSettings = Settings.EpicStoreSettings;
+            if (Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends)
+            {
+                PlayerActivities.EpicApi.SaveCurrentUser();
+                PlayerActivities.EpicApi.CurrentAccountInfos = null;
+                _ = PlayerActivities.EpicApi.CurrentAccountInfos;
             }
 
             Plugin.SavePluginSettings(Settings);

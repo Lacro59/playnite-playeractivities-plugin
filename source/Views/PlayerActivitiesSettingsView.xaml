@@ -8,6 +8,7 @@
              xmlns:PlayerActivities="clr-namespace:PlayerActivities" 
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
              xmlns:Gog="clr-namespace:CommonPluginsControls.Stores.Gog"
+             xmlns:Epic="clr-namespace:CommonPluginsControls.Stores.Epic"
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
@@ -34,16 +35,20 @@
                     </CheckBox>
 
 
-                    <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0">
+                    <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0" Name="PART_GOG">
                         <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
                     </CheckBox>
                     
                     <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
                         <Label Content="{DynamicResource LOCPaEnableOriginFriends}" />
                     </CheckBox>
-                    
-                    <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
+
+                    <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_STEAM">
                         <Label Content="{DynamicResource LOCPaEnableSteamFriends}" />
+                    </CheckBox>
+
+                    <CheckBox IsChecked="{Binding Settings.EnableEpicFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_EPIC">
+                        <Label Content="{DynamicResource LOCPaEnableEpicFriends}" />
                     </CheckBox>
                 </StackPanel>
             </ScrollViewer>
@@ -111,13 +116,20 @@
             <StackPanel Margin="10">
 
                 <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10"
+                                 Visibility="{Binding ElementName=PART_STEAM, Path=IsChecked}"
                                  ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
                                  UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
                                  UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
-                <Gog:PanelView x:Name="GogPanel" 
+                <Gog:PanelView x:Name="GogPanel" Margin="0,0,0,10"
+                               Visibility="{Binding ElementName=PART_GOG, Path=IsChecked}"
                                ForceAuth="True"
                                UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+                <Epic:PanelView x:Name="EpicPanel" 
+                                Visibility="{Binding ElementName=PART_EPIC, Path=IsChecked}"
+                                ForceAuth="True"
+                                UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
             </StackPanel>
         </TabItem>
     </TabControl>

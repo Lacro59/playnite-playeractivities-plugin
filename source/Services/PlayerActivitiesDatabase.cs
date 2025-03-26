@@ -583,7 +583,19 @@ namespace PlayerActivities.Services
                     origin = originFriends.GetFriends();
                 }
 
-                playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).ToList();
+                List<PlayerFriends> epic = new List<PlayerFriends>();
+                if (PluginSettings.Settings.EnableEpicFriends && !FriendsDataIsCanceled)
+                {
+                    FriendsDataLoading.FriendName = string.Empty;
+                    FriendsDataLoading.ActualCount = 0;
+                    FriendsDataLoading.FriendCount = 0;
+                    FriendsDataLoading.SourceName = "Epic";
+
+                    EpicFriends epicFriends = new EpicFriends();
+                    epic = epicFriends.GetFriends();
+                }
+
+                playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).Concat(epic).ToList();
 
                 PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
                 plugin.SavePluginSettings(PluginSettings.Settings);

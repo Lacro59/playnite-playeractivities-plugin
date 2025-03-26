@@ -13,7 +13,7 @@ namespace PlayerActivities.Models
     public class PlayerFriends
     {
         public string ClientName { get; set; }
-        public long FriendId { get; set; }
+        public string FriendId { get; set; }
         public string FriendPseudo { get; set; }
         public string FriendsAvatar { get; set; }
         public string FriendsLink { get; set; }
@@ -38,7 +38,7 @@ namespace PlayerActivities.Models
         public int GamesOwned { get; set; }
         public int GamesCompleted { get; set; }
         public int Achievements { get; set; }
-        public long Playtime { get; set; }
+        public int Playtime { get; set; }
     }
 
 
@@ -49,6 +49,6 @@ namespace PlayerActivities.Models
         public string Link { get; set; }
         public bool IsCommun { get; set; }
         public int Achievements { get; set; }
-        public long Playtime { get; set; }
+        public int Playtime { get; set; }
     }
 }

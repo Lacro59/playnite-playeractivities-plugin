@@ -1,6 +1,6 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsStores;
-using CommonPluginsStores.Gog;
+using CommonPluginsStores.Epic;
 using CommonPluginsStores.Models;
 using PlayerActivities.Models;
 using Playnite.SDK;
@@ -12,13 +12,13 @@ using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Clients
 {
-    public class GogFriends : GenericFriends
+    public class EpicFriends : GenericFriends
     {
-        private GogApi GogApi => PlayerActivities.GogApi;
-        internal override StoreApi StoreApi => GogApi;
+        private EpicApi EpicApi => PlayerActivities.EpicApi;
+        internal override StoreApi StoreApi => EpicApi;
 
 
-        public GogFriends() : base("GOG")
+        public EpicFriends() : base("Epic")
         {
 
         }
@@ -28,12 +28,12 @@ namespace PlayerActivities.Clients
         {
             List<PlayerFriends> Friends = new List<PlayerFriends>();
 
-            if (GogApi.IsUserLoggedIn)
+            if (EpicApi.IsUserLoggedIn)
             {
                 try
                 {
-                    AccountInfos CurrentUser = GogApi.CurrentAccountInfos;
-                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = GogApi.CurrentGamesInfos;
+                    AccountInfos CurrentUser = EpicApi.CurrentAccountInfos;
+                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = EpicApi.CurrentGamesInfos;
 
                     PlayerFriends playerFriendsUs = new PlayerFriends
                     {
@@ -62,7 +62,7 @@ namespace PlayerActivities.Clients
                     Friends.Add(playerFriendsUs);
 
 
-                    ObservableCollection<AccountInfos> CurrentFriendsInfos = GogApi.CurrentFriendsInfos;
+                    ObservableCollection<AccountInfos> CurrentFriendsInfos = EpicApi.CurrentFriendsInfos;
                     if (CurrentFriendsInfos == null)
                     {
                         return Friends;
@@ -78,7 +78,7 @@ namespace PlayerActivities.Clients
                         }
 
                         PluginDatabase.FriendsDataLoading.FriendName = y.Pseudo;
-                        ObservableCollection<AccountGameInfos> FriendGamesInfos = GogApi.GetAccountGamesInfos(y);
+                        ObservableCollection<AccountGameInfos> friendGamesInfos = EpicApi.GetAccountGamesInfos(y);
 
                         PlayerFriends playerFriends = new PlayerFriends
                         {
@@ -91,11 +91,11 @@ namespace PlayerActivities.Clients
                             IsUser = false,
                             Stats = new PlayerStats
                             {
-                                GamesOwned = FriendGamesInfos.Count,
-                                Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
-                                Playtime = FriendGamesInfos.Sum(x => x.Playtime)
+                                GamesOwned = friendGamesInfos?.Count ?? 0,
+                                Achievements = friendGamesInfos?.Sum(x => x.AchievementsUnlocked) ?? 0,
+                                Playtime = friendGamesInfos?.Sum(x => x.Playtime) ?? 0
                             },
-                            Games = FriendGamesInfos.Select(x => new PlayerGames
+                            Games = friendGamesInfos?.Select(x => new PlayerGames
                             {
                                 Achievements = x.AchievementsUnlocked,
                                 Playtime = x.Playtime,
@@ -103,7 +103,7 @@ namespace PlayerActivities.Clients
                                 IsCommun = x.IsCommun,
                                 Link = x.Link,
                                 Name = x.Name
-                            }).ToList()
+                            }).ToList() ?? new List<PlayerGames>()
                         };
 
                         PluginDatabase.FriendsDataLoading.ActualCount += 1;

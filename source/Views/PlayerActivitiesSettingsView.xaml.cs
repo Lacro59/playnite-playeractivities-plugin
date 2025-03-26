@@ -23,6 +23,7 @@ namespace PlayerActivities.Views
 
             SteamPanel.StoreApi = PlayerActivities.SteamApi;
             GogPanel.StoreApi = PlayerActivities.GogApi;
+            EpicPanel.StoreApi = PlayerActivities.EpicApi;
         }
     }
 }

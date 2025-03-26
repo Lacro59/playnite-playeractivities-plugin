@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
+using CommonPluginsStores.Epic;
 using CommonPluginsStores.Gog;
 using CommonPluginsStores.Steam;
 using PlayerActivities.Clients;
@@ -36,6 +37,7 @@ namespace PlayerActivities
 
         public static SteamApi SteamApi { get; set; }
         public static GogApi GogApi { get; set; }
+        public static EpicApi EpicApi { get; set; }
 
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
@@ -348,6 +350,15 @@ namespace PlayerActivities
                 GogApi.SetForceAuth(true);
                 GogApi.StoreSettings = PluginDatabase.PluginSettings.Settings.GogStoreSettings;
                 _ = GogApi.CurrentAccountInfos;
+            }
+
+            if (PluginDatabase.PluginSettings.Settings.PluginState.EpicIsEnabled)
+            {
+                EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.CheckDlc);
+                EpicApi.SetLanguage(API.Instance.ApplicationSettings.Language);
+                EpicApi.SetForceAuth(true);
+                EpicApi.StoreSettings = PluginDatabase.PluginSettings.Settings.EpicStoreSettings;
+                _ = EpicApi.CurrentAccountInfos;
             }
         }
 
