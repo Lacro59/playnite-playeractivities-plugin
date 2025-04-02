@@ -12,6 +12,10 @@
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+
     <TabControl Margin="20">
         <TabItem Header="{DynamicResource LOCPa}">
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
@@ -114,20 +118,19 @@
 
         <TabItem Header="{DynamicResource LOCLibraries}">
             <StackPanel Margin="10">
-
                 <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10"
-                                 Visibility="{Binding ElementName=PART_STEAM, Path=IsChecked}"
+                                 Visibility="{Binding ElementName=PART_STEAM, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
                                  ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
                                  UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
                                  UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
                 <Gog:PanelView x:Name="GogPanel" Margin="0,0,0,10"
-                               Visibility="{Binding ElementName=PART_GOG, Path=IsChecked}"
+                               Visibility="{Binding ElementName=PART_GOG, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
                                ForceAuth="True"
                                UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
                 <Epic:PanelView x:Name="EpicPanel" 
-                                Visibility="{Binding ElementName=PART_EPIC, Path=IsChecked}"
+                                Visibility="{Binding ElementName=PART_EPIC, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 ForceAuth="True"
                                 UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
             </StackPanel>
