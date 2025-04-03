@@ -38,7 +38,7 @@ namespace PlayerActivities.Services
 
                 PaView ViewExtension = new PaView(plugin);
                 Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(ResourceProvider.GetString("LOCPa"), ViewExtension, windowOptions);
-                windowExtension.ShowDialog();
+                _ = windowExtension.ShowDialog();
             };
             Visible = plugin.PluginSettings.Settings.EnableIntegrationButtonHeader;
         }

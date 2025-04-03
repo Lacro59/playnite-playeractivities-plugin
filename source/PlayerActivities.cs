@@ -4,7 +4,6 @@ using CommonPluginsShared.PlayniteExtended;
 using CommonPluginsStores.Epic;
 using CommonPluginsStores.Gog;
 using CommonPluginsStores.Steam;
-using PlayerActivities.Clients;
 using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;

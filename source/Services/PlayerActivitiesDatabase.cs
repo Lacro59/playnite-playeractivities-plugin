@@ -73,7 +73,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel PluginSettings, string PluginUserDataPath) : base(PluginSettings, "PlayerActivities", PluginUserDataPath)
+        public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
             SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", "cebe6d32-8c46-4459-b993-5a5189d60788", "SuccessStory");
             GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", "afbb1a0d-04a1-4d0c-9afa-c6e42ca855b4", "GameActivity");
@@ -106,12 +106,12 @@ namespace PlayerActivities.Services
         }
 
 
-        public override PlayerActivitiesData Get(Guid Id, bool OnlyCache = false, bool Force = false)
+        public override PlayerActivitiesData Get(Guid id, bool onlyCache = false, bool force = false)
         {
-            PlayerActivitiesData playerActivities = base.GetOnlyCache(Id);
+            PlayerActivitiesData playerActivities = base.GetOnlyCache(id);
             if (playerActivities == null)
             {
-                Game game = API.Instance.Database.Games.Get(Id);
+                Game game = API.Instance.Database.Games.Get(id);
                 if (game != null)
                 {
                     playerActivities = GetDefault(game);
@@ -123,7 +123,7 @@ namespace PlayerActivities.Services
 
 
         #region Plugin data
-        public void InitializePluginData(bool forced = false, Guid Id = default)
+        public void InitializePluginData(bool forced = false, Guid id = default)
         {
             GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
                 $"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}",
@@ -141,7 +141,7 @@ namespace PlayerActivities.Services
                 {
                     Database.ForEach(y =>
                     {
-                        if (Id == default || y.Game?.Id == Id)
+                        if (id == default || y.Game?.Id == id)
                         {
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
@@ -151,20 +151,20 @@ namespace PlayerActivities.Services
                     });
                 }
 
-                FirstScanSuccessStory(Id);
-                FirstScanScreenshotsVisualizer(Id);
+                FirstScanSuccessStory(id);
+                FirstScanScreenshotsVisualizer(id);
                 if (!forced)
                 {
-                    FirstScanGameActivity(Id);
+                    FirstScanGameActivity(id);
                 }
-                FirstScanHowLongToBeat(Id);
+                FirstScanHowLongToBeat(id);
 
                 Database.EndBufferUpdate();
             }, globalProgressOptions);
         }
 
 
-        public void FirstScanSuccessStory(Guid Id = default)
+        public void FirstScanSuccessStory(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
             {
@@ -173,7 +173,7 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (Id == default || fileId == Id)
+                            if (id == default || fileId == id)
                             {
                                 SetAchievements(fileId);
                             }
@@ -182,19 +182,19 @@ namespace PlayerActivities.Services
             }
         }
 
-        public void SetAchievements(Guid Id)
+        public void SetAchievements(Guid id)
         {
             try
             {
                 List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
 
-                string PathData = Path.Combine(SuccessStoryPath, Id + ".json");
+                string PathData = Path.Combine(SuccessStoryPath, id + ".json");
                 if (File.Exists(PathData))
                 {
                     GameAchievements obj = Serialization.FromJsonFile<GameAchievements>(PathData);
                     if (obj.Items?.Count() > 0 && obj.Progression > 0)
                     {
-                        PlayerActivitiesData playerActivitiesData = Get(Id);
+                        PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
@@ -248,7 +248,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanScreenshotsVisualizer(Guid Id = default)
+        public void FirstScanScreenshotsVisualizer(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
             {
@@ -257,7 +257,7 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
                         {
-                            if (Id == default(Guid) || fileId == Id)
+                            if (id == default(Guid) || fileId == id)
                             {
                                 SetScreenshots(fileId);
                             }
@@ -266,19 +266,19 @@ namespace PlayerActivities.Services
             }
         }
 
-        public void SetScreenshots(Guid Id)
+        public void SetScreenshots(Guid id)
         {
             try
             {
                 List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
 
-                string PathData = Path.Combine(ScreenshotsVisuliazerPath, Id + ".json");
+                string PathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
                 if (File.Exists(PathData))
                 {
                     GameScreenshots obj = Serialization.FromJsonFile<GameScreenshots>(PathData);
                     if (obj.Items?.Count() > 0)
                     {
-                        PlayerActivitiesData playerActivitiesData = Get(Id);
+                        PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
@@ -311,7 +311,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanGameActivity(Guid Id = default)
+        public void FirstScanGameActivity(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
             {
@@ -320,7 +320,7 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (Id == default(Guid) || fileId == Id)
+                            if (id == default(Guid) || fileId == id)
                             {
                                 SetGameActivity(fileId);
                             }
@@ -329,17 +329,17 @@ namespace PlayerActivities.Services
             }
         }
 
-        private void SetGameActivity(Guid Id)
+        private void SetGameActivity(Guid id)
         {
             try
             {
-                string PathData = Path.Combine(GameActivityPath, Id + ".json");
+                string PathData = Path.Combine(GameActivityPath, id + ".json");
                 if (File.Exists(PathData))
                 {
                     GameActivities obj = Serialization.FromJsonFile<GameActivities>(PathData);
                     if (obj.Items?.Count() > 0)
                     {
-                        PlayerActivitiesData playerActivitiesData = Get(Id);
+                        PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
@@ -387,7 +387,7 @@ namespace PlayerActivities.Services
         }
 
 
-        public void FirstScanHowLongToBeat(Guid Id = default)
+        public void FirstScanHowLongToBeat(Guid id = default)
         {
             if (Directory.Exists(HowLongToBeatPath))
             {
@@ -396,7 +396,7 @@ namespace PlayerActivities.Services
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (Id == default || fileId == Id)
+                            if (id == default || fileId == id)
                             {
                                 SetHowLongToBeat(fileId);
                             }
@@ -405,17 +405,17 @@ namespace PlayerActivities.Services
             }
         }
 
-        public void SetHowLongToBeat(Guid Id)
+        public void SetHowLongToBeat(Guid id)
         {
             try
             {
-                string PathData = Path.Combine(HowLongToBeatPath, Id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(HowLongToBeatPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameHowLongToBeat obj = Serialization.FromJsonFile<GameHowLongToBeat>(PathData);
+                    GameHowLongToBeat obj = Serialization.FromJsonFile<GameHowLongToBeat>(pathData);
                     if (obj.Items?.Count() > 0)
                     {
-                        PlayerActivitiesData playerActivitiesData = Get(Id);
+                        PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
@@ -451,10 +451,10 @@ namespace PlayerActivities.Services
         }
 
 
-        public ObservableCollection<ActivityListGrouped> GetActivitiesData(Guid Id)
+        public ObservableCollection<ActivityListGrouped> GetActivitiesData(Guid id)
         {
             ObservableCollection<ActivityListGrouped> data = GetActivitiesData(false);
-            return data.Where(x => x.GameContext.Id == Id)?.ToObservable();
+            return data.Where(x => x.GameContext.Id == id)?.ToObservable();
         }
 
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
