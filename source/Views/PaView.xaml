@@ -367,6 +367,17 @@
 
                         <ListView.View>
                             <GridView>
+                                <GridViewColumn Width="65">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCActionsLabel}" Tag="noSort" />
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button ToolTip="{DynamicResource LOCCommonRefreshGameData}" HorizontalAlignment="Center"
+                                                    Tag="{Binding}" Click="Button_Click"
+                                                    Content="&#xefd1;" FontFamily="{DynamicResource FontIcoFont}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                
                                 <GridViewColumn Width="50">
                                     <GridViewColumnHeader Content="{DynamicResource LOCGameIconTitle}" Tag="noSort" />
                                     <GridViewColumn.CellTemplate>
@@ -414,9 +425,9 @@
                                     <GridViewColumnHeader Content="{DynamicResource LOCPaGameOwned}" />
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesCompleted}">
+                                <!--GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesCompleted}">
                                     <GridViewColumnHeader Content="{DynamicResource LOCPaGameCompleted}" />
-                                </GridViewColumn>
+                                </GridViewColumn-->
 
                                 <GridViewColumn Width="70" DisplayMemberBinding="{Binding Stats.Achievements}">
                                     <GridViewColumnHeader Content="🏆" />
@@ -424,6 +435,10 @@
 
                                 <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
                                     <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding LastRefresh, Converter={StaticResource LocalDateTimeConverter}}">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCCommonLastUpdate}" />
                                 </GridViewColumn>
                             </GridView>
                         </ListView.View>

@@ -30,6 +30,8 @@ namespace PlayerActivities.Models
         public List<PlayerGames> Games { get; set; } = new List<PlayerGames>();
 
         public RelayCommand<object> NavigateUrl { get; } = new RelayCommand<object>((url) => GlobalCommands.NavigateUrl(url));
+
+        public DateTime LastRefresh { get; set; } = DateTime.Now;
     }
 
 

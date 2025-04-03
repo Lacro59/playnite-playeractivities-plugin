@@ -42,6 +42,8 @@ namespace PlayerActivities.Clients
 
         public abstract List<PlayerFriends> GetFriends();
 
+        public abstract PlayerFriends GetFriends(PlayerFriends pf);
+
 
         #region Errors
         public virtual void ShowNotificationPluginNoAuthenticate(string Message, ExternalPlugin PluginSource)

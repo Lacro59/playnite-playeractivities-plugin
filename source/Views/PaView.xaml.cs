@@ -204,6 +204,28 @@ namespace PlayerActivities.Views
             });
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button)
+            {
+                if (button.Tag is PlayerFriends item)
+                {
+                    button.IsEnabled = false;
+                    PART_BtFriends.IsEnabled = false;
+                    _ = Task.Run(() => {
+                        PluginDatabase.RefreshFriends(Plugin, item.ClientName, item);
+                        GetFriends();
+
+                        _ = (Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                        {
+                            button.IsEnabled = true;
+                            PART_BtFriends.IsEnabled = true;
+                        })));
+                    });
+                }
+            }
+        }
+
 
         private void ListViewExtend_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {

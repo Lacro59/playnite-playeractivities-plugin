@@ -122,5 +122,50 @@ namespace PlayerActivities.Clients
 
             return Friends;
         }
+
+        public override PlayerFriends GetFriends(PlayerFriends pf)
+        {
+            if (SteamApi.IsUserLoggedIn)
+            {
+                try
+                {
+                    AccountInfos accountInfos = new AccountInfos
+                    {
+                        UserId = pf.FriendId,
+                        Pseudo = pf.FriendPseudo,
+                        IsCurrent = pf.IsUser
+                    };
+
+                    ObservableCollection<AccountGameInfos> FriendGamesInfos = SteamApi.GetAccountGamesInfos(accountInfos);
+
+                    pf.Stats = new PlayerStats
+                    {
+                        GamesOwned = FriendGamesInfos.Count,
+                        Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
+                        Playtime = FriendGamesInfos.Sum(x => x.Playtime)
+                    };
+                    pf.Games = FriendGamesInfos.Select(x => new PlayerGames
+                    {
+                        Achievements = x.AchievementsUnlocked,
+                        Playtime = x.Playtime,
+                        Id = x.Id,
+                        IsCommun = x.IsCommun,
+                        Link = x.Link,
+                        Name = x.Name
+                    }).ToList();
+                    pf.LastRefresh = DateTime.Now;
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, true, PluginDatabase.PluginName);
+                }
+            }
+            else
+            {
+                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.PlayerActivities);
+            }
+
+            return pf;
+        }
     }
 }

@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Threading;
 using PlayerActivities.Views;
 using System.Collections.ObjectModel;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Services
 {
@@ -648,7 +649,7 @@ namespace PlayerActivities.Services
                 }));
 
                 _ = GetFriends(plugin, true);
-                FriendsDataLoaderClose();
+                FriendsDataLoaderClose(string.Empty);
             });
         }
 
@@ -663,10 +664,67 @@ namespace PlayerActivities.Services
             Database.SetGameInfo<Activity>();
 
             _ = GetFriends(plugin, true);
-            FriendsDataLoaderClose();
+            FriendsDataLoaderClose(string.Empty);
         }
 
-        private void FriendsDataLoaderClose()
+        public void RefreshFriends(PlayerActivities plugin, string clientName, PlayerFriends pf)
+        {
+            FriendsDataIsDownloaded = false;
+
+            StopWatchFriendsDataLoading = new Stopwatch();
+            StopWatchFriendsDataLoading.Start();
+
+            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+
+            string pathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
+            if (File.Exists(pathPlayerFriends))
+            {
+                try
+                {
+                    playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(pathPlayerFriends);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false);
+                }
+            }
+
+
+            if (PluginSettings.Settings.EnableGogFriends && clientName.IsEqual("GOG"))
+            {
+                GogFriends gogFriends = new GogFriends();
+                pf = gogFriends.GetFriends(pf);
+            }
+
+            if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
+            {
+                SteamFriends steamFriends = new SteamFriends();
+                pf = steamFriends.GetFriends(pf);
+            }
+
+            if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
+            {
+                OriginFriends originFriends = new OriginFriends();
+                pf = originFriends.GetFriends(pf);
+            }
+
+            if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
+            {
+                EpicFriends epicFriends = new EpicFriends();
+                pf = epicFriends.GetFriends(pf);
+            }
+
+            int index = playerFriends.FindIndex(item => item.FriendId.IsEqual(pf.FriendId));
+            if (index != -1)
+            {
+                playerFriends[index] = pf;
+            }
+
+            File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
+            FriendsDataLoaderClose(pf.FriendPseudo);
+        }
+
+        private void FriendsDataLoaderClose(string pseudo)
         {
             if (WindowFriendsDataLoading != null)
             {
@@ -679,6 +737,7 @@ namespace PlayerActivities.Services
             StopWatchFriendsDataLoading.Stop();
             TimeSpan ts = StopWatchFriendsDataLoading.Elapsed;
             Logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
+                + (!pseudo.IsNullOrEmpty() ? $" - {pseudo} " : "")
                 + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
 
             FriendsDataIsCanceled = false;
