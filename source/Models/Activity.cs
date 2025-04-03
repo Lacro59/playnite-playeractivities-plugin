@@ -1,5 +1,6 @@
 ﻿using CommonPluginsShared.Converters;
 using CommonPluginsShared.Extensions;
+using NodaTime;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
@@ -23,24 +24,44 @@ namespace PlayerActivities.Models
         {
             get
             {
-                int years = DateActivity.GetYearsBetween();
-                int months = DateActivity.GetMonthsBetween();
-                int days = DateActivity.GetDaysBetween();
+                Period period = Period.Between(LocalDateTime.FromDateTime(DateActivity), LocalDateTime.FromDateTime(DateTime.Now), PeriodUnits.YearMonthDay);
 
-                //if (years > 0)
-                //{
-                //    return years == 1 ? string.Format(ResourceProvider.GetString("LOCPaYearAgo"), years) : string.Format(ResourceProvider.GetString("LOCPaYearsAgo"), years);
-                //}
+                int years = period.Years;
+                int months = period.Months;
+                int days = period.Days;
+
+                string result = "";
+
+                if (years > 0)
+                {
+                    result += years == 1 ?
+                        string.Format(ResourceProvider.GetString("LOCCommonYear"), years) :
+                        string.Format(ResourceProvider.GetString("LOCCommonYears"), years);
+                }
+
                 if (months > 0)
                 {
-                    return months == 1 ? string.Format(ResourceProvider.GetString("LOCPaMonthAgo"), months) : string.Format(ResourceProvider.GetString("LOCPaMonthsAgo"), months);
-                }
-                if (days >= 0)
-                {
-                    return days >= 0 ? string.Format(ResourceProvider.GetString("LOCPaDayAgo"), days) : string.Format(ResourceProvider.GetString("LOCPaDaysAgo"), days);
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        result += ", ";
+                    }
+                    result += months == 1 ?
+                        string.Format(ResourceProvider.GetString("LOCCommonMonth"), months) :
+                        string.Format(ResourceProvider.GetString("LOCCommonMonths"), months);
                 }
 
-                return string.Empty;
+                if (days > 0)
+                {
+                    if (!string.IsNullOrEmpty(result))
+                    {
+                        result += ", ";
+                    }
+                    result += days == 1 ?
+                        string.Format(ResourceProvider.GetString("LOCCommonDay"), days) :
+                        string.Format(ResourceProvider.GetString("LOCCommonDays"), days);
+                }
+
+                return result;
             }
         }
 
