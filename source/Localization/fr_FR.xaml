@@ -20,6 +20,7 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">Activer les amis Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Activer les amis GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Activer les amis Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Afficher les activités du jeu</sys:String>
 
@@ -45,8 +46,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Jeu posséd</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Jeux terminés</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">🕒 des amis</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Votre 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Succès</sys:String>
