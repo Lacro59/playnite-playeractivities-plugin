@@ -20,6 +20,7 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Origin フレンドを有効にする</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">ゲームのアクティビティを表示</sys:String>
 
@@ -45,8 +46,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">所有済みのゲーム</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">クリア済みのゲーム</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">フレンド </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">あなた </sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">フレンド 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">あなた 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">実績</sys:String>
