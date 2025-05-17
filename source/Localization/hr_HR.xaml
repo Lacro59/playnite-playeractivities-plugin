@@ -46,8 +46,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your 🏆</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
