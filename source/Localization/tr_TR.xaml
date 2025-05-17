@@ -20,6 +20,7 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">Origin arkadaşlarını etkinleştir</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Epic arkadaşlarını etkinleştir</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Oyun etkinliklerini görüntüle</sys:String>
 
@@ -45,8 +46,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Oyuna sahipsiniz</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Tamamlanan oyunlar</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Sizin </sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Sizin</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Arkadaşlar 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>

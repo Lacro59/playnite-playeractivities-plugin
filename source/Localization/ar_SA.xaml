@@ -20,6 +20,7 @@
     <sys:String x:Key="LOCPaEnableSteamFriends">تمكين أصدقاء Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">تمكين أصدقاء GOG</sys:String>
     <sys:String x:Key="LOCPaEnableOriginFriends">تمكين أصدقاء Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
@@ -36,17 +37,17 @@
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">لقد أكملت اللعبة.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">منذ {0} ي</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">منذ {0} </sys:String>
     <sys:String x:Key="LOCPaDaysAgo">منذ {0} أيّا</sys:String>
     <sys:String x:Key="LOCPaMonthAgo">منذ {0} شهر</sys:String>
     <sys:String x:Key="LOCPaMonthsAgo">منذ {0} أشهر</sys:String>
     <sys:String x:Key="LOCPaYearAgo">منذ {0} عا</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">منذ {0} سنوات</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">لعبة مملو</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">الألعاب المكتم</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends </sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your </sys:String>
+    <sys:String x:Key="LOCPaGameOwned">لعبة ممل</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">الألعاب المكت</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
