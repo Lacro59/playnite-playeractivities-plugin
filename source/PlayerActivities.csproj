@@ -105,6 +105,7 @@
     <Compile Include="Models\Activity.cs" />
     <Compile Include="Models\ActivityElement.cs" />
     <Compile Include="Models\ActivityList.cs" />
+    <Compile Include="Models\Enumerations\ActivityType.cs" />
     <Compile Include="Models\FriendsDataLoading.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />

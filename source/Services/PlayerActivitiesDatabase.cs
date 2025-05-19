@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using PlayerActivities.Clients;
@@ -22,11 +21,11 @@ using System.Windows;
 using System.Windows.Threading;
 using PlayerActivities.Views;
 using System.Collections.ObjectModel;
-using static CommonPluginsShared.PlayniteTools;
+using PlayerActivities.Models.Enumerations;
 
 namespace PlayerActivities.Services
 {
-    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, Models.PlayerActivitiesData, Activity>
+    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, PlayerActivitiesData, Activity>
     {
         private string SuccessStoryPath { get; }
         private string GameActivityPath { get; }
@@ -34,33 +33,33 @@ namespace PlayerActivities.Services
         private string HowLongToBeatPath { get; }
 
 
-        private bool friendsDataIsDownloaded = true;
-        public bool FriendsDataIsDownloaded { get => friendsDataIsDownloaded; set => SetValue(ref friendsDataIsDownloaded, value); }
+        private bool _friendsDataIsDownloaded = true;
+        public bool FriendsDataIsDownloaded { get => _friendsDataIsDownloaded; set => SetValue(ref _friendsDataIsDownloaded, value); }
 
-        private bool friendsDataIsCanceled = false;
-        public bool FriendsDataIsCanceled { get => friendsDataIsCanceled; set => SetValue(ref friendsDataIsCanceled, value); }
+        private bool _friendsDataIsCanceled = false;
+        public bool FriendsDataIsCanceled { get => _friendsDataIsCanceled; set => SetValue(ref _friendsDataIsCanceled, value); }
 
         private Window WindowFriendsDataLoading { get; set; } = null;
         private Stopwatch StopWatchFriendsDataLoading { get; set; } = new Stopwatch();
 
-        private FriendsDataLoading friendsDataLoading = new FriendsDataLoading();
-        public FriendsDataLoading FriendsDataLoading { get => friendsDataLoading; set => SetValue(ref friendsDataLoading, value); }
+        private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
+        public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
 
-        private HltbUserStats hltbUserStats;
+        private HltbUserStats _hltbUserStats;
         private HltbUserStats HltbUserStats
         {
             get
             {
-                if (hltbUserStats == null)
+                if (_hltbUserStats == null)
                 {
-                    string PathHltbUserStats = Path.Combine(HowLongToBeatPath, "..", "HltbUserStats.json");
-                    if (File.Exists(PathHltbUserStats))
+                    string pathHltbUserStats = Path.Combine(HowLongToBeatPath, "..", "HltbUserStats.json");
+                    if (File.Exists(pathHltbUserStats))
                     {
                         try
                         {
-                            hltbUserStats = Serialization.FromJsonFile<HltbUserStats>(PathHltbUserStats);
-                            hltbUserStats.TitlesList = hltbUserStats.TitlesList.Where(x => x != null).ToList();
+                            _hltbUserStats = Serialization.FromJsonFile<HltbUserStats>(pathHltbUserStats);
+                            _hltbUserStats.TitlesList = _hltbUserStats.TitlesList.Where(x => x != null).ToList();
                         }
                         catch (Exception ex)
                         {
@@ -68,7 +67,7 @@ namespace PlayerActivities.Services
                         }
                     }
                 }
-                return hltbUserStats;
+                return _hltbUserStats;
             }
         }
 
@@ -79,30 +78,6 @@ namespace PlayerActivities.Services
             GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", "afbb1a0d-04a1-4d0c-9afa-c6e42ca855b4", "GameActivity");
             ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", "c6c8276f-91bf-48e5-a1d1-4bee0b493488", "ScreenshotsVisualizer");
             HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", "e08cd51f-9c9a-4ee3-a094-fde03b55492f", "HowLongToBeat");
-        }
-
-
-        protected override bool LoadDatabase()
-        {
-            try
-            {
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-
-                Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
-                Database.SetGameInfo<Activity>();
-
-                stopWatch.Stop();
-                TimeSpan ts = stopWatch.Elapsed;
-                Logger.Info($"LoadDatabase with {Database.Count} items - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex, false, true, PluginName);
-                return false;
-            }
-
-            return true;
         }
 
 
@@ -123,13 +98,14 @@ namespace PlayerActivities.Services
 
 
         #region Plugin data
+
         public void InitializePluginData(bool forced = false, Guid id = default)
         {
-            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
-                $"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}",
-                false
-            );
-            globalProgressOptions.IsIndeterminate = true;
+            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions($"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}")
+            {
+                Cancelable = false,
+                IsIndeterminate = true
+            };
 
             _ = API.Instance.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
             {
@@ -451,94 +427,113 @@ namespace PlayerActivities.Services
         }
 
 
+        /// <summary>
+        /// Retrieves activities related to a specific game identified by its Guid.
+        /// </summary>
+        /// <param name="id">The unique identifier (Guid) of the game to filter activities for.</param>
+        /// <returns>
+        /// An <see cref="ObservableCollection{ActivityListGrouped}"/> containing only
+        /// the activities associated with the specified game. Returns an empty collection if none are found.
+        /// </returns>
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(Guid id)
         {
             ObservableCollection<ActivityListGrouped> data = GetActivitiesData(false);
-            return data.Where(x => x.GameContext.Id == id)?.ToObservable();
+            return new ObservableCollection<ActivityListGrouped>(data.Where(x => x.GameContext.Id == id));
         }
 
+        /// <summary>
+        /// Retrieves and optionally groups recent activity data for all games in the database.
+        /// </summary>
+        /// <param name="grouped">
+        /// If <c>true</c>, groups activities by game and relative time period ("TimeAgo").
+        /// If <c>false</c>, each activity is listed independently, grouped only by game.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ObservableCollection{ActivityListGrouped}"/> containing grouped activity data,
+        /// ordered by date descending. Returns an empty collection if no activity matches the configured types.
+        /// </returns>
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
         {
-            ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
-            Database.ForEach(x =>
-            {
-                x.Items.ForEach(y =>
+            // Step 1: Flatten all activity items from games that exist in the database
+            var activityLists = Database
+                .Where(x => x.GameExist)
+                .SelectMany(x => x.Items.Select(y => new ActivityList
                 {
-                    activityLists.Add(new ActivityList
-                    {
-                        GameContext = x.Game,
-                        DateActivity = y.DateActivity,
-                        Type = y.Type,
-                        Value = y.Value
-                    });
-                });
-            });
+                    GameContext = x.Game,
+                    DateActivity = y.DateActivity,
+                    Type = y.Type,
+                    Value = y.Value
+                }))
+                .OrderByDescending(x => x.DateActivity)
+                .ToList();
 
+            // Step 2: Build the list of activity types to include based on plugin settings
+            var activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
 
-            // Options
-            List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
             if (PluginSettings.Settings.EnableHowLongToBeatData)
-            {
                 activityTypes.Add(ActivityType.HowLongToBeatCompleted);
-            }
+
             if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
-            {
                 activityTypes.Add(ActivityType.ScreenshotsTaked);
-            }
+
             if (PluginSettings.Settings.EnableSuccessStoryData)
             {
                 activityTypes.Add(ActivityType.AchievementsGoal);
                 activityTypes.Add(ActivityType.AchievementsUnlocked);
             }
 
+            // Step 3: Filter and group activity data
+            var filteredActivities = activityLists.Where(x => activityTypes.Contains(x.Type));
 
-            ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
-            Game GameContext = null;
-            string TimeAgo = string.Empty;
+            var groupedActivities = new ObservableCollection<ActivityListGrouped>();
 
-            activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
-            activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
+            foreach (var activity in filteredActivities)
             {
-                IEnumerable<ActivityListGrouped> finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && (!grouped || z.TimeAgo.IsEqual(x.TimeAgo)));
-                if (finded.Count() > 0)
+                var existingGroup = groupedActivities.FirstOrDefault(g =>
+                    g.GameContext.Id == activity.GameContext.Id &&
+                    (!grouped || g.TimeAgo.IsEqual(activity.TimeAgo)));
+
+                if (existingGroup != null)
                 {
-                    finded.First().Activities.Add(new Activity
+                    existingGroup.Activities.Add(new Activity
                     {
-                        DateActivity = x.DateActivity,
-                        Value = x.Value,
-                        Type = x.Type
+                        DateActivity = activity.DateActivity,
+                        Value = activity.Value,
+                        Type = activity.Type
                     });
                 }
                 else
                 {
-                    GameContext = x.GameContext;
-                    TimeAgo = x.TimeAgo;
-                    activityListsGrouped.Add(new ActivityListGrouped
+                    groupedActivities.Add(new ActivityListGrouped
                     {
-                        GameContext = x.GameContext,
-                        DtString = x.DateActivity.ToString("yyyy-MM-dd"),
-                        TimeAgo = x.TimeAgo,
+                        GameContext = activity.GameContext,
+                        DtString = activity.DateActivity.ToString("yyyy-MM-dd"),
+                        TimeAgo = activity.TimeAgo,
                         Activities = new List<Activity>
+                        {
+                            new Activity
                             {
-                                new Activity
-                                {
-                                    DateActivity = x.DateActivity,
-                                    Value = x.Value,
-                                    Type = x.Type
-                                }
+                                DateActivity = activity.DateActivity,
+                                Value = activity.Value,
+                                Type = activity.Type
                             }
+                        }
                     });
                 }
-            });
+            }
 
-            // Order grouped activities
-            activityListsGrouped.ForEach(x =>
+            // Step 4: Sort activities within each group
+            foreach (var group in groupedActivities)
             {
-                _ = x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
-            });
+                group.Activities = group.Activities
+                    .OrderByDescending(a => a.DateActivity)
+                    .ThenBy(a => a.Type)
+                    .ToList();
+            }
 
-            return activityListsGrouped;
+            return groupedActivities;
         }
+
         #endregion
 
 

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlayerActivities.Views" 
              xmlns:controls="clr-namespace:PlayerActivities.Controls"
-             xmlns:enum="clr-namespace:PlayerActivities.Models" 
+             xmlns:enum="clr-namespace:PlayerActivities.Models.Enumerations"
              xmlns:convertersshared="clr-namespace:CommonPluginsShared.Converters" 
              xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" 
              xmlns:controls2="clr-namespace:CommonPluginsControls.Controls" 

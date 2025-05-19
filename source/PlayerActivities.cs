@@ -6,6 +6,7 @@ using CommonPluginsStores.Gog;
 using CommonPluginsStores.Steam;
 using PlayerActivities.Controls;
 using PlayerActivities.Models;
+using PlayerActivities.Models.Enumerations;
 using PlayerActivities.Services;
 using PlayerActivities.Views;
 using Playnite.SDK;
@@ -250,7 +251,7 @@ namespace PlayerActivities
             try
             {
                 PlayerActivitiesData playerActivities = PluginDatabase.Get(args.Game);
-                if (playerActivities.IsFirst())
+                if (playerActivities.HasFirst())
                 {
                     playerActivities.Items.Add(new Activity
                     {
