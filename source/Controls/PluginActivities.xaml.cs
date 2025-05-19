@@ -10,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
 
 namespace PlayerActivities.Controls
 {
@@ -76,16 +74,16 @@ namespace PlayerActivities.Controls
 
     public class PluginActivitiesDataContext : ObservableObject, IDataContext
     {
-        private bool isActivated;
-        public bool IsActivated { get => isActivated; set => SetValue(ref isActivated, value); }
+        private bool _isActivated;
+        public bool IsActivated { get => _isActivated; set => SetValue(ref _isActivated, value); }
 
-        private bool showImage;
-        public bool ShowImage { get => showImage; set => SetValue(ref showImage, value); }
+        private bool _showImage;
+        public bool ShowImage { get => _showImage; set => SetValue(ref _showImage, value); }
 
-        private double maxHeight = double.NaN;
-        public double MaxHeight { get => maxHeight; set => SetValue(ref maxHeight, value); }
+        private double _maxHeight = double.NaN;
+        public double MaxHeight { get => _maxHeight; set => SetValue(ref _maxHeight, value); }
 
-        private ObservableCollection<ActivityListGrouped> items;
-        public ObservableCollection<ActivityListGrouped> Items { get => items; set => SetValue(ref items, value); }
+        private ObservableCollection<ActivityListGrouped> _items;
+        public ObservableCollection<ActivityListGrouped> Items { get => _items; set => SetValue(ref _items, value); }
     }
 }

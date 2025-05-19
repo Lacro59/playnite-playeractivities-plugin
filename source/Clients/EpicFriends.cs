@@ -24,9 +24,9 @@ namespace PlayerActivities.Clients
         }
 
 
-        public override List<PlayerFriends> GetFriends()
+        public override List<PlayerFriend> GetFriends()
         {
-            List<PlayerFriends> Friends = new List<PlayerFriends>();
+            List<PlayerFriend> Friends = new List<PlayerFriend>();
 
             if (EpicApi.IsUserLoggedIn)
             {
@@ -35,7 +35,7 @@ namespace PlayerActivities.Clients
                     AccountInfos CurrentUser = EpicApi.CurrentAccountInfos;
                     ObservableCollection<AccountGameInfos> CurrentGamesInfos = EpicApi.CurrentGamesInfos;
 
-                    PlayerFriends playerFriendsUs = new PlayerFriends
+                    PlayerFriend playerFriendsUs = new PlayerFriend
                     {
                         ClientName = ClientName,
                         FriendId = CurrentUser.UserId,
@@ -49,7 +49,7 @@ namespace PlayerActivities.Clients
                             Achievements = CurrentGamesInfos.Sum(x => x.AchievementsUnlocked),
                             Playtime = CurrentGamesInfos.Sum(x => x.Playtime)
                         },
-                        Games = CurrentGamesInfos.Select(x => new PlayerGames
+                        Games = CurrentGamesInfos.Select(x => new PlayerGame
                         {
                             Achievements = x.AchievementsUnlocked,
                             Playtime = x.Playtime,
@@ -80,7 +80,7 @@ namespace PlayerActivities.Clients
                         PluginDatabase.FriendsDataLoading.FriendName = y.Pseudo;
                         ObservableCollection<AccountGameInfos> friendGamesInfos = EpicApi.GetAccountGamesInfos(y);
 
-                        PlayerFriends playerFriends = new PlayerFriends
+                        PlayerFriend playerFriends = new PlayerFriend
                         {
                             ClientName = ClientName,
                             FriendId = y.UserId,
@@ -95,7 +95,7 @@ namespace PlayerActivities.Clients
                                 Achievements = friendGamesInfos?.Sum(x => x.AchievementsUnlocked) ?? 0,
                                 Playtime = friendGamesInfos?.Sum(x => x.Playtime) ?? 0
                             },
-                            Games = friendGamesInfos?.Select(x => new PlayerGames
+                            Games = friendGamesInfos?.Select(x => new PlayerGame
                             {
                                 Achievements = x.AchievementsUnlocked,
                                 Playtime = x.Playtime,
@@ -103,7 +103,7 @@ namespace PlayerActivities.Clients
                                 IsCommun = x.IsCommun,
                                 Link = x.Link,
                                 Name = x.Name
-                            }).ToList() ?? new List<PlayerGames>()
+                            }).ToList() ?? new List<PlayerGame>()
                         };
 
                         PluginDatabase.FriendsDataLoading.ActualCount += 1;
@@ -123,7 +123,7 @@ namespace PlayerActivities.Clients
             return Friends;
         }
 
-        public override PlayerFriends GetFriends(PlayerFriends pf)
+        public override PlayerFriend GetFriends(PlayerFriend pf)
         {
             if (EpicApi.IsUserLoggedIn)
             {
@@ -144,7 +144,7 @@ namespace PlayerActivities.Clients
                         Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
                         Playtime = FriendGamesInfos.Sum(x => x.Playtime)
                     };
-                    pf.Games = FriendGamesInfos.Select(x => new PlayerGames
+                    pf.Games = FriendGamesInfos.Select(x => new PlayerGame
                     {
                         Achievements = x.AchievementsUnlocked,
                         Playtime = x.Playtime,

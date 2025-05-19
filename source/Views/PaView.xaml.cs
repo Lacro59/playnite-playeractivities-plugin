@@ -116,8 +116,9 @@ namespace PlayerActivities.Views
             _ = Task.Run(() =>
             {
                 _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
-                ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
-                ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
+                FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
+                ControlDataContext.FriendsSource = friendsData.PlayerFriends.ToObservable();
+                ControlDataContext.LastFriendsRefresh = friendsData.PlayerFriends.Count == 0 ? (DateTime?)null : friendsData.LastUpdate;
                 IsFriendsFinished = true;
                 IsFinish();
             });
@@ -208,7 +209,7 @@ namespace PlayerActivities.Views
         {
             if (sender is Button button)
             {
-                if (button.Tag is PlayerFriends item)
+                if (button.Tag is PlayerFriend item)
                 {
                     button.IsEnabled = false;
                     PART_BtFriends.IsEnabled = false;
@@ -235,14 +236,14 @@ namespace PlayerActivities.Views
             }
 
             ListViewExtend lv = sender as ListViewExtend;
-            PlayerFriends pf = lv.SelectedItem as PlayerFriends;
+            PlayerFriend pf = lv.SelectedItem as PlayerFriend;
 
             if (pf == null)
             {
                 return;
             }
 
-            PlayerFriends pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
+            PlayerFriend pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
 
             ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
             pf.Games.ForEach(x =>
@@ -272,8 +273,8 @@ namespace PlayerActivities.Views
         private ObservableCollection<ActivityListGrouped> _itemsSource = new ObservableCollection<ActivityListGrouped>();
         public ObservableCollection<ActivityListGrouped> ItemsSource { get => _itemsSource; set => SetValue(ref _itemsSource, value); }
 
-        private ObservableCollection<PlayerFriends> _friendsSource = new ObservableCollection<PlayerFriends>();
-        public ObservableCollection<PlayerFriends> FriendsSource { get => _friendsSource; set => SetValue(ref _friendsSource, value); }
+        private ObservableCollection<PlayerFriend> _friendsSource = new ObservableCollection<PlayerFriend>();
+        public ObservableCollection<PlayerFriend> FriendsSource { get => _friendsSource; set => SetValue(ref _friendsSource, value); }
 
         private ObservableCollection<ListFriendsInfo> _friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
         public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _friendsDetailsSource; set => SetValue(ref _friendsDetailsSource, value); }
@@ -284,8 +285,8 @@ namespace PlayerActivities.Views
         private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
         public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
-        private DateTime _lastFriendsRefresh = DateTime.Now;
-        public DateTime LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
+        private DateTime? _lastFriendsRefresh;
+        public DateTime? LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
 
 
         #region Menus
@@ -372,7 +373,7 @@ namespace PlayerActivities.Views
         public bool IsCheck { get => isCheck; set => SetValue(ref isCheck, value); }
     }
 
-    public class ListFriendsInfo : PlayerGames
+    public class ListFriendsInfo : PlayerGame
     {
         public int UsAchievements { get; set; }
         public long UsPlaytime { get; set; }

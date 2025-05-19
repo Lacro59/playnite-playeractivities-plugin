@@ -22,27 +22,54 @@ using System.Windows.Threading;
 using PlayerActivities.Views;
 using System.Collections.ObjectModel;
 using PlayerActivities.Models.Enumerations;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Services
 {
     public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, PlayerActivitiesData, Activity>
     {
+        #region Fields and Properties
+
+        /// <summary>
+        /// Path to the SuccessStory plugin data directory.
+        /// </summary>
         private string SuccessStoryPath { get; }
+
+        /// <summary>
+        /// Path to the GameActivity plugin data directory.
+        /// </summary>
         private string GameActivityPath { get; }
+
+        /// <summary>
+        /// Path to the ScreenshotsVisualizer plugin data directory.
+        /// </summary>
         private string ScreenshotsVisuliazerPath { get; }
+
+        /// <summary>
+        /// Path to the HowLongToBeat plugin data directory.
+        /// </summary>
         private string HowLongToBeatPath { get; }
 
 
         private bool _friendsDataIsDownloaded = true;
+        /// <summary>
+        /// Indicates if friends data has been downloaded.
+        /// </summary>
         public bool FriendsDataIsDownloaded { get => _friendsDataIsDownloaded; set => SetValue(ref _friendsDataIsDownloaded, value); }
 
         private bool _friendsDataIsCanceled = false;
+        /// <summary>
+        /// Indicates if friends data download has been canceled.
+        /// </summary>
         public bool FriendsDataIsCanceled { get => _friendsDataIsCanceled; set => SetValue(ref _friendsDataIsCanceled, value); }
 
         private Window WindowFriendsDataLoading { get; set; } = null;
         private Stopwatch StopWatchFriendsDataLoading { get; set; } = new Stopwatch();
 
         private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
+        /// <summary>
+        /// Stores the loading state for friends data.
+        /// </summary>
         public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
 
@@ -71,16 +98,26 @@ namespace PlayerActivities.Services
             }
         }
 
+        #endregion
+
 
         public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
-            SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", "cebe6d32-8c46-4459-b993-5a5189d60788", "SuccessStory");
-            GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", "afbb1a0d-04a1-4d0c-9afa-c6e42ca855b4", "GameActivity");
-            ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", "c6c8276f-91bf-48e5-a1d1-4bee0b493488", "ScreenshotsVisualizer");
-            HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", "e08cd51f-9c9a-4ee3-a094-fde03b55492f", "HowLongToBeat");
+            SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory).ToString(), "SuccessStory");
+            GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.GameActivity).ToString(), "GameActivity");
+            ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer).ToString(), "ScreenshotsVisualizer");
+            HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat).ToString(), "HowLongToBeat");
         }
 
 
+        /// <summary>
+        /// Retrieves activity data for a specific game by its Guid.
+        /// If not found in cache, creates a default entry and adds it to the database.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
+        /// <param name="onlyCache">If true, only retrieves from cache.</param>
+        /// <param name="force">If true, forces retrieval.</param>
+        /// <returns>PlayerActivitiesData for the specified game.</returns>
         public override PlayerActivitiesData Get(Guid id, bool onlyCache = false, bool force = false)
         {
             PlayerActivitiesData playerActivities = base.GetOnlyCache(id);
@@ -99,6 +136,12 @@ namespace PlayerActivities.Services
 
         #region Plugin data
 
+        /// <summary>
+        /// Initializes or refreshes plugin data from external sources.
+        /// Optionally forces a full rescan and can target a specific game.
+        /// </summary>
+        /// <param name="forced">If true, removes and reloads all data.</param>
+        /// <param name="id">Optional game Guid to target.</param>
         public void InitializePluginData(bool forced = false, Guid id = default)
         {
             GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions($"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}")
@@ -139,7 +182,10 @@ namespace PlayerActivities.Services
             }, globalProgressOptions);
         }
 
-
+        /// <summary>
+        /// Scans the SuccessStory plugin data directory and imports achievements for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanSuccessStory(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
@@ -158,6 +204,11 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes achievement data for a specific game from SuccessStory.
+        /// Adds achievement unlocks and progression goals as activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetAchievements(Guid id)
         {
             try
@@ -224,6 +275,10 @@ namespace PlayerActivities.Services
         }
 
 
+        /// <summary>
+        /// Scans the ScreenshotsVisualizer plugin data directory and imports screenshots for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanScreenshotsVisualizer(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
@@ -242,6 +297,11 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes screenshot data for a specific game from ScreenshotsVisualizer.
+        /// Adds screenshot activities by day.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetScreenshots(Guid id)
         {
             try
@@ -287,6 +347,10 @@ namespace PlayerActivities.Services
         }
 
 
+        /// <summary>
+        /// Scans the GameActivity plugin data directory and imports play sessions for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanGameActivity(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
@@ -305,6 +369,11 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes play session data for a specific game from GameActivity.
+        /// Adds first playtime and playtime goal activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         private void SetGameActivity(Guid id)
         {
             try
@@ -363,6 +432,10 @@ namespace PlayerActivities.Services
         }
 
 
+        /// <summary>
+        /// Scans the HowLongToBeat plugin data directory and imports completion data for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanHowLongToBeat(Guid id = default)
         {
             if (Directory.Exists(HowLongToBeatPath))
@@ -381,6 +454,11 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes completion data for a specific game from HowLongToBeat.
+        /// Adds completion activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetHowLongToBeat(Guid id)
         {
             try
@@ -537,75 +615,58 @@ namespace PlayerActivities.Services
         #endregion
 
 
-        public List<PlayerFriends> GetFriends(PlayerActivities plugin, bool force = false)
+        #region Friends Data Management
+
+        /// <summary>
+        /// Retrieves the list of player friends from all enabled platforms (GOG, Steam, Origin, Epic).
+        /// If force is true, fetches fresh data from each platform and updates the local cache.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
+        /// <param name="force">If true, forces a refresh from all sources.</param>
+        /// <returns>List of PlayerFriends objects.</returns>
+        public FriendsData GetFriends(PlayerActivities plugin, bool force = false)
         {
-            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+            var friendsData = new FriendsData();
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
 
             if (force)
             {
-                List<PlayerFriends> gogs = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableGogFriends)
+                // Helper to fetch friends from a platform if enabled and not canceled
+                List<PlayerFriend> FetchFriends(bool enabled, string sourceName, Func<List<PlayerFriend>> getFriendsFunc)
                 {
+                    if (!enabled || FriendsDataIsCanceled)
+                        return new List<PlayerFriend>();
+
                     FriendsDataLoading.FriendName = string.Empty;
                     FriendsDataLoading.ActualCount = 0;
                     FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Gog";
-
-                    GogFriends gogFriends = new GogFriends();
-                    gogs = gogFriends.GetFriends();
+                    FriendsDataLoading.SourceName = sourceName;
+                    return getFriendsFunc();
                 }
 
-                List<PlayerFriends> steams = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableSteamFriends && !FriendsDataIsCanceled)
+                var gog = FetchFriends(PluginSettings.Settings.EnableGogFriends, "Gog", () => new GogFriends().GetFriends());
+                var steam = FetchFriends(PluginSettings.Settings.EnableSteamFriends, "Steam", () => new SteamFriends().GetFriends());
+                var origin = FetchFriends(PluginSettings.Settings.EnableOriginFriends, "Origin", () => new OriginFriends().GetFriends());
+                var epic = FetchFriends(PluginSettings.Settings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
+
+                friendsData.PlayerFriends = gog.Concat(steam).Concat(origin).Concat(epic).ToList();
+
+                try
                 {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Steam";
-
-                    SteamFriends steamFriends = new SteamFriends();
-                    steams = steamFriends.GetFriends();
+                    File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
                 }
-
-                List<PlayerFriends> origin = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableOriginFriends && !FriendsDataIsCanceled)
+                catch (Exception ex)
                 {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Origin";
-
-                    OriginFriends originFriends = new OriginFriends();
-                    origin = originFriends.GetFriends();
+                    Common.LogError(ex, false);
                 }
-
-                List<PlayerFriends> epic = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableEpicFriends && !FriendsDataIsCanceled)
-                {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Epic";
-
-                    EpicFriends epicFriends = new EpicFriends();
-                    epic = epicFriends.GetFriends();
-                }
-
-                playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).Concat(epic).ToList();
-
-                PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
-                plugin.SavePluginSettings(PluginSettings.Settings);
-
-                File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
             }
             else
             {
-                string PathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
-                if (File.Exists(PathPlayerFriends))
+                if (File.Exists(friendsFilePath))
                 {
                     try
                     {
-                        playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(PathPlayerFriends);
+                        friendsData = Serialization.FromJsonFile<FriendsData>(friendsFilePath);
                     }
                     catch (Exception ex)
                     {
@@ -614,9 +675,13 @@ namespace PlayerActivities.Services
                 }
             }
 
-            return playerFriends;
+            return friendsData;
         }
 
+        /// <summary>
+        /// Asynchronously refreshes friends data, updates the database, and shows a loading window.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
         public async Task RefreshFriendsDataLoader(PlayerActivities plugin)
         {
             FriendsDataIsDownloaded = false;
@@ -648,6 +713,10 @@ namespace PlayerActivities.Services
             });
         }
 
+        /// <summary>
+        /// Synchronously refreshes friends data and updates the database.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
         public void RefreshFriends(PlayerActivities plugin)
         {
             FriendsDataIsDownloaded = false;
@@ -662,21 +731,27 @@ namespace PlayerActivities.Services
             FriendsDataLoaderClose(string.Empty);
         }
 
-        public void RefreshFriends(PlayerActivities plugin, string clientName, PlayerFriends pf)
+        /// <summary>
+        /// Refreshes friends data for a specific client and friend, updating the local cache.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
+        /// <param name="clientName">The name of the client (e.g., "STEAM").</param>
+        /// <param name="pf">The PlayerFriends object to update.</param>
+        public void RefreshFriends(PlayerActivities plugin, string clientName, PlayerFriend pf)
         {
             FriendsDataIsDownloaded = false;
 
             StopWatchFriendsDataLoading = new Stopwatch();
             StopWatchFriendsDataLoading.Start();
 
-            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+            List<PlayerFriend> playerFriends = new List<PlayerFriend>();
 
             string pathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
             if (File.Exists(pathPlayerFriends))
             {
                 try
                 {
-                    playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(pathPlayerFriends);
+                    playerFriends = Serialization.FromJsonFile<List<PlayerFriend>>(pathPlayerFriends);
                 }
                 catch (Exception ex)
                 {
@@ -684,41 +759,48 @@ namespace PlayerActivities.Services
                 }
             }
 
-
+            // Refresh friend data based on client
             if (PluginSettings.Settings.EnableGogFriends && clientName.IsEqual("GOG"))
             {
-                GogFriends gogFriends = new GogFriends();
-                pf = gogFriends.GetFriends(pf);
+                pf = new GogFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
+            else if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
             {
-                SteamFriends steamFriends = new SteamFriends();
-                pf = steamFriends.GetFriends(pf);
+                pf = new SteamFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
+            else if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
             {
-                OriginFriends originFriends = new OriginFriends();
-                pf = originFriends.GetFriends(pf);
+                pf = new OriginFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
+            else if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
             {
-                EpicFriends epicFriends = new EpicFriends();
-                pf = epicFriends.GetFriends(pf);
+                pf = new EpicFriends().GetFriends(pf);
             }
 
-            int index = playerFriends.FindIndex(item => item.FriendId.IsEqual(pf.FriendId));
-            if (index != -1)
+            // Update existing entry
+            var index = playerFriends.FindIndex(f => f.FriendId.IsEqual(pf.FriendId));
+            if (index >= 0)
             {
                 playerFriends[index] = pf;
             }
 
-            File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
+            // Save updated data
+            try
+            {
+                File.WriteAllText(pathPlayerFriends, Serialization.ToJson(playerFriends));
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false);
+            }
+
             FriendsDataLoaderClose(pf.FriendPseudo);
         }
 
+        /// <summary>
+        /// Closes the friends data loading window and logs the operation duration.
+        /// </summary>
+        /// <param name="pseudo">Optional friend pseudo to log.</param>
         private void FriendsDataLoaderClose(string pseudo)
         {
             if (WindowFriendsDataLoading != null)
@@ -738,6 +820,8 @@ namespace PlayerActivities.Services
             FriendsDataIsCanceled = false;
             FriendsDataIsDownloaded = true;
         }
+
+        #endregion
 
 
         public override void SetThemesResources(Game game)

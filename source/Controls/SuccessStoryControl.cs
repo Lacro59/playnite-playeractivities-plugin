@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Controls
 {
@@ -22,7 +23,7 @@ namespace PlayerActivities.Controls
 
         // Gets the SuccessStory plugin instance by GUID
         private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788"));
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
 
         /// <summary>
         /// Indicates if the SuccessStory plugin is installed.

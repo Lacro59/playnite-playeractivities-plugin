@@ -40,9 +40,9 @@ namespace PlayerActivities.Clients
         }
 
 
-        public abstract List<PlayerFriends> GetFriends();
+        public abstract List<PlayerFriend> GetFriends();
 
-        public abstract PlayerFriends GetFriends(PlayerFriends pf);
+        public abstract PlayerFriend GetFriends(PlayerFriend pf);
 
 
         #region Errors

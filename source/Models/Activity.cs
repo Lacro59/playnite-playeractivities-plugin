@@ -4,6 +4,7 @@ using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace PlayerActivities.Models
 {
@@ -16,8 +17,9 @@ namespace PlayerActivities.Models
 
         private DateTime _dateActivity = DateTime.Now.ToUniversalTime();
         /// <summary>
-        /// The date and time when the activity occurred, in UTC.
-        /// Defaults to the current UTC time.
+        /// Gets or sets the date and time when the activity occurred.
+        /// The value is internally stored in UTC and returned in the local time zone.
+        /// When setting the value, it is automatically converted to UTC.
         /// </summary>
         public DateTime DateActivity
         {
@@ -44,44 +46,39 @@ namespace PlayerActivities.Models
         {
             get
             {
-                Period period = Period.Between(LocalDateTime.FromDateTime(DateActivity), LocalDateTime.FromDateTime(DateTime.Now), PeriodUnits.YearMonthDay);
+                var now = LocalDateTime.FromDateTime(DateTime.Now);
+                var then = LocalDateTime.FromDateTime(DateActivity);
+                var period = Period.Between(then, now, PeriodUnits.YearMonthDay);
 
-                int years = period.Years;
-                int months = period.Months;
-                int days = period.Days;
+                var sb = new StringBuilder();
 
-                string result = "";
-
-                if (years > 0)
+                if (period.Years > 0)
                 {
-                    result += years == 1 ?
-                        string.Format(ResourceProvider.GetString("LOCCommonYear"), years) :
-                        string.Format(ResourceProvider.GetString("LOCCommonYears"), years);
+                    sb.AppendFormat(
+                        ResourceProvider.GetString(period.Years == 1 ? "LOCCommonYear" : "LOCCommonYears"),
+                        period.Years
+                    );
                 }
 
-                if (months > 0)
+                if (period.Months > 0)
                 {
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        result += ", ";
-                    }
-                    result += months == 1 ?
-                        string.Format(ResourceProvider.GetString("LOCCommonMonth"), months) :
-                        string.Format(ResourceProvider.GetString("LOCCommonMonths"), months);
+                    if (sb.Length > 0) sb.Append(", ");
+                    sb.AppendFormat(
+                        ResourceProvider.GetString(period.Months == 1 ? "LOCCommonMonth" : "LOCCommonMonths"),
+                        period.Months
+                    );
                 }
 
-                if (days > 0)
+                if (period.Days > 0)
                 {
-                    if (!string.IsNullOrEmpty(result))
-                    {
-                        result += ", ";
-                    }
-                    result += days == 1 ?
-                        string.Format(ResourceProvider.GetString("LOCCommonDay"), days) :
-                        string.Format(ResourceProvider.GetString("LOCCommonDays"), days);
+                    if (sb.Length > 0) sb.Append(", ");
+                    sb.AppendFormat(
+                        ResourceProvider.GetString(period.Days == 1 ? "LOCCommonDay" : "LOCCommonDays"),
+                        period.Days
+                    );
                 }
 
-                return result;
+                return sb.ToString();
             }
         }
 

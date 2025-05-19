@@ -106,6 +106,7 @@
     <Compile Include="Models\ActivityElement.cs" />
     <Compile Include="Models\ActivityList.cs" />
     <Compile Include="Models\Enumerations\ActivityType.cs" />
+    <Compile Include="Models\FriendsData.cs" />
     <Compile Include="Models\FriendsDataLoading.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />
@@ -114,7 +115,9 @@
     <Compile Include="Models\HowLongToBeat\HltbUserStats.cs" />
     <Compile Include="Models\PlayerActivitiesData.cs" />
     <Compile Include="Models\PlayerActivitiesCollection.cs" />
-    <Compile Include="Models\PlayerFriends.cs" />
+    <Compile Include="Models\PlayerFriend.cs" />
+    <Compile Include="Models\PlayerGame.cs" />
+    <Compile Include="Models\PlayerStats.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\GameScreenshots.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\Screenshot.cs" />
     <Compile Include="Models\SuccessStory\Achievements.cs" />

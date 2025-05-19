@@ -10,12 +10,14 @@ using PlayerActivities.Models.Enumerations;
 using PlayerActivities.Services;
 using PlayerActivities.Views;
 using Playnite.SDK;
+using Playnite.SDK.Data;
 using Playnite.SDK.Events;
 using Playnite.SDK.Models;
 using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -359,6 +361,30 @@ namespace PlayerActivities
                 EpicApi.SetForceAuth(true);
                 EpicApi.StoreSettings = PluginDatabase.PluginSettings.Settings.EpicStoreSettings;
                 _ = EpicApi.CurrentAccountInfos;
+            }
+
+
+            // TODO TEMP
+            _ = SpinWait.SpinUntil(() => PluginDatabase.IsLoaded, -1);
+            string friendsFilePath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "PlayerFriends.json");
+            string friendsFilePathNew = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "FriendsData.json");
+            if (Serialization.TryFromJsonFile(friendsFilePath, out List<PlayerFriend> playerFriends))
+            {
+                FriendsData friendsData = new FriendsData
+                {
+                    PlayerFriends = playerFriends,
+                    LastUpdate = PluginSettings.Settings.LastFriendsRefresh
+                };
+
+                try
+                {
+                    File.WriteAllText(friendsFilePathNew, Serialization.ToJson(friendsData));
+                    CommonPlayniteShared.Common.FileSystem.DeleteFileSafe(friendsFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false);
+                }
             }
         }
 

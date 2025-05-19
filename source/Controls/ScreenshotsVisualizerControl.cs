@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Controls
 {
@@ -22,7 +23,7 @@ namespace PlayerActivities.Controls
 
         // Gets the ScreenshotsVisualizer plugin instance by GUID
         private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488"));
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
 
         /// <summary>
         /// Indicates if the ScreenshotsVisualizer plugin is installed.

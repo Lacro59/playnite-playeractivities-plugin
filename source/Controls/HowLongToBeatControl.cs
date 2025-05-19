@@ -6,6 +6,7 @@ using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Controls
 {
@@ -19,7 +20,7 @@ namespace PlayerActivities.Controls
 
         // Gets the HowLongToBeat plugin instance based on its GUID
         private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == Guid.Parse("e08cd51f-9c9a-4ee3-a094-fde03b55492f"));
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat));
 
         /// <summary>
         /// Checks if the HowLongToBeat plugin is installed.
