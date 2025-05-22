@@ -650,6 +650,7 @@ namespace PlayerActivities.Services
                 var epic = FetchFriends(PluginSettings.Settings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
 
                 friendsData.PlayerFriends = gog.Concat(steam).Concat(origin).Concat(epic).ToList();
+                friendsData.LastUpdate = DateTime.UtcNow;
 
                 try
                 {
@@ -709,7 +710,7 @@ namespace PlayerActivities.Services
                 }));
 
                 _ = GetFriends(plugin, true);
-                FriendsDataLoaderClose(string.Empty);
+                FriendsDataLoaderClose(string.Empty, string.Empty);
             });
         }
 
@@ -728,7 +729,7 @@ namespace PlayerActivities.Services
             Database.SetGameInfo<Activity>();
 
             _ = GetFriends(plugin, true);
-            FriendsDataLoaderClose(string.Empty);
+            FriendsDataLoaderClose(string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -746,12 +747,13 @@ namespace PlayerActivities.Services
 
             List<PlayerFriend> playerFriends = new List<PlayerFriend>();
 
-            string pathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
-            if (File.Exists(pathPlayerFriends))
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
+            if (File.Exists(friendsFilePath))
             {
                 try
                 {
-                    playerFriends = Serialization.FromJsonFile<List<PlayerFriend>>(pathPlayerFriends);
+                    FriendsData friendsData = Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                    playerFriends = friendsData.PlayerFriends;
                 }
                 catch (Exception ex)
                 {
@@ -787,21 +789,23 @@ namespace PlayerActivities.Services
             // Save updated data
             try
             {
-                File.WriteAllText(pathPlayerFriends, Serialization.ToJson(playerFriends));
+                FriendsData friendsData = new FriendsData { PlayerFriends = playerFriends };
+                File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
             }
             catch (Exception ex)
             {
                 Common.LogError(ex, false);
             }
 
-            FriendsDataLoaderClose(pf.FriendPseudo);
+            FriendsDataLoaderClose(pf.FriendPseudo, pf.ClientName);
         }
 
         /// <summary>
         /// Closes the friends data loading window and logs the operation duration.
         /// </summary>
         /// <param name="pseudo">Optional friend pseudo to log.</param>
-        private void FriendsDataLoaderClose(string pseudo)
+        /// <param name="clientName">The name of the client (e.g., "STEAM").</param>
+        private void FriendsDataLoaderClose(string pseudo, string clientName)
         {
             if (WindowFriendsDataLoading != null)
             {
@@ -814,7 +818,7 @@ namespace PlayerActivities.Services
             StopWatchFriendsDataLoading.Stop();
             TimeSpan ts = StopWatchFriendsDataLoading.Elapsed;
             Logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
-                + (!pseudo.IsNullOrEmpty() ? $" - {pseudo} " : "")
+                + (!pseudo.IsNullOrEmpty() ? $" - {pseudo} ({clientName})" : "")
                 + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
 
             FriendsDataIsCanceled = false;
