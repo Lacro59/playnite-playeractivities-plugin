@@ -75,6 +75,6 @@ namespace PlayerActivities.Models
         /// <summary>
         /// The last time the friend's data was refreshed.
         /// </summary>
-        public DateTime LastRefresh { get; set; } = DateTime.Now;
+        public DateTime LastUpdate { get; set; } = DateTime.Now;
     }
 }

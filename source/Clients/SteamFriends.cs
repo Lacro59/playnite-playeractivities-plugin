@@ -12,157 +12,170 @@ using System.Collections.ObjectModel;
 
 namespace PlayerActivities.Clients
 {
+    /// <summary>
+    /// Client for retrieving Steam friends and their game statistics.
+    /// </summary>
     public class SteamFriends : GenericFriends
     {
         private SteamApi SteamApi => PlayerActivities.SteamApi;
         internal override StoreApi StoreApi => SteamApi;
+        
 
-
-        public SteamFriends() : base("Steam")
+        public SteamFriends() : base("Steam") 
         {
-
         }
 
-
+        /// <summary>
+        /// Retrieve the list of Steam friends including the current user with stats and games.
+        /// </summary>
         public override List<PlayerFriend> GetFriends()
         {
-            List<PlayerFriend> Friends = new List<PlayerFriend>();
+            var friends = new List<PlayerFriend>();
 
-            if (SteamApi.IsUserLoggedIn)
+            if (!SteamApi.IsUserLoggedIn)
             {
-                try
-                {
-                    AccountInfos CurrentUser = SteamApi.CurrentAccountInfos;
-                    ObservableCollection<AccountGameInfos> CurrentGamesInfos = SteamApi.CurrentGamesInfos;
-
-                    PlayerFriend playerFriendsUs = new PlayerFriend
-                    {
-                        ClientName = ClientName,
-                        FriendId = CurrentUser.UserId,
-                        FriendPseudo = CurrentUser.Pseudo,
-                        FriendsAvatar = CurrentUser.Avatar,
-                        FriendsLink = CurrentUser.Link,
-                        IsUser = true,
-                        Stats = new PlayerStats
-                        {
-                            GamesOwned = CurrentGamesInfos.Count,
-                            Achievements = CurrentGamesInfos.Sum(x => x.AchievementsUnlocked),
-                            Playtime = CurrentGamesInfos.Sum(x => x.Playtime)
-                        },
-                        Games = CurrentGamesInfos.Select(x => new PlayerGame
-                        {
-                            Achievements = x.AchievementsUnlocked,
-                            Playtime = x.Playtime,
-                            Id = x.Id,
-                            IsCommun = false,
-                            Link = x.Link,
-                            Name = x.Name
-                        }).ToList()
-                    };
-                    Friends.Add(playerFriendsUs);
-
-
-                    ObservableCollection<AccountInfos> CurrentFriendsInfos = SteamApi.CurrentFriendsInfos;
-                    if (CurrentFriendsInfos == null)
-                    {
-                        return Friends;
-                    }
-
-                    PluginDatabase.FriendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
-
-                    CurrentFriendsInfos.ForEach(y =>
-                    {
-                        if (PluginDatabase.FriendsDataIsCanceled)
-                        {
-                            return;
-                        }
-
-                        PluginDatabase.FriendsDataLoading.FriendName = y.Pseudo;
-                        ObservableCollection<AccountGameInfos> FriendGamesInfos = SteamApi.GetAccountGamesInfos(y);
-
-                        PlayerFriend playerFriends = new PlayerFriend
-                        {
-                            ClientName = ClientName,
-                            FriendId = y.UserId,
-                            FriendPseudo = y.Pseudo,
-                            FriendsAvatar = y.Avatar,
-                            FriendsLink = y.Link,
-                            AcceptedAt = y.DateAdded,
-                            IsUser = false,
-                            Stats = new PlayerStats
-                            {
-                                GamesOwned = FriendGamesInfos.Count,
-                                Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
-                                Playtime = FriendGamesInfos.Sum(x => x.Playtime)
-                            },
-                            Games = FriendGamesInfos.Select(x => new PlayerGame
-                            {
-                                Achievements = x.AchievementsUnlocked,
-                                Playtime = x.Playtime,
-                                Id = x.Id,
-                                IsCommun = x.IsCommun,
-                                Link = x.Link,
-                                Name = x.Name
-                            }).ToList()
-                        };
-
-                        PluginDatabase.FriendsDataLoading.ActualCount += 1;
-                        Friends.Add(playerFriends);
-                    });
-                }
-                catch (Exception ex)
-                {
-                    Common.LogError(ex, false, true, PluginDatabase.PluginName);
-                }
-            }
-            else
-            {
-                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.PlayerActivities);
+                ShowNotificationPluginNoAuthenticate(
+                    string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName),
+                    ExternalPlugin.PlayerActivities
+                );
+                return friends;
             }
 
-            return Friends;
-        }
-
-        public override PlayerFriend GetFriends(PlayerFriend pf)
-        {
-            if (SteamApi.IsUserLoggedIn)
+            try
             {
-                try
+                // Current user
+                var CurrentUser = SteamApi.CurrentAccountInfos;
+                var CurrentGamesInfos = SteamApi.CurrentGamesInfos ?? new ObservableCollection<AccountGameInfos>();
+
+                var playerFriendsUs = new PlayerFriend
                 {
-                    AccountInfos accountInfos = new AccountInfos
+                    ClientName = ClientName,
+                    FriendId = CurrentUser.UserId,
+                    FriendPseudo = CurrentUser.Pseudo,
+                    FriendsAvatar = CurrentUser.Avatar,
+                    FriendsLink = CurrentUser.Link,
+                    IsUser = true,
+                    Stats = new PlayerStats
                     {
-                        UserId = pf.FriendId,
-                        Pseudo = pf.FriendPseudo,
-                        IsCurrent = pf.IsUser
-                    };
-
-                    ObservableCollection<AccountGameInfos> FriendGamesInfos = SteamApi.GetAccountGamesInfos(accountInfos);
-
-                    pf.Stats = new PlayerStats
-                    {
-                        GamesOwned = FriendGamesInfos.Count,
-                        Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
-                        Playtime = FriendGamesInfos.Sum(x => x.Playtime)
-                    };
-                    pf.Games = FriendGamesInfos.Select(x => new PlayerGame
+                        GamesOwned = CurrentGamesInfos.Count,
+                        Achievements = CurrentGamesInfos.Sum(x => x.AchievementsUnlocked),
+                        Playtime = CurrentGamesInfos.Sum(x => x.Playtime)
+                    },
+                    Games = CurrentGamesInfos.Select(x => new PlayerGame
                     {
                         Achievements = x.AchievementsUnlocked,
                         Playtime = x.Playtime,
                         Id = x.Id,
-                        IsCommun = x.IsCommun,
+                        IsCommun = false,
                         Link = x.Link,
                         Name = x.Name
-                    }).ToList();
-                    pf.LastRefresh = DateTime.Now;
-                }
-                catch (Exception ex)
+                    }).ToList()
+                };
+                friends.Add(playerFriendsUs);
+
+                // Friends
+                var CurrentFriendsInfos = SteamApi.CurrentFriendsInfos;
+                if (CurrentFriendsInfos == null)
+                    return friends;
+
+                PluginDatabase.FriendsDataLoading.FriendCount = CurrentFriendsInfos.Count;
+
+                foreach (var friend in CurrentFriendsInfos)
                 {
-                    Common.LogError(ex, false, true, PluginDatabase.PluginName);
+                    if (PluginDatabase.FriendsDataIsCanceled)
+                    {
+                        return friends;
+                    }
+
+                    PluginDatabase.FriendsDataLoading.FriendName = friend.Pseudo;
+
+                    var FriendGamesInfos = SteamApi.GetAccountGamesInfos(friend) ?? new ObservableCollection<AccountGameInfos>();
+
+                    var playerFriend = new PlayerFriend
+                    {
+                        ClientName = ClientName,
+                        FriendId = friend.UserId,
+                        FriendPseudo = friend.Pseudo,
+                        FriendsAvatar = friend.Avatar,
+                        FriendsLink = friend.Link,
+                        AcceptedAt = friend.DateAdded,
+                        IsUser = false,
+                        Stats = new PlayerStats
+                        {
+                            GamesOwned = FriendGamesInfos.Count,
+                            Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
+                            Playtime = FriendGamesInfos.Sum(x => x.Playtime)
+                        },
+                        Games = FriendGamesInfos.Select(x => new PlayerGame
+                        {
+                            Achievements = x.AchievementsUnlocked,
+                            Playtime = x.Playtime,
+                            Id = x.Id,
+                            IsCommun = x.IsCommun,
+                            Link = x.Link,
+                            Name = x.Name
+                        }).ToList()
+                    };
+
+                    PluginDatabase.FriendsDataLoading.ActualCount += 1;
+                    friends.Add(playerFriend);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                ShowNotificationPluginNoAuthenticate(string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName), ExternalPlugin.PlayerActivities);
+                Common.LogError(ex, false, true, PluginDatabase.PluginName);
+            }
+
+            return friends;
+        }
+
+        /// <summary>
+        /// Retrieve or update a single Steam friend’s data and statistics.
+        /// </summary>
+        public override PlayerFriend GetFriends(PlayerFriend pf)
+        {
+            if (!SteamApi.IsUserLoggedIn)
+            {
+                ShowNotificationPluginNoAuthenticate(
+                    string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName),
+                    ExternalPlugin.PlayerActivities
+                );
+                return pf;
+            }
+
+            try
+            {
+                var accountInfos = new AccountInfos
+                {
+                    UserId = pf.FriendId,
+                    Pseudo = pf.FriendPseudo,
+                    IsCurrent = pf.IsUser
+                };
+
+                var FriendGamesInfos = SteamApi.GetAccountGamesInfos(accountInfos) ?? new ObservableCollection<AccountGameInfos>();
+
+                pf.Stats = new PlayerStats
+                {
+                    GamesOwned = FriendGamesInfos.Count,
+                    Achievements = FriendGamesInfos.Sum(x => x.AchievementsUnlocked),
+                    Playtime = FriendGamesInfos.Sum(x => x.Playtime)
+                };
+
+                pf.Games = FriendGamesInfos.Select(x => new PlayerGame
+                {
+                    Achievements = x.AchievementsUnlocked,
+                    Playtime = x.Playtime,
+                    Id = x.Id,
+                    IsCommun = x.IsCommun,
+                    Link = x.Link,
+                    Name = x.Name
+                }).ToList();
+
+                pf.LastUpdate = DateTime.Now;
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, true, PluginDatabase.PluginName);
             }
 
             return pf;
