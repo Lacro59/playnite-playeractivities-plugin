@@ -91,29 +91,9 @@ namespace PlayerActivities
         public void EndEdit()
         {
             // StoreAPI intialization
-            PlayerActivities.SteamApi.StoreSettings = Settings.SteamStoreSettings;
-            if (Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends)
-            {
-                PlayerActivities.SteamApi.SaveCurrentUser();
-                PlayerActivities.SteamApi.CurrentAccountInfos = null;
-                _ = PlayerActivities.SteamApi.CurrentAccountInfos;
-            }
-
-            PlayerActivities.GogApi.StoreSettings = Settings.GogStoreSettings;
-            if (Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends)
-            {
-                PlayerActivities.GogApi.SaveCurrentUser();
-                PlayerActivities.GogApi.CurrentAccountInfos = null;
-                _ = PlayerActivities.GogApi.CurrentAccountInfos;
-            }
-
-            PlayerActivities.EpicApi.StoreSettings = Settings.EpicStoreSettings;
-            if (Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends)
-            {
-                PlayerActivities.EpicApi.SaveCurrentUser();
-                PlayerActivities.EpicApi.CurrentAccountInfos = null;
-                _ = PlayerActivities.EpicApi.CurrentAccountInfos;
-            }
+            PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends);
+            PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends);
+            PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends);
 
             Plugin.SavePluginSettings(Settings);
             PlayerActivities.PluginDatabase.PluginSettings = this;
