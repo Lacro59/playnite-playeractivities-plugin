@@ -45,7 +45,9 @@ namespace PlayerActivities.Clients
         /// <summary>
         /// Path to store encrypted cookies for the client.
         /// </summary>
-        internal string CookiesPath { get; }
+        internal string FileCookies { get; }
+
+        internal CookiesTools CookiesTools { get; }
 
         #endregion
 
@@ -57,9 +59,15 @@ namespace PlayerActivities.Clients
         public GenericFriends(string clientName)
         {
             ClientName = clientName;
-            CookiesPath = Path.Combine(
+            FileCookies = Path.Combine(
                 PluginDatabase.Paths.PluginUserDataPath,
-                CommonPlayniteShared.Common.Paths.GetSafePathName($"{ClientName}.json"));
+                CommonPlayniteShared.Common.Paths.GetSafePathName($"{ClientName.RemoveWhiteSpace()}_Cookies.dat"));
+
+            CookiesTools = new CookiesTools(
+                "PlayerActivities",
+                ClientName,
+                FileCookies,
+                null);
         }
 
         /// <summary>
@@ -115,45 +123,16 @@ namespace PlayerActivities.Clients
         #region Cookies
 
         /// <summary>
-        /// Loads and decrypts cookies from the persistent storage.
+        /// Read the last identified cookies stored.
         /// </summary>
-        /// <returns>List of HttpCookie objects if available; otherwise null.</returns>
-        internal List<HttpCookie> GetCookies()
-        {
-            if (File.Exists(CookiesPath))
-            {
-                try
-                {
-                    // Decrypt cookie file using current Windows user SID as key
-                    return Serialization.FromJson<List<HttpCookie>>(
-                        Encryption.DecryptFromFile(
-                            CookiesPath,
-                            Encoding.UTF8,
-                            WindowsIdentity.GetCurrent().User.Value));
-                }
-                catch (Exception ex)
-                {
-                    Common.LogError(ex, false, "Failed to load saved cookies");
-                }
-            }
-
-            return null;
-        }
+        /// <returns></returns>
+        internal virtual List<HttpCookie> GetStoredCookies() => CookiesTools.GetStoredCookies();
 
         /// <summary>
-        /// Encrypts and saves cookies to persistent storage.
-        /// Ensures directory exists before saving.
+        /// Save the last identified cookies stored.
         /// </summary>
-        /// <param name="httpCookies">List of HttpCookie to save.</param>
-        internal void SetCookies(List<HttpCookie> httpCookies)
-        {
-            FileSystem.CreateDirectory(Path.GetDirectoryName(CookiesPath));
-            Encryption.EncryptToFile(
-                CookiesPath,
-                Serialization.ToJson(httpCookies),
-                Encoding.UTF8,
-                WindowsIdentity.GetCurrent().User.Value);
-        }
+        /// <param name="httpCookies"></param>
+        internal virtual bool SetStoredCookies(List<HttpCookie> httpCookies) => CookiesTools.SetStoredCookies(httpCookies);
 
         #endregion
     }
