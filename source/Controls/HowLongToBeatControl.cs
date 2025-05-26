@@ -15,17 +15,17 @@ namespace PlayerActivities.Controls
     /// </summary>
     public class HowLongToBeatPlugin
     {
-        // Reference to the plugin database
-        private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
-
-        // Gets the HowLongToBeat plugin instance based on its GUID
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?
+        // Cached instance of the HowLongToBeat plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
             .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat));
 
+        // Reference to the plugin's database
+        private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
+
         /// <summary>
-        /// Checks if the HowLongToBeat plugin is installed.
+        /// Indicates whether the HowLongToBeat plugin is currently installed.
         /// </summary>
-        public static bool IsInstalled => Plugin != null;
+        public static bool IsInstalled => CachedPlugin != null;
 
         /// <summary>
         /// Triggers the HowLongToBeat plugin's main view for the specified game.
@@ -33,7 +33,7 @@ namespace PlayerActivities.Controls
         /// <param name="game">The game to show HowLongToBeat data for.</param>
         public static void HowLongToBeatView(Game game)
         {
-            if (game == null || Plugin == null)
+            if (game == null || !IsInstalled)
             {
                 return;
             }
@@ -41,7 +41,7 @@ namespace PlayerActivities.Controls
             try
             {
                 // Retrieve game-specific menu items from the plugin
-                IEnumerable<GameMenuItem> pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs
+                IEnumerable<GameMenuItem> pluginMenus = CachedPlugin.GetGameMenuItems(new GetGameMenuItemsArgs
                 {
                     Games = new List<Game> { game },
                     IsGlobalSearchRequest = false

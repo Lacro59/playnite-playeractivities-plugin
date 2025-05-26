@@ -18,17 +18,17 @@ namespace PlayerActivities.Controls
     /// </summary>
     public class SuccessStoryPlugin
     {
+        // Cached instance of the SuccessStory plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
+
         // Reference to the PlayerActivities plugin database
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
 
-        // Gets the SuccessStory plugin instance by GUID
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
-
         /// <summary>
-        /// Indicates if the SuccessStory plugin is installed.
+        /// Indicates whether the SuccessStory plugin is installed.
         /// </summary>
-        public static bool IsInstalled => Plugin != null;
+        public static bool IsInstalled => CachedPlugin != null;
 
         /// <summary>
         /// Opens the SuccessStory view for the specified game.
@@ -36,24 +36,21 @@ namespace PlayerActivities.Controls
         /// <param name="game">Target game</param>
         public static void SuccessStoryView(Game game)
         {
-            if (game == null || Plugin == null)
+            if (game == null || CachedPlugin == null)
             {
                 return;
             }
 
             try
             {
-                var pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs
+                var pluginMenus = CachedPlugin.GetGameMenuItems(new GetGameMenuItemsArgs
                 {
                     Games = new List<Game> { game },
                     IsGlobalSearchRequest = false
                 });
 
                 var firstMenu = pluginMenus.FirstOrDefault();
-                if (firstMenu?.Action != null)
-                {
-                    firstMenu.Action.Invoke(null);
-                }
+                firstMenu?.Action?.Invoke(null);
             }
             catch (Exception ex)
             {
@@ -67,15 +64,16 @@ namespace PlayerActivities.Controls
     /// </summary>
     public class SuccessStoryControl : ContentControl
     {
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788"));
+        // Cached instance of the SuccessStory plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
 
         private PluginUserControl Control { get; }
 
         /// <summary>
-        /// Indicates if the SuccessStory plugin is installed.
+        /// Indicates whether the SuccessStory plugin is installed.
         /// </summary>
-        public static bool IsInstalled => Plugin != null;
+        public static bool IsInstalled => CachedPlugin != null;
 
         #region Dependency Properties
 
@@ -136,12 +134,12 @@ namespace PlayerActivities.Controls
         /// <param name="controlName">Name of the plugin view to load.</param>
         public SuccessStoryControl(string controlName)
         {
-            if (Plugin == null)
+            if (!IsInstalled)
             {
                 return;
             }
 
-            Control = Plugin.GetGameViewControl(new GetGameViewControlArgs
+            Control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
             {
                 Name = controlName,
                 Mode = ApplicationMode.Desktop

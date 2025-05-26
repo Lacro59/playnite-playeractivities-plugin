@@ -17,15 +17,11 @@ using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Abstractions;
 using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace PlayerActivities
 {
@@ -40,7 +36,6 @@ namespace PlayerActivities
         public static SteamApi SteamApi { get; set; }
         public static GogApi GogApi { get; set; }
         public static EpicApi EpicApi { get; set; }
-
 
         public PlayerActivities(IPlayniteAPI api) : base(api)
         {
@@ -69,17 +64,17 @@ namespace PlayerActivities
             }
         }
 
-
-
         #region Custom event
+
         public void OnCustomThemeButtonClick(object sender, RoutedEventArgs e)
         {
 
         }
+
         #endregion
 
-
         #region Theme integration
+
         // Button on top panel
         public override IEnumerable<TopPanelItem> GetTopPanelItems()
         {
@@ -96,10 +91,11 @@ namespace PlayerActivities
         {
             yield return SidebarItem;
         }
+
         #endregion
 
-
         #region Menus
+
         // To add new game menu items override GetGameMenuItems
         public override IEnumerable<GameMenuItem> GetGameMenuItems(GetGameMenuItemsArgs args)
         {
@@ -209,10 +205,11 @@ namespace PlayerActivities
 
             return mainMenuItems;
         }
+
         #endregion
 
-
         #region Game event
+
         public override void OnGameSelected(OnGameSelectedEventArgs args)
         {
             try
@@ -322,10 +319,11 @@ namespace PlayerActivities
                 }
             });
         }
+
         #endregion
 
-
         #region Application event
+
         // Add code to be executed when Playnite is initialized.
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
         {
@@ -375,8 +373,8 @@ namespace PlayerActivities
         {
 
         }
-        #endregion
 
+        #endregion
 
         // Add code to be executed when library is updated.
         public override void OnLibraryUpdated(OnLibraryUpdatedEventArgs args)
@@ -384,8 +382,8 @@ namespace PlayerActivities
 
         }
 
-
         #region Settings
+
         public override ISettings GetSettings(bool firstRunSettings)
         {
             return PluginSettings;
@@ -395,6 +393,7 @@ namespace PlayerActivities
         {
             return new PlayerActivitiesSettingsView();
         }
+
         #endregion
     }
 }

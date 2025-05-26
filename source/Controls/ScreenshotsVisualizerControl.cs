@@ -18,17 +18,17 @@ namespace PlayerActivities.Controls
     /// </summary>
     public class ScreenshotsVisualizerPlugin
     {
+        // Cached instance of the ScreenshotsVisualizer plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
+
         // Reference to the PlayerActivities plugin database
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
 
-        // Gets the ScreenshotsVisualizer plugin instance by GUID
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
-
         /// <summary>
-        /// Indicates if the ScreenshotsVisualizer plugin is installed.
+        /// Indicates whether the ScreenshotsVisualizer plugin is installed.
         /// </summary>
-        public static bool IsInstalled => Plugin != null;
+        public static bool IsInstalled => CachedPlugin != null;
 
         /// <summary>
         /// Opens the ScreenshotsVisualizer view for a specific game.
@@ -36,14 +36,14 @@ namespace PlayerActivities.Controls
         /// <param name="game">Target game</param>
         public static void ScreenshotsVisualizerView(Game game)
         {
-            if (game == null || Plugin == null)
+            if (game == null || CachedPlugin == null)
             {
                 return;
             }
 
             try
             {
-                var pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs
+                var pluginMenus = CachedPlugin.GetGameMenuItems(new GetGameMenuItemsArgs
                 {
                     Games = new List<Game> { game },
                     IsGlobalSearchRequest = false
@@ -67,15 +67,16 @@ namespace PlayerActivities.Controls
     /// </summary>
     public class ScreenshotsVisualizerControl : ContentControl
     {
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == Guid.Parse("c6c8276f-91bf-48e5-a1d1-4bee0b493488"));
+        // Cached instance of the ScreenshotsVisualizer plugin
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
 
         private PluginUserControl Control { get; }
 
         /// <summary>
-        /// Indicates if the ScreenshotsVisualizer plugin is installed.
+        /// Indicates whether the ScreenshotsVisualizer plugin is installed.
         /// </summary>
-        public static bool IsInstalled => Plugin != null;
+        public static bool IsInstalled => CachedPlugin != null;
 
         #region Dependency Properties
 
@@ -136,12 +137,12 @@ namespace PlayerActivities.Controls
         /// <param name="controlName">Name of the control to load from plugin.</param>
         public ScreenshotsVisualizerControl(string controlName)
         {
-            if (Plugin == null)
+            if (!IsInstalled)
             {
                 return;
             }
 
-            Control = Plugin.GetGameViewControl(new GetGameViewControlArgs
+            Control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
             {
                 Name = controlName,
                 Mode = ApplicationMode.Desktop
