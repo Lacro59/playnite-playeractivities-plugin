@@ -635,7 +635,9 @@ namespace PlayerActivities.Services
                 List<PlayerFriend> FetchFriends(bool enabled, string sourceName, Func<List<PlayerFriend>> getFriendsFunc)
                 {
                     if (!enabled || FriendsDataIsCanceled)
+                    {
                         return new List<PlayerFriend>();
+                    }
 
                     FriendsDataLoading.FriendName = string.Empty;
                     FriendsDataLoading.ActualCount = 0;
