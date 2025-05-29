@@ -37,7 +37,7 @@
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">لقد أكملت اللعبة.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">منذ {0} </sys:String>
+    <sys:String x:Key="LOCPaDayAgo">منذ {0}</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">منذ {0} أيّا</sys:String>
     <sys:String x:Key="LOCPaMonthAgo">منذ {0} شهر</sys:String>
     <sys:String x:Key="LOCPaMonthsAgo">منذ {0} أشهر</sys:String>

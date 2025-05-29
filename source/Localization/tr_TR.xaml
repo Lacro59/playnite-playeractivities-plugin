@@ -13,7 +13,7 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">BaşarıÖyküsü verisini görüntüle (BaşarıÖyküsü-SuccessStory eklentisi gerekli)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">BaşarıÖyküsü verisini görüntüle (BaşarıÖyküsü eklentisi gerekli)</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">EkrangörüntüsüGörselleştirici verisini görüntüle (EkrangörüntüsüGörselleştirici- ScreenshotVisualizer eklentisi gerekli)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">BitirmekNeKadarSürdü verisini görüntüle (BitirmekNeKadarSürdü - HowLongToBeat eklentisi gerekli)</sys:String>
     
@@ -31,7 +31,7 @@
     <sys:String x:Key="LOCPaPlaytimeGoal">{0} saat oynama süresine ulaştınız.</sys:String>
     
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} başarımın kilidini açtınız.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">% {0} başarıma ulaştınız.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">%{0} başarıma ulaştınız.</sys:String>
 
     <sys:String x:Key="LOCPaScreenshotsTaked">{0} ekran görüntüsü aldınız.</sys:String>
 
@@ -46,8 +46,8 @@
     
     <sys:String x:Key="LOCPaGameOwned">Oyuna sahipsiniz</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Tamamlanan oyunlar</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Sizin</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Sizin 🏆</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Arkadaşlar 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>
