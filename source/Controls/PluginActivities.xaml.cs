@@ -19,10 +19,10 @@ namespace PlayerActivities.Controls
     public partial class PluginActivities : PluginUserControlExtend
     {
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
-        internal override IPluginDatabase pluginDatabase => PluginDatabase;
+        protected override IPluginDatabase pluginDatabase => PluginDatabase;
 
         private PluginActivitiesDataContext ControlDataContext = new PluginActivitiesDataContext();
-        internal override IDataContext controlDataContext
+        protected override IDataContext controlDataContext
         {
             get => ControlDataContext;
             set => ControlDataContext = (PluginActivitiesDataContext)controlDataContext;

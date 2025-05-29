@@ -100,7 +100,6 @@ namespace PlayerActivities.Services
 
         #endregion
 
-
         public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
             SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory).ToString(), "SuccessStory");
@@ -108,7 +107,6 @@ namespace PlayerActivities.Services
             ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer).ToString(), "ScreenshotsVisualizer");
             HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat).ToString(), "HowLongToBeat");
         }
-
 
         /// <summary>
         /// Retrieves activity data for a specific game by its Guid.
@@ -132,7 +130,6 @@ namespace PlayerActivities.Services
             }
             return playerActivities;
         }
-
 
         #region Plugin data
 
@@ -213,12 +210,12 @@ namespace PlayerActivities.Services
         {
             try
             {
-                List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
+                List<ulong> achievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
 
-                string PathData = Path.Combine(SuccessStoryPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(SuccessStoryPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameAchievements obj = Serialization.FromJsonFile<GameAchievements>(PathData);
+                    GameAchievements obj = Serialization.FromJsonFile<GameAchievements>(pathData);
                     if (obj.Items?.Count() > 0 && obj.Progression > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -227,42 +224,52 @@ namespace PlayerActivities.Services
                             return;
                         }
 
-                        int Unlocked = 0;
-                        obj.Items.Where(x => x.DateUnlocked != null && (DateTime)x.DateUnlocked != default(DateTime))
-                            .Select(x => x.DateUnlocked?.ToString("yyyy-MM-dd")).Distinct().OrderBy(x => x).ForEach(x =>
+                        int unlocked = 0;
+                        var unlockedItems = obj.Items.Where(x => x.IsUnlock).ToList();
+
+                        var distinctDates = unlockedItems
+                            .Select(x => x.DateWhenUnlocked?.Date)
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .ToList();
+
+                        foreach (var date in distinctDates)
                         {
-                            List<Achievements> ach = obj.Items.FindAll(y => y.DateUnlocked?.ToString("yyyy-MM-dd").IsEqual(x) ?? false).ToList();
+                            if (date == null) continue;
 
                             // by day
-                            DateTime DateActivity = (DateTime)obj.Items.FindAll(y => y.DateUnlocked?.ToString("yyyy-MM-dd").IsEqual(x) ?? false).First().DateUnlocked;
-                            ulong Value = (ulong)ach.Count();
+                            var achievements = unlockedItems
+                                .Where(y => y.DateWhenUnlocked?.Date == date)
+                                .ToList();
+
+                            var value = (ulong)achievements.Count;
 
                             playerActivitiesData.Items.Add(new Activity
                             {
-                                DateActivity = DateActivity,
+                                DateActivity = date.Value,
                                 Type = ActivityType.AchievementsUnlocked,
-                                Value = Value
+                                Value = value
                             });
 
                             // by goal
-                            Unlocked += ach.Count();
-                            ulong Progression = (ulong)Math.Ceiling((double)(Unlocked * 100 / obj.Items.Count()));
-                            AchievementsGoals.ForEach(z =>
+                            unlocked += achievements.Count;
+                            ulong progression = (ulong)Math.Ceiling((double)(unlocked * 100 / obj.Items.Count()));
+
+                            foreach (var goal in achievementsGoals)
                             {
-                                if (Progression >= z
-                                    && playerActivitiesData.Items.Find(y => y.DateActivity == DateActivity && y.Type == ActivityType.AchievementsGoal) == null
-                                    && playerActivitiesData.Items.Find(y => y.Type == ActivityType.AchievementsGoal && y.Value == z) == null)
+                                if (progression >= goal
+                                    && !playerActivitiesData.Items.Any(y => y.DateActivity == date.Value && y.Type == ActivityType.AchievementsGoal)
+                                    && !playerActivitiesData.Items.Any(y => y.Type == ActivityType.AchievementsGoal && y.Value == goal))
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = DateActivity,
+                                        DateActivity = date.Value,
                                         Type = ActivityType.AchievementsGoal,
-                                        Value = z
+                                        Value = goal
                                     });
-                                    return;
                                 }
-                            });
-                        });
+                            }
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -274,21 +281,20 @@ namespace PlayerActivities.Services
             }
         }
 
-
         /// <summary>
         /// Scans the ScreenshotsVisualizer plugin data directory and imports screenshots for all or a specific game.
         /// </summary>
         /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanScreenshotsVisualizer(Guid id = default)
         {
-            if (Directory.Exists(SuccessStoryPath))
+            if (Directory.Exists(ScreenshotsVisuliazerPath))
             {
                 _ = Parallel.ForEach(Directory.EnumerateFiles(ScreenshotsVisuliazerPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
                         {
-                            if (id == default(Guid) || fileId == id)
+                            if (id == default || fileId == id)
                             {
                                 SetScreenshots(fileId);
                             }
@@ -306,12 +312,10 @@ namespace PlayerActivities.Services
         {
             try
             {
-                List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
-
-                string PathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameScreenshots obj = Serialization.FromJsonFile<GameScreenshots>(PathData);
+                    GameScreenshots obj = Serialization.FromJsonFile<GameScreenshots>(pathData);
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -320,21 +324,27 @@ namespace PlayerActivities.Services
                             return;
                         }
 
-                        obj.Items.Select(x => x.Modifed.ToString("yyyy-MM-dd")).Distinct().OrderBy(x => x).ForEach(x =>
-                        {
-                            List<Screenshot> screen = obj.Items.FindAll(y => y.Modifed.ToString("yyyy-MM-dd").IsEqual(x)).ToList();
+                        var distinctDates = obj.Items
+                            .Select(x => x.Modifed.Date)
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .ToList();
 
-                            // by day
-                            DateTime DateActivity = (DateTime)obj.Items.FindAll(y => y.Modifed.ToString("yyyy-MM-dd").IsEqual(x)).First().Modifed;
-                            ulong Value = (ulong)screen.Count();
+                        foreach (var date in distinctDates)
+                        {
+                            var screenshots = obj.Items
+                                .Where(y => y.Modifed.Date == date)
+                                .ToList();
+
+                            var value = (ulong)screenshots.Count;
 
                             playerActivitiesData.Items.Add(new Models.Activity
                             {
-                                DateActivity = DateActivity,
+                                DateActivity = date,
                                 Type = ActivityType.ScreenshotsTaked,
-                                Value = Value
+                                Value = value
                             });
-                        });
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -346,21 +356,20 @@ namespace PlayerActivities.Services
             }
         }
 
-
         /// <summary>
         /// Scans the GameActivity plugin data directory and imports play sessions for all or a specific game.
         /// </summary>
         /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanGameActivity(Guid id = default)
         {
-            if (Directory.Exists(SuccessStoryPath))
+            if (Directory.Exists(GameActivityPath))
             {
                 _ = Parallel.ForEach(Directory.EnumerateFiles(GameActivityPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (id == default(Guid) || fileId == id)
+                            if (id == default || fileId == id)
                             {
                                 SetGameActivity(fileId);
                             }
@@ -378,16 +387,22 @@ namespace PlayerActivities.Services
         {
             try
             {
-                string PathData = Path.Combine(GameActivityPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(GameActivityPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameActivities obj = Serialization.FromJsonFile<GameActivities>(PathData);
+                    GameActivities obj = Serialization.FromJsonFile<GameActivities>(pathData);
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
+                        }
+
+
+                        if (playerActivitiesData.Game.Name.IndexOf("Golden Axe") > 0)
+                        {
+
                         }
 
                         // Playtime first
@@ -400,26 +415,27 @@ namespace PlayerActivities.Services
                         });
 
                         // Playtime goal
-                        List<ulong> PlaytimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
-                        ulong ElapsedSeconds = 0;
-                        obj.Items.OrderBy(x => x.DateSession).ForEach(x =>
+                        List<ulong> playtimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
+                        ulong elapsedSeconds = 0;
+
+                        foreach (var item in obj.Items.OrderBy(x => x.DateSession))
                         {
-                            ElapsedSeconds += x.ElapsedSeconds;
-                            PlaytimeGoals.ForEach(y =>
+                            elapsedSeconds += item.ElapsedSeconds;
+
+                            foreach (var goal in playtimeGoals)
                             {
-                                if (ElapsedSeconds >= 3600 * y
-                                        && playerActivitiesData.Items.Find(z => z.Type == ActivityType.PlaytimeGoal && z.Value == y) == null)
+                                if (elapsedSeconds >= 3600 * goal
+                                    && !playerActivitiesData.Items.Any(z => z.Type == ActivityType.PlaytimeGoal && z.Value == goal))
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = x.DateSession,
+                                        DateActivity = item.DateSession,
                                         Type = ActivityType.PlaytimeGoal,
-                                        Value = y
+                                        Value = goal
                                     });
-                                    return;
                                 }
-                            });
-                        });
+                            }
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -430,7 +446,6 @@ namespace PlayerActivities.Services
                 Common.LogError(ex, false);
             }
         }
-
 
         /// <summary>
         /// Scans the HowLongToBeat plugin data directory and imports completion data for all or a specific game.
@@ -479,22 +494,26 @@ namespace PlayerActivities.Services
                         HltbDataUser hltbDataUser = obj.GetData();
                         if (HltbUserStats != null)
                         {
-                            List<TitleList> titleLists = HltbUserStats.TitlesList.FindAll(x => x.Id == obj.GetData().Id).ToList();
-                            titleLists.ForEach(x =>
+                            var titleLists = HltbUserStats.TitlesList
+                                .Where(x => x.Id == hltbDataUser.Id)
+                                .ToList();
+
+                            foreach (var title in titleLists)
                             {
-                                DateTime? dt = x.Completion;
-                                if (dt != null)
+                                DateTime? completionDate = title.Completion;
+                                if (completionDate != null)
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = (DateTime)dt,
+                                        DateActivity = completionDate.Value,
                                         Type = ActivityType.HowLongToBeatCompleted
                                     });
                                 }
-                            });
+                            }
                         }
 
                         AddOrUpdate(playerActivitiesData);
+
                     }
                 }
             }
@@ -503,7 +522,6 @@ namespace PlayerActivities.Services
                 Common.LogError(ex, false);
             }
         }
-
 
         /// <summary>
         /// Retrieves activities related to a specific game identified by its Guid.
@@ -538,7 +556,7 @@ namespace PlayerActivities.Services
                 .SelectMany(x => x.Items.Select(y => new ActivityList
                 {
                     GameContext = x.Game,
-                    DateActivity = y.DateActivity,
+                    DateActivity = y.DateActivity.Date,
                     Type = y.Type,
                     Value = y.Value
                 }))
@@ -613,7 +631,6 @@ namespace PlayerActivities.Services
         }
 
         #endregion
-
 
         #region Friends Data Management
 
@@ -828,7 +845,6 @@ namespace PlayerActivities.Services
         }
 
         #endregion
-
 
         public override void SetThemesResources(Game game)
         {

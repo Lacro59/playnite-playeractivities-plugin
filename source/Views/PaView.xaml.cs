@@ -10,15 +10,12 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Threading;
 
 namespace PlayerActivities.Views
@@ -28,7 +25,7 @@ namespace PlayerActivities.Views
     /// </summary>
     public partial class PaView : UserControl
     {
-        internal static ILogger Logger => LogManager.GetLogger();
+        private static ILogger Logger => LogManager.GetLogger();
 
         private PlayerActivities Plugin { get; }
         private PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -36,7 +33,6 @@ namespace PlayerActivities.Views
         internal static PaViewData ControlDataContext { get; set; } = new PaViewData();
 
         private List<string> SearchSources { get; set; } = new List<string>();
-
 
         private bool TimeLineFilter(object item)
         {
@@ -58,10 +54,8 @@ namespace PlayerActivities.Views
             return txtFilter && sourceFilter;
         }
 
-
         private bool IsDataFinished = false;
         private bool IsFriendsFinished = false;
-
 
         public PaView(PlayerActivities plugin)
         {
@@ -98,8 +92,8 @@ namespace PlayerActivities.Views
             GetData();
         }
 
-
         #region Data
+
         private void GetData()
         {
             _ = Task.Run(() =>
@@ -146,14 +140,16 @@ namespace PlayerActivities.Views
                 });
             }
         }
+
         #endregion
 
-
         #region Filter
+
         private void TextboxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
         }
+
         private void ChkSource_Checked(object sender, RoutedEventArgs e)
         {
             FilterCbSource(sender as CheckBox);
@@ -183,9 +179,10 @@ namespace PlayerActivities.Views
             }
 
             CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
-        }
-        #endregion
 
+        }
+
+        #endregion
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
@@ -227,7 +224,6 @@ namespace PlayerActivities.Views
             }
         }
 
-
         private void ListViewExtend_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null)
@@ -236,9 +232,7 @@ namespace PlayerActivities.Views
             }
 
             ListViewExtend lv = sender as ListViewExtend;
-            PlayerFriend pf = lv.SelectedItem as PlayerFriend;
-
-            if (pf == null)
+            if (!(lv.SelectedItem is PlayerFriend pf))
             {
                 return;
             }
@@ -266,6 +260,7 @@ namespace PlayerActivities.Views
         }
     }
 
+
     public class PaViewData : ObservableObject
     {
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -290,36 +285,15 @@ namespace PlayerActivities.Views
 
 
         #region Menus
-        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
 
-            API.Instance.StartGame(game.Id);
-        });
+        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) 
+            => API.Instance.StartGame(game.Id));
 
-        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
+        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) 
+            => API.Instance.InstallGame(game.Id));
 
-            API.Instance.InstallGame(game.Id);
-        });
-
-        public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            API.Instance.MainView.SelectGame(game.Id);
-            API.Instance.MainView.SwitchToLibraryView();
-        });
+        public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game)
+            => Commands.GoToGame.Execute(game.Id));
 
         public RelayCommand<Game> RefreshGameDataCommand { get; } = new RelayCommand<Game>((game) =>
         {
@@ -332,37 +306,18 @@ namespace PlayerActivities.Views
             PaView.ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
         });
 
-        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
+        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) 
+            => SuccessStoryPlugin.SuccessStoryView(game));
 
-            SuccessStoryPlugin.SuccessStoryView(game);
-        });
+        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) 
+            => HowLongToBeatPlugin.HowLongToBeatView(game));
 
-        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            HowLongToBeatPlugin.HowLongToBeatView(game);
-        });
-
-        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game);
-        });
+        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) 
+            => ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game));
+        
         #endregion
     }
+
 
     public class ListSource : ObservableObject
     {
@@ -372,6 +327,7 @@ namespace PlayerActivities.Views
         private bool isCheck;
         public bool IsCheck { get => isCheck; set => SetValue(ref isCheck, value); }
     }
+
 
     public class ListFriendsInfo : PlayerGame
     {

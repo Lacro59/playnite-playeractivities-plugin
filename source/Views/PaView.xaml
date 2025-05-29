@@ -200,7 +200,8 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,0,0,10" BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
+                                <GroupBox Margin="0,0,0,10" Header="{Binding GameContext.Name}"
+                                          BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
                                     <Grid Margin="5" Name="PART_Root" Tag="{Binding}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="100" />
@@ -342,7 +343,7 @@
                                             </ItemsControl>
                                         </ScrollViewer>
                                     </Grid>
-                                </Border>
+                                </GroupBox>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
