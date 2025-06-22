@@ -164,7 +164,11 @@ namespace PlayerActivities.Services
                             y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
                             y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
                             y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
+
+                            if (IsEnabledPlaynitePlugin(GetPluginId(ExternalPlugin.GameActivity)))
+                            {
+                                y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
+                            }
                         }
                     });
                 }
@@ -418,13 +422,16 @@ namespace PlayerActivities.Services
                         }
 
                         // Playtime first
-                        DateTime dtFirst = obj.Items.Select(x => x.DateSession).Min();
-
-                        playerActivitiesData.Items.Add(new Activity
+                        if (!playerActivitiesData.Items.Any(x => x.Type == ActivityType.PlaytimeFirst))
                         {
-                            DateActivity = dtFirst,
-                            Type = ActivityType.PlaytimeFirst
-                        });
+                            DateTime dtFirst = obj.Items.Select(x => x.DateSession).Min();
+
+                            playerActivitiesData.Items.Add(new Activity
+                            {
+                                DateActivity = dtFirst,
+                                Type = ActivityType.PlaytimeFirst
+                            });
+                        }
 
                         // Playtime goal
                         List<ulong> playtimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5, 1 };
