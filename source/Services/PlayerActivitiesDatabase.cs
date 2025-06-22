@@ -163,6 +163,8 @@ namespace PlayerActivities.Services
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
                             y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
                             y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
                         }
                     });
                 }
@@ -174,6 +176,7 @@ namespace PlayerActivities.Services
                     FirstScanGameActivity(id);
                 }
                 FirstScanHowLongToBeat(id);
+                FirstScanGameActivity(id);
 
                 Database.EndBufferUpdate();
             }, globalProgressOptions);
@@ -215,7 +218,12 @@ namespace PlayerActivities.Services
                 string pathData = Path.Combine(SuccessStoryPath, id + ".json");
                 if (File.Exists(pathData))
                 {
-                    GameAchievements obj = Serialization.FromJsonFile<GameAchievements>(pathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameAchievements obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0 && obj.Progression > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -315,7 +323,12 @@ namespace PlayerActivities.Services
                 string pathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
                 if (File.Exists(pathData))
                 {
-                    GameScreenshots obj = Serialization.FromJsonFile<GameScreenshots>(pathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameScreenshots obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -390,19 +403,18 @@ namespace PlayerActivities.Services
                 string pathData = Path.Combine(GameActivityPath, id + ".json");
                 if (File.Exists(pathData))
                 {
-                    GameActivities obj = Serialization.FromJsonFile<GameActivities>(pathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameActivities obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
                         if (playerActivitiesData == null)
                         {
                             return;
-                        }
-
-
-                        if (playerActivitiesData.Game.Name.IndexOf("Golden Axe") > 0)
-                        {
-
                         }
 
                         // Playtime first
@@ -415,7 +427,7 @@ namespace PlayerActivities.Services
                         });
 
                         // Playtime goal
-                        List<ulong> playtimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
+                        List<ulong> playtimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5, 1 };
                         ulong elapsedSeconds = 0;
 
                         foreach (var item in obj.Items.OrderBy(x => x.DateSession))
@@ -481,7 +493,12 @@ namespace PlayerActivities.Services
                 string pathData = Path.Combine(HowLongToBeatPath, id + ".json");
                 if (File.Exists(pathData))
                 {
-                    GameHowLongToBeat obj = Serialization.FromJsonFile<GameHowLongToBeat>(pathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameHowLongToBeat obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -567,10 +584,14 @@ namespace PlayerActivities.Services
             var activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
 
             if (PluginSettings.Settings.EnableHowLongToBeatData)
+            {
                 activityTypes.Add(ActivityType.HowLongToBeatCompleted);
+            }
 
             if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
+            {
                 activityTypes.Add(ActivityType.ScreenshotsTaked);
+            }
 
             if (PluginSettings.Settings.EnableSuccessStoryData)
             {

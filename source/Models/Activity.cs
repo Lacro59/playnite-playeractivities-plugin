@@ -14,8 +14,8 @@ namespace PlayerActivities.Models
     /// </summary>
     public class Activity
     {
-
         private DateTime _dateActivity = DateTime.Now.ToUniversalTime();
+
         /// <summary>
         /// Gets or sets the date and time when the activity occurred.
         /// The value is internally stored in UTC and returned in the local time zone.
