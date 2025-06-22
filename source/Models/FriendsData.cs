@@ -8,12 +8,12 @@ namespace PlayerActivities.Models
     /// </summary>
     public class FriendsData
     {
+        private DateTime _lastUpdate = DateTime.UtcNow;
+
         /// <summary>
         /// List of friends associated with the player.
         /// </summary>
         public List<PlayerFriend> PlayerFriends { get; set; } = new List<PlayerFriend>();
-
-        private DateTime _lastUpdate = DateTime.UtcNow;
 
         /// <summary>
         /// Gets or sets the date and time when the friends data was last updated.

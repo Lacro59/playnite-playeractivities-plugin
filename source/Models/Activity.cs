@@ -81,10 +81,5 @@ namespace PlayerActivities.Models
                 return sb.ToString();
             }
         }
-
-        /// <summary>
-        /// A list of additional detailed elements related to the activity (e.g., session data, metadata).
-        /// </summary>
-        public List<ActivityElement> ActivityElements { get; set; } = new List<ActivityElement>();
     }
 }

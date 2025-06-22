@@ -9,6 +9,10 @@ namespace PlayerActivities.Models
     public class FriendsDataLoading : ObservableObject
     {
         private string _sourceName = string.Empty;
+        private string _friendName = string.Empty; 
+        private int _actualCount;
+        private int _friendCount;
+
         /// <summary>
         /// Gets or sets the name of the source (e.g., Steam, GOG).
         /// </summary>
@@ -18,7 +22,6 @@ namespace PlayerActivities.Models
             set => SetValue(ref _sourceName, value);
         }
 
-        private string _friendName = string.Empty;
         /// <summary>
         /// Gets or sets the name of the friend being processed.
         /// </summary>
@@ -28,7 +31,6 @@ namespace PlayerActivities.Models
             set => SetValue(ref _friendName, value);
         }
 
-        private int _actualCount;
         /// <summary>
         /// Gets or sets the current number of processed friends.
         /// </summary>
@@ -38,7 +40,6 @@ namespace PlayerActivities.Models
             set => SetValue(ref _actualCount, value);
         }
 
-        private int _friendCount;
         /// <summary>
         /// Gets or sets the total number of friends to process.
         /// </summary>
