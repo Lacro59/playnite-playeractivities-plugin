@@ -149,7 +149,6 @@ namespace PlayerActivities.Clients
         {
             games = games ?? StoreApi.GetAccountGamesInfos(account);
 
-
             return new PlayerFriend
             {
                 ClientName = ClientName,

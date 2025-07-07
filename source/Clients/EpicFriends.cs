@@ -8,21 +8,12 @@ namespace PlayerActivities.Clients
     /// </summary>
     public class EpicFriends : GenericFriends
     {
-        #region Properties
-
-        /// <summary>
-        /// Instance of EpicApi used for accessing Epic account and friends data.
-        /// </summary>
-        private EpicApi EpicApi => PlayerActivities.EpicApi;
-
-        #endregion
-
         /// <summary>
         /// Default constructor passes client name "Epic" to base.
         /// </summary>
         public EpicFriends() : base("Epic")
         {
-            StoreApi = EpicApi;
+            StoreApi = PlayerActivities.EpicApi;
         }
     }
 }

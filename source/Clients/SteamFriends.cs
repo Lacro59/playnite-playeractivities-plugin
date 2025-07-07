@@ -7,18 +7,9 @@ namespace PlayerActivities.Clients
     /// </summary>
     public class SteamFriends : GenericFriends
     {
-        #region Properties
-
-        /// <summary>
-        /// Instance of SteamApi used for accessing Steam account and friends data.
-        /// </summary>
-        private SteamApi SteamApi => PlayerActivities.SteamApi;
-
-        # endregion
-
         public SteamFriends() : base("Steam")
         {
-            StoreApi = SteamApi;
+            StoreApi = PlayerActivities.SteamApi;
         }
     }
 }

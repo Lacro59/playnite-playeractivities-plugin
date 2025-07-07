@@ -8,21 +8,12 @@ namespace PlayerActivities.Clients
     /// </summary>
     public class GogFriends : GenericFriends
     {
-        #region Properties
-
-        /// <summary>
-        /// Instance of GogApi used for accessing GOG account and friends data.
-        /// </summary>
-        private GogApi GogApi => PlayerActivities.GogApi;
-
-        #endregion
-
         /// <summary>
         /// Default constructor passes client name "GOG" to base.
         /// </summary>
         public GogFriends() : base("GOG")
         {
-            StoreApi = GogApi;
+            StoreApi = PlayerActivities.GogApi;
         }
     }
 }
