@@ -336,13 +336,13 @@ namespace PlayerActivities
 
             // StoreAPI intialization
             SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            SteamApi.Intialization(PluginDatabase.PluginSettings.Settings.SteamStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.Settings.EnableSteamFriends);
+            SteamApi.Initialization(PluginDatabase.PluginSettings.Settings.SteamStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.Settings.EnableSteamFriends);
 
             EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            EpicApi.Intialization(PluginDatabase.PluginSettings.Settings.EpicStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.Settings.EnableEpicFriends);
+            EpicApi.Initialization(PluginDatabase.PluginSettings.Settings.EpicStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.Settings.EnableEpicFriends);
 
             GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            GogApi.Intialization(PluginDatabase.PluginSettings.Settings.GogStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.Settings.EnableGogFriends);
+            GogApi.Initialization(PluginDatabase.PluginSettings.Settings.GogStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.Settings.EnableGogFriends);
 
             // TODO TEMP
             _ = SpinWait.SpinUntil(() => PluginDatabase.IsLoaded, -1);
