@@ -6,7 +6,7 @@ namespace PlayerActivities.Clients
     /// <summary>
     /// Client for retrieving Origin (EA) friends and their game statistics.
     /// </summary>
-    public class OriginFriends : GenericFriends
+    public class EaFriends : GenericFriends
     {
         #region Properties
 
@@ -19,7 +19,7 @@ namespace PlayerActivities.Clients
 
         # endregion
 
-        public OriginFriends() : base("EA")
+        public EaFriends() : base("EA")
         {
             StoreApi = OriginApi;
         }

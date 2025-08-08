@@ -693,10 +693,10 @@ namespace PlayerActivities.Services
 
                 var gog = FetchFriends(PluginSettings.Settings.EnableGogFriends, "Gog", () => new GogFriends().GetFriends());
                 var steam = FetchFriends(PluginSettings.Settings.EnableSteamFriends, "Steam", () => new SteamFriends().GetFriends());
-                var origin = FetchFriends(PluginSettings.Settings.EnableOriginFriends, "Origin", () => new OriginFriends().GetFriends());
+                var ea = FetchFriends(PluginSettings.Settings.EnableOriginFriends, "EA app", () => new EaFriends().GetFriends());
                 var epic = FetchFriends(PluginSettings.Settings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
 
-                friendsData.PlayerFriends = gog.Concat(steam).Concat(origin).Concat(epic).ToList();
+                friendsData.PlayerFriends = gog.Concat(steam).Concat(ea).Concat(epic).ToList();
                 friendsData.LastUpdate = DateTime.UtcNow;
 
                 try
@@ -819,7 +819,7 @@ namespace PlayerActivities.Services
             }
             else if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
             {
-                pf = new OriginFriends().GetFriends(pf);
+                pf = new EaFriends().GetFriends(pf);
             }
             else if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
             {

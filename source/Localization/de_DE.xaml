@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam Freunde aktivieren</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG Freunde aktivieren</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Origin Freunde aktivieren</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Origin Freunde aktivieren</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Epic Store Freunde aktivieren</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Spiele Aktivitäten anzeigen</sys:String>

@@ -216,7 +216,7 @@ namespace PlayerActivities.Clients
             {
                 ShowNotificationPluginNoAuthenticate(
                     string.Format(ResourceProvider.GetString("LOCCommonPluginNoAuthenticate"), ClientName),
-                    ExternalPlugin.PlayerActivities
+                    ClientName.IsEqual("EA") ? ExternalPlugin.OriginLibrary : ExternalPlugin.PlayerActivities
                 );
                 return false;
             }

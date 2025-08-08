@@ -97,7 +97,7 @@
     <Compile Include="Clients\GenericFriends.cs" />
     <Compile Include="Clients\EpicFriends.cs" />
     <Compile Include="Clients\GogFriends.cs" />
-    <Compile Include="Clients\OriginFriends.cs" />
+    <Compile Include="Clients\EaFriends.cs" />
     <Compile Include="Clients\SteamFriends.cs" />
     <Compile Include="Controls\HowLongToBeatControl.cs" />
     <Compile Include="Controls\PluginActivities.xaml.cs">
