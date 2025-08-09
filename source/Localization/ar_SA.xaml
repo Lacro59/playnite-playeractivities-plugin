@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">تمكين أصدقاء Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">تمكين أصدقاء GOG</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">تمكين أصدقاء Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
