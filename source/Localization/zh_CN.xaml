@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">启用 Steam 好友</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">启用 GOG 好友</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">启用 Origin 好友</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">启用 Epic 好友</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">显示游戏活动</sys:String>
