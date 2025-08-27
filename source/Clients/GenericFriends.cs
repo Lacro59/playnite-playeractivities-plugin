@@ -153,6 +153,7 @@ namespace PlayerActivities.Clients
             {
                 ClientName = ClientName,
                 FriendId = account.UserId,
+                ClientId = account.ClientId,
                 FriendPseudo = account.Pseudo,
                 FriendsAvatar = account.Avatar,
                 FriendsLink = account.Link,
@@ -196,6 +197,7 @@ namespace PlayerActivities.Clients
             var accountInfos = new AccountInfos
             {
                 UserId = pf.FriendId,
+                ClientId = pf.ClientId,
                 Pseudo = pf.FriendPseudo,
                 Avatar = pf.FriendsAvatar,
                 Link = pf.FriendsLink,

@@ -1,4 +1,4 @@
-﻿using CommonPluginsStores.Origin;
+﻿using CommonPluginsStores.Ea;
 using System;
 
 namespace PlayerActivities.Clients
@@ -11,17 +11,17 @@ namespace PlayerActivities.Clients
         #region Properties
 
         /// <summary>
-        /// Instance of OriginApi used for accessing Origin/EA account and friends data.
+        /// Instance of EaApi used for accessing Origin/EA account and friends data.
         /// </summary>
-        private static readonly Lazy<OriginApi> originApi = new Lazy<OriginApi>(() => new OriginApi(PluginDatabase.PluginName));
+        private static readonly Lazy<EaApi> eaApi = new Lazy<EaApi>(() => new EaApi(PluginDatabase.PluginName));
 
-        internal static OriginApi OriginApi => originApi.Value;
+        internal static EaApi EaApi => eaApi.Value;
 
         # endregion
 
         public EaFriends() : base("EA")
         {
-            StoreApi = OriginApi;
+            StoreApi = EaApi;
         }
     }
 }

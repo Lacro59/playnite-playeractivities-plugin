@@ -24,6 +24,11 @@ namespace PlayerActivities.Models
         public string FriendId { get; set; }
 
         /// <summary>
+        /// Unique identifier of the friend on the client/platform.
+        /// </summary>
+        public string ClientId { get; set; }
+
+        /// <summary>
         /// Display name or pseudonym of the friend.
         /// </summary>
         public string FriendPseudo { get; set; }
