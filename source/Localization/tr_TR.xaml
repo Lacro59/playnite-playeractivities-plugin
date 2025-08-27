@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG arkadaşlarını etkinleştir</sys:String>
-    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">EA arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Epic arkadaşlarını etkinleştir</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Oyun etkinliklerini görüntüle</sys:String>
