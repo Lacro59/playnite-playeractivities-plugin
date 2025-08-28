@@ -463,11 +463,18 @@
                                     <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="Name" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock ToolTip="{Binding Link}">
-                                                <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding Link}">
-                                                    <controls2:TextBlockTrimmed Text="{Binding Name}" Style="{DynamicResource ListExtendStyleTextBlock}" />
-                                                </Hyperlink>
-                                            </TextBlock>
+                                            <StackPanel>
+                                                <TextBlock ToolTip="{Binding Link}"
+                                                           Visibility="{Binding Link, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
+                                                    <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding Link}">
+                                                        <controls2:TextBlockTrimmed Text="{Binding Name}" Style="{DynamicResource ListExtendStyleTextBlock}" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+
+
+                                                <TextBlock Text="{Binding Name}"
+                                                           Visibility="{Binding Link, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}, ConverterParameter=Inverted}" />
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
