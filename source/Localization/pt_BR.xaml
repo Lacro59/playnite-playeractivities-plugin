@@ -3,65 +3,65 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
+    <sys:String x:Key="LOCPa">Atividades do jogador</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
-    <sys:String x:Key="LOCPaView">View player activities</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Atualizar dados de amigos</sys:String>
+    <sys:String x:Key="LOCPaView">Visualizar atividades do jogador</sys:String>
 
-    <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
+    <sys:String x:Key="LOCPaActivities">Atividades do jogador</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Exibir dados do SuccessStory (Plugin SuccessStory necessário)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Exibir dados do ScreenshotVisualizer (Plugin ScreenshotVisualizer necessário)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Exibir dados do HowLongToBeat (Plugin HowLongToBeat necessário)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableEAFriends">Enable Origin friends</sys:String>
-    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Ativar amigos Steam</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">Ativar amigos GOG</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Ativar amigos EA</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Ativar amigos Epic</sys:String>
 
-    <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
+    <sys:String x:Key="LOCPaIntegrationActivities">Exibir atividades de jogo</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">Você jogou pela primeira vez.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">Você alcançou {0} horas de jogo.</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">Você desbloqueou {0} conquistas.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">Você alcançou {0}% das conquistas.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">You have taked {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaked">Você fez {0} capturas de tela.</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">Você completou o jogo.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} dia atrás</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} dias atrás</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} mês atrás</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} meses atrás</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} ano atrás</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} anos atrás</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends 🏆</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your 🏆</sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Jogo possuído</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Jogos concluídos</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Amigos 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Seu 🏆</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Seu 🕒</sys:String>
+    <sys:String x:Key="LOCPaAchievements">Conquistas</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Commun</sys:String>
+    <sys:String x:Key="LOCPaCommun">Comum</sys:String>
 
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Exibir jogo na biblioteca</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Atualizar dados do jogo</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">Visualizar dados do HowLongToBeat</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Visualizar dados do SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Visualizar dados do ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
