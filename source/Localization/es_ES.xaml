@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Tu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Común</sys:String>
+    <sys:String x:Key="LOCPaCommon">Común</sys:String>
 
 
     <!-- Menus -->

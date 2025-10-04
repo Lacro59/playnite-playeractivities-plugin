@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">شائع</sys:String>
+    <sys:String x:Key="LOCPaCommon">شائع</sys:String>
 
 
     <!-- Menus -->

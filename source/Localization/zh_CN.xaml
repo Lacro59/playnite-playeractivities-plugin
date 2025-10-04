@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">您的 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">私信</sys:String>
+    <sys:String x:Key="LOCPaCommon">私信</sys:String>
 
 
     <!-- Menus -->

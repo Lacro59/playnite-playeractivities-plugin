@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Ortak</sys:String>
+    <sys:String x:Key="LOCPaCommon">Ortak</sys:String>
 
 
     <!-- Menus -->
