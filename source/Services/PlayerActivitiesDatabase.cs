@@ -164,21 +164,13 @@ namespace PlayerActivities.Services
                             y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
                             y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
                             y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
-
-                            if (IsEnabledPlaynitePlugin(GetPluginId(ExternalPlugin.GameActivity)))
-                            {
-                                y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
-                            }
+                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
                         }
                     });
                 }
 
                 FirstScanSuccessStory(id);
                 FirstScanScreenshotsVisualizer(id);
-                if (!forced)
-                {
-                    FirstScanGameActivity(id);
-                }
                 FirstScanHowLongToBeat(id);
                 FirstScanGameActivity(id);
 
