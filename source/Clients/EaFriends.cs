@@ -17,7 +17,7 @@ namespace PlayerActivities.Clients
 
         internal static EaApi EaApi => eaApi.Value;
 
-        # endregion
+        #endregion
 
         public EaFriends() : base("EA")
         {
