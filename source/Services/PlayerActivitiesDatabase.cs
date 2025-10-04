@@ -662,6 +662,23 @@ namespace PlayerActivities.Services
 
         #region Friends Data Management
 
+        private FriendsData LoadFriendsData()
+        {
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
+            if (File.Exists(friendsFilePath))
+            {
+                try
+                {
+                    return Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false);
+                }
+            }
+            return new FriendsData();
+        }
+
         /// <summary>
         /// Retrieves the list of player friends from all enabled platforms (GOG, Steam, Origin, Epic).
         /// If force is true, fetches fresh data from each platform and updates the local cache.
@@ -699,6 +716,11 @@ namespace PlayerActivities.Services
                 friendsData.PlayerFriends = gog.Concat(steam).Concat(ea).Concat(epic).ToList();
                 friendsData.LastUpdate = DateTime.UtcNow;
 
+                if (FriendsDataIsCanceled)
+                {
+                    return LoadFriendsData();
+                }
+
                 try
                 {
                     File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
@@ -710,17 +732,7 @@ namespace PlayerActivities.Services
             }
             else
             {
-                if (File.Exists(friendsFilePath))
-                {
-                    try
-                    {
-                        friendsData = Serialization.FromJsonFile<FriendsData>(friendsFilePath);
-                    }
-                    catch (Exception ex)
-                    {
-                        Common.LogError(ex, false);
-                    }
-                }
+                return LoadFriendsData();
             }
 
             return friendsData;
