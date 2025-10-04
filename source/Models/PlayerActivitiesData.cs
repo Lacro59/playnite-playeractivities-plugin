@@ -14,7 +14,7 @@ namespace PlayerActivities.Models
         /// </returns>
         public bool HasFirst()
         {
-            return !Items.Any(x => x.Type == ActivityType.PlaytimeFirst);
+            return Items.Any(x => x.Type == ActivityType.PlaytimeFirst);
         }
     }
 }
