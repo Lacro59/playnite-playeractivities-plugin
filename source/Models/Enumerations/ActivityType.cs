@@ -4,7 +4,7 @@
     {
         HowLongToBeatCompleted,
         AchievementsGoal, AchievementsUnlocked,
-        ScreenshotsTaked,
+        ScreenshotsTaken,
         PlaytimeGoal, PlaytimeFirst
     }
 }

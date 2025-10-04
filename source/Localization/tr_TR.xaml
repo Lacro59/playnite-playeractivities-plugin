@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} başarımın kilidini açtınız.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">%{0} başarıma ulaştınız.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">{0} ekran görüntüsü aldınız.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">{0} ekran görüntüsü aldınız.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Oyunu tamamladınız.</sys:String>
 

@@ -304,7 +304,7 @@ namespace PlayerActivities
                     PluginDatabase.SetAchievements(args.Game.Id);
 
                     // Screenshots
-                    playerActivities.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
+                    playerActivities.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
                     PluginDatabase.SetScreenshots(args.Game.Id);
 
                     // HowLongToBeat

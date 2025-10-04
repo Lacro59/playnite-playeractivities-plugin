@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Sie haben {0} Errungenschaften freigeschaltet.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Sie haben {0}% Errungenschaften erreicht.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Sie haben {0} Screenshots aufgenommen.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Sie haben {0} Screenshots aufgenommen.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Sie haben das Spiel abgeschlossen.</sys:String>
 

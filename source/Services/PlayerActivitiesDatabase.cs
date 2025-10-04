@@ -161,7 +161,7 @@ namespace PlayerActivities.Services
                         {
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
                             y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
                             y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
 
@@ -358,7 +358,7 @@ namespace PlayerActivities.Services
                             playerActivitiesData.Items.Add(new Models.Activity
                             {
                                 DateActivity = date,
-                                Type = ActivityType.ScreenshotsTaked,
+                                Type = ActivityType.ScreenshotsTaken,
                                 Value = value
                             });
                         }
@@ -597,7 +597,7 @@ namespace PlayerActivities.Services
 
             if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
             {
-                activityTypes.Add(ActivityType.ScreenshotsTaked);
+                activityTypes.Add(ActivityType.ScreenshotsTaken);
             }
 
             if (PluginSettings.Settings.EnableSuccessStoryData)

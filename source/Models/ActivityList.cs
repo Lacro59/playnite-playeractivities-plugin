@@ -105,7 +105,7 @@ namespace PlayerActivities.Models
         /// <summary>
         /// Indicates whether the game has screenshot data.
         /// </summary>
-        public bool HasScreenshotsVisualizer => Data?.Items?.Any(x => x.Type == ActivityType.ScreenshotsTaked) == true;
+        public bool HasScreenshotsVisualizer => Data?.Items?.Any(x => x.Type == ActivityType.ScreenshotsTaken) == true;
 
         /// <summary>
         /// Indicates whether ScreenshotsVisualizer plugin is installed.
