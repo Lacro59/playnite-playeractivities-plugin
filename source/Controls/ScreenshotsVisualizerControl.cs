@@ -19,8 +19,7 @@ namespace PlayerActivities.Controls
     public class ScreenshotsVisualizerPlugin
     {
         // Cached instance of the ScreenshotsVisualizer plugin for better performance
-        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
 
         // Reference to the PlayerActivities plugin database
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -48,12 +47,7 @@ namespace PlayerActivities.Controls
                     Games = new List<Game> { game },
                     IsGlobalSearchRequest = false
                 });
-
-                var firstMenu = pluginMenus.FirstOrDefault();
-                if (firstMenu?.Action != null)
-                {
-                    firstMenu.Action.Invoke(null);
-                }
+                pluginMenus?.FirstOrDefault()?.Action?.Invoke(null);
             }
             catch (Exception ex)
             {

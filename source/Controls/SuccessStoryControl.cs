@@ -19,8 +19,7 @@ namespace PlayerActivities.Controls
     public class SuccessStoryPlugin
     {
         // Cached instance of the SuccessStory plugin for better performance
-        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
-            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == GetPluginId(ExternalPlugin.SuccessStory));
 
         // Reference to the PlayerActivities plugin database
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -48,9 +47,7 @@ namespace PlayerActivities.Controls
                     Games = new List<Game> { game },
                     IsGlobalSearchRequest = false
                 });
-
-                var firstMenu = pluginMenus.FirstOrDefault();
-                firstMenu?.Action?.Invoke(null);
+                pluginMenus?.FirstOrDefault()?.Action?.Invoke(null);
             }
             catch (Exception ex)
             {
