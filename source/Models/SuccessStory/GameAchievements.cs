@@ -16,6 +16,8 @@ namespace PlayerActivities.Models.SuccessStory
         public int Unlocked => Items.Count(x => x.IsUnlock);
 
         [DontSerialize]
-        public int Progression => (int)Math.Ceiling((double)(Unlocked * 100) / Total);
+        public int Progression => Total == 0
+            ? 0
+            : (int)Math.Ceiling((double)(Unlocked * 100) / Total);
     }
 }
