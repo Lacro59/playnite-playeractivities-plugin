@@ -55,3 +55,14 @@ Packages:
       - Allowed right-clicking on games list
       - Fixed bug on length of games list for friends data
       - Minor optimizations
+  - Version: 1.1.1
+    RequiredApiVersion: 6.13.0
+    ReleaseDate: 2025-10-04
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v1.1.1/playnite-playeractivities-plugin_1_1_1.pext
+    Changelog:
+      - 'Updated: Localizations'
+      - 'Warning: Epic is broken'
+      - 'Optimized: UI'
+      - 'Fixed: Incorrect data'
+      - 'Fixed: EA data'
+      - 'Fixed: Steam data'
