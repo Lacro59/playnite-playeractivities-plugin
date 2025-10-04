@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Habilitar amigos de Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Habilitar amigos de GOG</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Habilitar amigos de Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Habilitar amigos de Epic</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Mostrar actividades del juego</sys:String>
@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Has desbloqueado {0} logros.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Has alcanzado el {0}% de logros.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Has tomado {0} capturas de pantalla.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Has tomado {0} capturas de pantalla.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Has completado el juego.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Tu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Común</sys:String>
+    <sys:String x:Key="LOCPaCommon">Común</sys:String>
 
 
     <!-- Menus -->

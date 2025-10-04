@@ -3,39 +3,39 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">玩家活</sys:String>
+    <sys:String x:Key="LOCPa">玩家活动状态</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">刷新好友数据</sys:String>
-    <sys:String x:Key="LOCPaView">查看玩家活</sys:String>
+    <sys:String x:Key="LOCPaView">查看玩家活动状态</sys:String>
 
-    <sys:String x:Key="LOCPaActivities">玩家动态</sys:String>
+    <sys:String x:Key="LOCPaActivities">玩家活动</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">显示功成名就的数据（需要功成名就插件</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示截图可视化的数据 (需要截图可视化插件)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示攻关历时的数据 (需要攻关历时插件)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">显示 SuccessStory 数据（需要安装 SuccessStory 插件）</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">显示 ScreenshotsVisualizer 数据 （需要安装 ScreenshotsVisualizer ）</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">显示 HowLongToBeat 数据 (需要 HowLongToBeat 插件)</sys:String>
     
     <sys:String x:Key="LOCPaEnableSteamFriends">启用 Steam 好友</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">启用 GOG 好友</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">启用 Origin 好友</sys:String>
-    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">启用 Epic 好友</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">显示游戏活动</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">这是您第一次游</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">您已经游玩过 {0} 小时</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">您第一次玩过该游戏。</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">您已经游玩过 {0} 小时。</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">您已经解锁了 {0} 个成就</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">您已经达成 {0}% 的成就</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">您已经解锁了 {0} 个成就。</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">您已经达成 {0}% 的成就。</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">您已截取 {0} 张截图</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">您已拍摄了 {0} 屏幕截图。</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">您已完成此游戏</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">您已完成此游戏。</sys:String>
 
     <sys:String x:Key="LOCPaDayAgo">{0} 天前</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} 天前</sys:String>
@@ -46,22 +46,22 @@
     
     <sys:String x:Key="LOCPaGameOwned">已拥有游戏</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">已完成游戏</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">好友 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">您的 🏆</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">好友 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">您的 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">成就</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">信</sys:String>
+    <sys:String x:Key="LOCPaCommon">私信</sys:String>
 
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">仅库中的游戏</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">刷新所有数据</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">显示库中的游戏</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">刷新游戏数据</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">查看攻关历时数据</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">查看成功的故事数据</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">查看屏幕截图可视化器数据</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">查看 HowLongToBeat 数据</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">查看 SuccessStory 数据</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">查看 ScreenshotsVisualizer 数据</sys:String>
 
 </ResourceDictionary>

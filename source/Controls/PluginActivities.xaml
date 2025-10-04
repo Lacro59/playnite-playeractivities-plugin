@@ -6,9 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
     xmlns:local="clr-namespace:PlayerActivities.Controls"
-    xmlns:enum="clr-namespace:PlayerActivities.Models" 
     xmlns:convertersshared="clr-namespace:CommonPluginsShared.Converters" 
-    xmlns:converters="clr-namespace:CommonPlayniteShared.Converters"
+    xmlns:converters="clr-namespace:CommonPlayniteShared.Converters" 
+    xmlns:enum="clr-namespace:PlayerActivities.Models.Enumerations"
     MinHeight="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, Path=MinHeight}"
     MaxHeight="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, Path=MaxHeight}"
     Height="{Binding RelativeSource={RelativeSource AncestorType=ContentControl}, Path=Height}"
@@ -212,13 +212,13 @@
                                                     <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
                                                 </DockPanel>
 
-                                                <!-- ScreenshotsTaked  -->
+                                                <!-- ScreenshotsTaken -->
                                                 <DockPanel>
                                                     <DockPanel.Style>
                                                         <Style TargetType="DockPanel">
                                                             <Setter Property="Visibility" Value="Collapsed" />
                                                             <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaked}">
+                                                                <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaken}">
                                                                     <Setter Property="Visibility" Value="Visible" />
                                                                 </DataTrigger>
                                                             </Style.Triggers>
@@ -228,7 +228,7 @@
                                                     <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
                                                         <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
                                                         <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                        <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaked}" />
+                                                        <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
                                                     </DockPanel>
 
                                                     <local:ScreenshotsVisualizerPluginListScreenshots GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"

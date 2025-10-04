@@ -44,7 +44,7 @@
                     </CheckBox>
                     
                     <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
-                        <Label Content="{DynamicResource LOCPaEnableOriginFriends}" />
+                        <Label Content="{DynamicResource LOCPaEnableEAFriends}" />
                     </CheckBox>
 
                     <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_STEAM">

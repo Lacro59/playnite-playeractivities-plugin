@@ -3,7 +3,7 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">AttivitàGiocatore</sys:String>
+    <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Aggiorna i dati degli amici</sys:String>
     <sys:String x:Key="LOCPaView">Visualizza attività del giocatore</sys:String>
@@ -14,13 +14,13 @@
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">Mostra i dati di SuccessStory (plugin di SuccessStory richiesto)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Visualizza dati di screenshotsVisualizer (plugin screenshotsVisualizer richiesto)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Visualizza i dati HowLongToBeat (plugin HowLongToBeat richiesto)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Visualizza dati di ScreenshotsVisualizer (plugin ScreenshotsVisualizer richiesto)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Visualizza i dati di HowLongToBeat (plugin HowLongToBeat richiesto)</sys:String>
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Abilita amici di Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Abilita amici di GOG</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Attiva amici di Origin</sys:String>
-    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Abilita amici di Epic</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Visualizza attività di gioco</sys:String>
 
@@ -33,11 +33,11 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Hai sbloccato {0} obiettivi.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Hai raggiunto {0}% obiettivi.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Hai preso {0} schermate.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Hai catturato {0} schermate.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Hai completato il gioco.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} giorni fa</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} giorno fa</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">{0} giorni fa</sys:String>
     <sys:String x:Key="LOCPaMonthAgo">{0} mese fa</sys:String>
     <sys:String x:Key="LOCPaMonthsAgo">{0} mesi fa</sys:String>
@@ -46,13 +46,13 @@
     
     <sys:String x:Key="LOCPaGameOwned">Gioco posseduto</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Giochi completati</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Amici</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Il tuo</sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Amici 🕒</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">🏆 degli amici</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">I tuoi 🏆</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">🕒 degli amici</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Il tuo 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Obiettivi</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Comune</sys:String>
+    <sys:String x:Key="LOCPaCommon">Comune</sys:String>
 
 
     <!-- Menus -->

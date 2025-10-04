@@ -10,15 +10,12 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Threading;
 
 namespace PlayerActivities.Views
@@ -28,7 +25,7 @@ namespace PlayerActivities.Views
     /// </summary>
     public partial class PaView : UserControl
     {
-        internal static ILogger Logger => LogManager.GetLogger();
+        private static ILogger Logger => LogManager.GetLogger();
 
         private PlayerActivities Plugin { get; }
         private PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -36,7 +33,6 @@ namespace PlayerActivities.Views
         internal static PaViewData ControlDataContext { get; set; } = new PaViewData();
 
         private List<string> SearchSources { get; set; } = new List<string>();
-
 
         private bool TimeLineFilter(object item)
         {
@@ -58,10 +54,8 @@ namespace PlayerActivities.Views
             return txtFilter && sourceFilter;
         }
 
-
         private bool IsDataFinished = false;
         private bool IsFriendsFinished = false;
-
 
         public PaView(PlayerActivities plugin)
         {
@@ -98,8 +92,8 @@ namespace PlayerActivities.Views
             GetData();
         }
 
-
         #region Data
+
         private void GetData()
         {
             _ = Task.Run(() =>
@@ -116,8 +110,9 @@ namespace PlayerActivities.Views
             _ = Task.Run(() =>
             {
                 _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
-                ControlDataContext.FriendsSource = PluginDatabase.GetFriends(Plugin).ToObservable();
-                ControlDataContext.LastFriendsRefresh = PluginDatabase.PluginSettings.Settings.LastFriendsRefresh;
+                FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
+                ControlDataContext.FriendsSource = friendsData.PlayerFriends.ToObservable();
+                ControlDataContext.LastFriendsRefresh = friendsData.PlayerFriends.Count == 0 ? (DateTime?)null : friendsData.LastUpdate;
                 IsFriendsFinished = true;
                 IsFinish();
             });
@@ -145,14 +140,16 @@ namespace PlayerActivities.Views
                 });
             }
         }
+
         #endregion
 
-
         #region Filter
+
         private void TextboxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
             CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
         }
+
         private void ChkSource_Checked(object sender, RoutedEventArgs e)
         {
             FilterCbSource(sender as CheckBox);
@@ -182,9 +179,10 @@ namespace PlayerActivities.Views
             }
 
             CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
-        }
-        #endregion
 
+        }
+
+        #endregion
 
         private void Button_RefreshFriendsData(object sender, RoutedEventArgs e)
         {
@@ -208,7 +206,7 @@ namespace PlayerActivities.Views
         {
             if (sender is Button button)
             {
-                if (button.Tag is PlayerFriends item)
+                if (button.Tag is PlayerFriend item)
                 {
                     button.IsEnabled = false;
                     PART_BtFriends.IsEnabled = false;
@@ -226,7 +224,6 @@ namespace PlayerActivities.Views
             }
         }
 
-
         private void ListViewExtend_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (sender == null)
@@ -235,14 +232,12 @@ namespace PlayerActivities.Views
             }
 
             ListViewExtend lv = sender as ListViewExtend;
-            PlayerFriends pf = lv.SelectedItem as PlayerFriends;
-
-            if (pf == null)
+            if (!(lv.SelectedItem is PlayerFriend pf))
             {
                 return;
             }
 
-            PlayerFriends pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
+            PlayerFriend pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
 
             ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
             pf.Games.ForEach(x =>
@@ -265,6 +260,7 @@ namespace PlayerActivities.Views
         }
     }
 
+
     public class PaViewData : ObservableObject
     {
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
@@ -272,8 +268,8 @@ namespace PlayerActivities.Views
         private ObservableCollection<ActivityListGrouped> _itemsSource = new ObservableCollection<ActivityListGrouped>();
         public ObservableCollection<ActivityListGrouped> ItemsSource { get => _itemsSource; set => SetValue(ref _itemsSource, value); }
 
-        private ObservableCollection<PlayerFriends> _friendsSource = new ObservableCollection<PlayerFriends>();
-        public ObservableCollection<PlayerFriends> FriendsSource { get => _friendsSource; set => SetValue(ref _friendsSource, value); }
+        private ObservableCollection<PlayerFriend> _friendsSource = new ObservableCollection<PlayerFriend>();
+        public ObservableCollection<PlayerFriend> FriendsSource { get => _friendsSource; set => SetValue(ref _friendsSource, value); }
 
         private ObservableCollection<ListFriendsInfo> _friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
         public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _friendsDetailsSource; set => SetValue(ref _friendsDetailsSource, value); }
@@ -284,41 +280,20 @@ namespace PlayerActivities.Views
         private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
         public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
-        private DateTime _lastFriendsRefresh = DateTime.Now;
-        public DateTime LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
+        private DateTime? _lastFriendsRefresh;
+        public DateTime? LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
 
 
         #region Menus
-        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
 
-            API.Instance.StartGame(game.Id);
-        });
+        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) 
+            => API.Instance.StartGame(game.Id));
 
-        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
+        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) 
+            => API.Instance.InstallGame(game.Id));
 
-            API.Instance.InstallGame(game.Id);
-        });
-
-        public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            API.Instance.MainView.SelectGame(game.Id);
-            API.Instance.MainView.SwitchToLibraryView();
-        });
+        public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game)
+            => Commands.GoToGame.Execute(game.Id));
 
         public RelayCommand<Game> RefreshGameDataCommand { get; } = new RelayCommand<Game>((game) =>
         {
@@ -331,37 +306,18 @@ namespace PlayerActivities.Views
             PaView.ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
         });
 
-        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
+        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) 
+            => SuccessStoryPlugin.SuccessStoryView(game));
 
-            SuccessStoryPlugin.SuccessStoryView(game);
-        });
+        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) 
+            => HowLongToBeatPlugin.HowLongToBeatView(game));
 
-        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            HowLongToBeatPlugin.HowLongToBeatView(game);
-        });
-
-        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) =>
-        {
-            if (game == null)
-            {
-                return;
-            }
-
-            ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game);
-        });
+        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) 
+            => ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game));
+        
         #endregion
     }
+
 
     public class ListSource : ObservableObject
     {
@@ -372,7 +328,8 @@ namespace PlayerActivities.Views
         public bool IsCheck { get => isCheck; set => SetValue(ref isCheck, value); }
     }
 
-    public class ListFriendsInfo : PlayerGames
+
+    public class ListFriendsInfo : PlayerGame
     {
         public int UsAchievements { get; set; }
         public long UsPlaytime { get; set; }

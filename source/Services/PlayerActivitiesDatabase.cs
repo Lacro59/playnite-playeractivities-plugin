@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using PlayerActivities.Clients;
@@ -22,45 +21,72 @@ using System.Windows;
 using System.Windows.Threading;
 using PlayerActivities.Views;
 using System.Collections.ObjectModel;
+using PlayerActivities.Models.Enumerations;
 using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Services
 {
-    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, Models.PlayerActivitiesData, Activity>
+    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, PlayerActivitiesData, Activity>
     {
+        #region Fields and Properties
+
+        /// <summary>
+        /// Path to the SuccessStory plugin data directory.
+        /// </summary>
         private string SuccessStoryPath { get; }
+
+        /// <summary>
+        /// Path to the GameActivity plugin data directory.
+        /// </summary>
         private string GameActivityPath { get; }
+
+        /// <summary>
+        /// Path to the ScreenshotsVisualizer plugin data directory.
+        /// </summary>
         private string ScreenshotsVisuliazerPath { get; }
+
+        /// <summary>
+        /// Path to the HowLongToBeat plugin data directory.
+        /// </summary>
         private string HowLongToBeatPath { get; }
 
 
-        private bool friendsDataIsDownloaded = true;
-        public bool FriendsDataIsDownloaded { get => friendsDataIsDownloaded; set => SetValue(ref friendsDataIsDownloaded, value); }
+        private bool _friendsDataIsDownloaded = true;
+        /// <summary>
+        /// Indicates if friends data has been downloaded.
+        /// </summary>
+        public bool FriendsDataIsDownloaded { get => _friendsDataIsDownloaded; set => SetValue(ref _friendsDataIsDownloaded, value); }
 
-        private bool friendsDataIsCanceled = false;
-        public bool FriendsDataIsCanceled { get => friendsDataIsCanceled; set => SetValue(ref friendsDataIsCanceled, value); }
+        private bool _friendsDataIsCanceled = false;
+        /// <summary>
+        /// Indicates if friends data download has been canceled.
+        /// </summary>
+        public bool FriendsDataIsCanceled { get => _friendsDataIsCanceled; set => SetValue(ref _friendsDataIsCanceled, value); }
 
         private Window WindowFriendsDataLoading { get; set; } = null;
         private Stopwatch StopWatchFriendsDataLoading { get; set; } = new Stopwatch();
 
-        private FriendsDataLoading friendsDataLoading = new FriendsDataLoading();
-        public FriendsDataLoading FriendsDataLoading { get => friendsDataLoading; set => SetValue(ref friendsDataLoading, value); }
+        private FriendsDataLoading _friendsDataLoading = new FriendsDataLoading();
+        /// <summary>
+        /// Stores the loading state for friends data.
+        /// </summary>
+        public FriendsDataLoading FriendsDataLoading { get => _friendsDataLoading; set => SetValue(ref _friendsDataLoading, value); }
 
 
-        private HltbUserStats hltbUserStats;
+        private HltbUserStats _hltbUserStats;
         private HltbUserStats HltbUserStats
         {
             get
             {
-                if (hltbUserStats == null)
+                if (_hltbUserStats == null)
                 {
-                    string PathHltbUserStats = Path.Combine(HowLongToBeatPath, "..", "HltbUserStats.json");
-                    if (File.Exists(PathHltbUserStats))
+                    string pathHltbUserStats = Path.Combine(HowLongToBeatPath, "..", "HltbUserStats.json");
+                    if (File.Exists(pathHltbUserStats))
                     {
                         try
                         {
-                            hltbUserStats = Serialization.FromJsonFile<HltbUserStats>(PathHltbUserStats);
-                            hltbUserStats.TitlesList = hltbUserStats.TitlesList.Where(x => x != null).ToList();
+                            _hltbUserStats = Serialization.FromJsonFile<HltbUserStats>(pathHltbUserStats);
+                            _hltbUserStats.TitlesList = _hltbUserStats.TitlesList.Where(x => x != null).ToList();
                         }
                         catch (Exception ex)
                         {
@@ -68,44 +94,28 @@ namespace PlayerActivities.Services
                         }
                     }
                 }
-                return hltbUserStats;
+                return _hltbUserStats;
             }
         }
 
+        #endregion
 
         public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
-            SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", "cebe6d32-8c46-4459-b993-5a5189d60788", "SuccessStory");
-            GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", "afbb1a0d-04a1-4d0c-9afa-c6e42ca855b4", "GameActivity");
-            ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", "c6c8276f-91bf-48e5-a1d1-4bee0b493488", "ScreenshotsVisualizer");
-            HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", "e08cd51f-9c9a-4ee3-a094-fde03b55492f", "HowLongToBeat");
+            SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory).ToString(), "SuccessStory");
+            GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.GameActivity).ToString(), "GameActivity");
+            ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer).ToString(), "ScreenshotsVisualizer");
+            HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat).ToString(), "HowLongToBeat");
         }
 
-
-        protected override bool LoadDatabase()
-        {
-            try
-            {
-                Stopwatch stopWatch = new Stopwatch();
-                stopWatch.Start();
-
-                Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
-                Database.SetGameInfo<Activity>();
-
-                stopWatch.Stop();
-                TimeSpan ts = stopWatch.Elapsed;
-                Logger.Info($"LoadDatabase with {Database.Count} items - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
-            }
-            catch (Exception ex)
-            {
-                Common.LogError(ex, false, true, PluginName);
-                return false;
-            }
-
-            return true;
-        }
-
-
+        /// <summary>
+        /// Retrieves activity data for a specific game by its Guid.
+        /// If not found in cache, creates a default entry and adds it to the database.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
+        /// <param name="onlyCache">If true, only retrieves from cache.</param>
+        /// <param name="force">If true, forces retrieval.</param>
+        /// <returns>PlayerActivitiesData for the specified game.</returns>
         public override PlayerActivitiesData Get(Guid id, bool onlyCache = false, bool force = false)
         {
             PlayerActivitiesData playerActivities = base.GetOnlyCache(id);
@@ -121,15 +131,21 @@ namespace PlayerActivities.Services
             return playerActivities;
         }
 
-
         #region Plugin data
+
+        /// <summary>
+        /// Initializes or refreshes plugin data from external sources.
+        /// Optionally forces a full rescan and can target a specific game.
+        /// </summary>
+        /// <param name="forced">If true, removes and reloads all data.</param>
+        /// <param name="id">Optional game Guid to target.</param>
         public void InitializePluginData(bool forced = false, Guid id = default)
         {
-            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions(
-                $"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}",
-                false
-            );
-            globalProgressOptions.IsIndeterminate = true;
+            GlobalProgressOptions globalProgressOptions = new GlobalProgressOptions($"{PluginName} - {ResourceProvider.GetString("LOCCommonProcessing")}")
+            {
+                Cancelable = false,
+                IsIndeterminate = true
+            };
 
             _ = API.Instance.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
             {
@@ -145,25 +161,27 @@ namespace PlayerActivities.Services
                         {
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
                             y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaked);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
                             y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
+                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
                         }
                     });
                 }
 
                 FirstScanSuccessStory(id);
                 FirstScanScreenshotsVisualizer(id);
-                if (!forced)
-                {
-                    FirstScanGameActivity(id);
-                }
                 FirstScanHowLongToBeat(id);
+                FirstScanGameActivity(id);
 
                 Database.EndBufferUpdate();
             }, globalProgressOptions);
         }
 
-
+        /// <summary>
+        /// Scans the SuccessStory plugin data directory and imports achievements for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanSuccessStory(Guid id = default)
         {
             if (Directory.Exists(SuccessStoryPath))
@@ -182,16 +200,26 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes achievement data for a specific game from SuccessStory.
+        /// Adds achievement unlocks and progression goals as activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetAchievements(Guid id)
         {
             try
             {
-                List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
+                List<ulong> achievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
 
-                string PathData = Path.Combine(SuccessStoryPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(SuccessStoryPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameAchievements obj = Serialization.FromJsonFile<GameAchievements>(PathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameAchievements obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0 && obj.Progression > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -200,42 +228,52 @@ namespace PlayerActivities.Services
                             return;
                         }
 
-                        int Unlocked = 0;
-                        obj.Items.Where(x => x.DateUnlocked != null && (DateTime)x.DateUnlocked != default(DateTime))
-                            .Select(x => x.DateUnlocked?.ToString("yyyy-MM-dd")).Distinct().OrderBy(x => x).ForEach(x =>
+                        int unlocked = 0;
+                        var unlockedItems = obj.Items.Where(x => x.IsUnlock).ToList();
+
+                        var distinctDates = unlockedItems
+                            .Select(x => x.DateWhenUnlocked?.Date)
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .ToList();
+
+                        foreach (var date in distinctDates)
                         {
-                            List<Achievements> ach = obj.Items.FindAll(y => y.DateUnlocked?.ToString("yyyy-MM-dd").IsEqual(x) ?? false).ToList();
+                            if (date == null) continue;
 
                             // by day
-                            DateTime DateActivity = (DateTime)obj.Items.FindAll(y => y.DateUnlocked?.ToString("yyyy-MM-dd").IsEqual(x) ?? false).First().DateUnlocked;
-                            ulong Value = (ulong)ach.Count();
+                            var achievements = unlockedItems
+                                .Where(y => y.DateWhenUnlocked?.Date == date)
+                                .ToList();
+
+                            var value = (ulong)achievements.Count;
 
                             playerActivitiesData.Items.Add(new Activity
                             {
-                                DateActivity = DateActivity,
+                                DateActivity = date.Value,
                                 Type = ActivityType.AchievementsUnlocked,
-                                Value = Value
+                                Value = value
                             });
 
                             // by goal
-                            Unlocked += ach.Count();
-                            ulong Progression = (ulong)Math.Ceiling((double)(Unlocked * 100 / obj.Items.Count()));
-                            AchievementsGoals.ForEach(z =>
+                            unlocked += achievements.Count;
+                            ulong progression = (ulong)Math.Ceiling((double)(unlocked * 100 / obj.Items.Count()));
+
+                            foreach (var goal in achievementsGoals)
                             {
-                                if (Progression >= z
-                                    && playerActivitiesData.Items.Find(y => y.DateActivity == DateActivity && y.Type == ActivityType.AchievementsGoal) == null
-                                    && playerActivitiesData.Items.Find(y => y.Type == ActivityType.AchievementsGoal && y.Value == z) == null)
+                                if (progression >= goal
+                                    && !playerActivitiesData.Items.Any(y => y.DateActivity == date.Value && y.Type == ActivityType.AchievementsGoal)
+                                    && !playerActivitiesData.Items.Any(y => y.Type == ActivityType.AchievementsGoal && y.Value == goal))
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = DateActivity,
+                                        DateActivity = date.Value,
                                         Type = ActivityType.AchievementsGoal,
-                                        Value = z
+                                        Value = goal
                                     });
-                                    return;
                                 }
-                            });
-                        });
+                            }
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -247,17 +285,20 @@ namespace PlayerActivities.Services
             }
         }
 
-
+        /// <summary>
+        /// Scans the ScreenshotsVisualizer plugin data directory and imports screenshots for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanScreenshotsVisualizer(Guid id = default)
         {
-            if (Directory.Exists(SuccessStoryPath))
+            if (Directory.Exists(ScreenshotsVisuliazerPath))
             {
                 _ = Parallel.ForEach(Directory.EnumerateFiles(ScreenshotsVisuliazerPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out var fileId))
                         {
-                            if (id == default(Guid) || fileId == id)
+                            if (id == default || fileId == id)
                             {
                                 SetScreenshots(fileId);
                             }
@@ -266,16 +307,24 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes screenshot data for a specific game from ScreenshotsVisualizer.
+        /// Adds screenshot activities by day.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetScreenshots(Guid id)
         {
             try
             {
-                List<ulong> AchievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
-
-                string PathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(ScreenshotsVisuliazerPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameScreenshots obj = Serialization.FromJsonFile<GameScreenshots>(PathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameScreenshots obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -284,21 +333,27 @@ namespace PlayerActivities.Services
                             return;
                         }
 
-                        obj.Items.Select(x => x.Modifed.ToString("yyyy-MM-dd")).Distinct().OrderBy(x => x).ForEach(x =>
-                        {
-                            List<Screenshot> screen = obj.Items.FindAll(y => y.Modifed.ToString("yyyy-MM-dd").IsEqual(x)).ToList();
+                        var distinctDates = obj.Items
+                            .Select(x => x.Modifed.Date)
+                            .Distinct()
+                            .OrderBy(x => x)
+                            .ToList();
 
-                            // by day
-                            DateTime DateActivity = (DateTime)obj.Items.FindAll(y => y.Modifed.ToString("yyyy-MM-dd").IsEqual(x)).First().Modifed;
-                            ulong Value = (ulong)screen.Count();
+                        foreach (var date in distinctDates)
+                        {
+                            var screenshots = obj.Items
+                                .Where(y => y.Modifed.Date == date)
+                                .ToList();
+
+                            var value = (ulong)screenshots.Count;
 
                             playerActivitiesData.Items.Add(new Models.Activity
                             {
-                                DateActivity = DateActivity,
-                                Type = ActivityType.ScreenshotsTaked,
-                                Value = Value
+                                DateActivity = date,
+                                Type = ActivityType.ScreenshotsTaken,
+                                Value = value
                             });
-                        });
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -310,17 +365,20 @@ namespace PlayerActivities.Services
             }
         }
 
-
+        /// <summary>
+        /// Scans the GameActivity plugin data directory and imports play sessions for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanGameActivity(Guid id = default)
         {
-            if (Directory.Exists(SuccessStoryPath))
+            if (Directory.Exists(GameActivityPath))
             {
                 _ = Parallel.ForEach(Directory.EnumerateFiles(GameActivityPath, "*.json"),
                     (objectFile) =>
                     {
                         if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
                         {
-                            if (id == default(Guid) || fileId == id)
+                            if (id == default || fileId == id)
                             {
                                 SetGameActivity(fileId);
                             }
@@ -329,14 +387,24 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes play session data for a specific game from GameActivity.
+        /// Adds first playtime and playtime goal activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         private void SetGameActivity(Guid id)
         {
             try
             {
-                string PathData = Path.Combine(GameActivityPath, id + ".json");
-                if (File.Exists(PathData))
+                string pathData = Path.Combine(GameActivityPath, id + ".json");
+                if (File.Exists(pathData))
                 {
-                    GameActivities obj = Serialization.FromJsonFile<GameActivities>(PathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameActivities obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -346,35 +414,39 @@ namespace PlayerActivities.Services
                         }
 
                         // Playtime first
-                        DateTime dtFirst = obj.Items.Select(x => x.DateSession).Min();
-
-                        playerActivitiesData.Items.Add(new Activity
+                        if (!playerActivitiesData.Items.Any(x => x.Type == ActivityType.PlaytimeFirst))
                         {
-                            DateActivity = dtFirst,
-                            Type = ActivityType.PlaytimeFirst
-                        });
+                            DateTime dtFirst = obj.Items.Select(x => x.DateSession).Min();
+
+                            playerActivitiesData.Items.Add(new Activity
+                            {
+                                DateActivity = dtFirst,
+                                Type = ActivityType.PlaytimeFirst
+                            });
+                        }
 
                         // Playtime goal
-                        List<ulong> PlaytimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5 };
-                        ulong ElapsedSeconds = 0;
-                        obj.Items.OrderBy(x => x.DateSession).ForEach(x =>
+                        List<ulong> playtimeGoals = new List<ulong> { 1000, 900, 800, 700, 600, 500, 400, 300, 200, 100, 50, 25, 10, 5, 1 };
+                        ulong elapsedSeconds = 0;
+
+                        foreach (var item in obj.Items.OrderBy(x => x.DateSession))
                         {
-                            ElapsedSeconds += x.ElapsedSeconds;
-                            PlaytimeGoals.ForEach(y =>
+                            elapsedSeconds += item.ElapsedSeconds;
+
+                            foreach (var goal in playtimeGoals)
                             {
-                                if (ElapsedSeconds >= 3600 * y
-                                        && playerActivitiesData.Items.Find(z => z.Type == ActivityType.PlaytimeGoal && z.Value == y) == null)
+                                if (elapsedSeconds >= 3600 * goal
+                                    && !playerActivitiesData.Items.Any(z => z.Type == ActivityType.PlaytimeGoal && z.Value == goal))
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = x.DateSession,
+                                        DateActivity = item.DateSession,
                                         Type = ActivityType.PlaytimeGoal,
-                                        Value = y
+                                        Value = goal
                                     });
-                                    return;
                                 }
-                            });
-                        });
+                            }
+                        }
 
                         AddOrUpdate(playerActivitiesData);
                     }
@@ -386,7 +458,10 @@ namespace PlayerActivities.Services
             }
         }
 
-
+        /// <summary>
+        /// Scans the HowLongToBeat plugin data directory and imports completion data for all or a specific game.
+        /// </summary>
+        /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanHowLongToBeat(Guid id = default)
         {
             if (Directory.Exists(HowLongToBeatPath))
@@ -405,6 +480,11 @@ namespace PlayerActivities.Services
             }
         }
 
+        /// <summary>
+        /// Imports and processes completion data for a specific game from HowLongToBeat.
+        /// Adds completion activities.
+        /// </summary>
+        /// <param name="id">Game Guid.</param>
         public void SetHowLongToBeat(Guid id)
         {
             try
@@ -412,7 +492,12 @@ namespace PlayerActivities.Services
                 string pathData = Path.Combine(HowLongToBeatPath, id + ".json");
                 if (File.Exists(pathData))
                 {
-                    GameHowLongToBeat obj = Serialization.FromJsonFile<GameHowLongToBeat>(pathData);
+                    _ = Serialization.TryFromJsonFile(pathData, out GameHowLongToBeat obj, out Exception ex);
+                    if (ex != null)
+                    {
+                        Common.LogError(ex, false, true, PluginName);
+                    }
+
                     if (obj.Items?.Count() > 0)
                     {
                         PlayerActivitiesData playerActivitiesData = Get(id);
@@ -425,22 +510,26 @@ namespace PlayerActivities.Services
                         HltbDataUser hltbDataUser = obj.GetData();
                         if (HltbUserStats != null)
                         {
-                            List<TitleList> titleLists = HltbUserStats.TitlesList.FindAll(x => x.Id == obj.GetData().Id).ToList();
-                            titleLists.ForEach(x =>
+                            var titleLists = HltbUserStats.TitlesList
+                                .Where(x => x.Id == hltbDataUser.Id)
+                                .ToList();
+
+                            foreach (var title in titleLists)
                             {
-                                DateTime? dt = x.Completion;
-                                if (dt != null)
+                                DateTime? completionDate = title.Completion;
+                                if (completionDate != null)
                                 {
                                     playerActivitiesData.Items.Add(new Activity
                                     {
-                                        DateActivity = (DateTime)dt,
+                                        DateActivity = completionDate.Value,
                                         Type = ActivityType.HowLongToBeatCompleted
                                     });
                                 }
-                            });
+                            }
                         }
 
                         AddOrUpdate(playerActivitiesData);
+
                     }
                 }
             }
@@ -450,178 +539,201 @@ namespace PlayerActivities.Services
             }
         }
 
-
+        /// <summary>
+        /// Retrieves activities related to a specific game identified by its Guid.
+        /// </summary>
+        /// <param name="id">The unique identifier (Guid) of the game to filter activities for.</param>
+        /// <returns>
+        /// An <see cref="ObservableCollection{ActivityListGrouped}"/> containing only
+        /// the activities associated with the specified game. Returns an empty collection if none are found.
+        /// </returns>
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(Guid id)
         {
             ObservableCollection<ActivityListGrouped> data = GetActivitiesData(false);
-            return data.Where(x => x.GameContext.Id == id)?.ToObservable();
+            return new ObservableCollection<ActivityListGrouped>(data.Where(x => x.GameContext.Id == id));
         }
 
+        /// <summary>
+        /// Retrieves and optionally groups recent activity data for all games in the database.
+        /// </summary>
+        /// <param name="grouped">
+        /// If <c>true</c>, groups activities by game and relative time period ("TimeAgo").
+        /// If <c>false</c>, each activity is listed independently, grouped only by game.
+        /// </param>
+        /// <returns>
+        /// An <see cref="ObservableCollection{ActivityListGrouped}"/> containing grouped activity data,
+        /// ordered by date descending. Returns an empty collection if no activity matches the configured types.
+        /// </returns>
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
         {
-            ObservableCollection<ActivityList> activityLists = new ObservableCollection<ActivityList>();
-            Database.ForEach(x =>
-            {
-                x.Items.ForEach(y =>
+            // Step 1: Flatten all activity items from games that exist in the database
+            var activityLists = Database
+                .Where(x => x.GameExist)
+                .SelectMany(x => x.Items.Select(y => new ActivityList
                 {
-                    activityLists.Add(new ActivityList
-                    {
-                        GameContext = x.Game,
-                        DateActivity = y.DateActivity,
-                        Type = y.Type,
-                        Value = y.Value
-                    });
-                });
-            });
+                    GameContext = x.Game,
+                    DateActivity = y.DateActivity.Date,
+                    Type = y.Type,
+                    Value = y.Value
+                }))
+                .OrderByDescending(x => x.DateActivity)
+                .ToList();
 
+            // Step 2: Build the list of activity types to include based on plugin settings
+            var activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
 
-            // Options
-            List<ActivityType> activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
             if (PluginSettings.Settings.EnableHowLongToBeatData)
             {
                 activityTypes.Add(ActivityType.HowLongToBeatCompleted);
             }
+
             if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
             {
-                activityTypes.Add(ActivityType.ScreenshotsTaked);
+                activityTypes.Add(ActivityType.ScreenshotsTaken);
             }
+
             if (PluginSettings.Settings.EnableSuccessStoryData)
             {
                 activityTypes.Add(ActivityType.AchievementsGoal);
                 activityTypes.Add(ActivityType.AchievementsUnlocked);
             }
 
+            // Step 3: Filter and group activity data
+            var filteredActivities = activityLists.Where(x => activityTypes.Contains(x.Type));
 
-            ObservableCollection<ActivityListGrouped> activityListsGrouped = new ObservableCollection<ActivityListGrouped>();
-            Game GameContext = null;
-            string TimeAgo = string.Empty;
+            var groupedActivities = new ObservableCollection<ActivityListGrouped>();
 
-            activityLists = activityLists.OrderByDescending(x => x.DateActivity).ToObservable();
-            activityLists.Where(x => activityTypes.Any(y => y == x.Type)).ForEach(x =>
+            foreach (var activity in filteredActivities)
             {
-                IEnumerable<ActivityListGrouped> finded = activityListsGrouped.Where(z => z.GameContext.Id == x.GameContext.Id && (!grouped || z.TimeAgo.IsEqual(x.TimeAgo)));
-                if (finded.Count() > 0)
+                var existingGroup = groupedActivities.FirstOrDefault(g =>
+                    g.GameContext.Id == activity.GameContext.Id &&
+                    (!grouped || g.TimeAgo.IsEqual(activity.TimeAgo)));
+
+                if (existingGroup != null)
                 {
-                    finded.First().Activities.Add(new Activity
+                    existingGroup.Activities.Add(new Activity
                     {
-                        DateActivity = x.DateActivity,
-                        Value = x.Value,
-                        Type = x.Type
+                        DateActivity = activity.DateActivity,
+                        Value = activity.Value,
+                        Type = activity.Type
                     });
                 }
                 else
                 {
-                    GameContext = x.GameContext;
-                    TimeAgo = x.TimeAgo;
-                    activityListsGrouped.Add(new ActivityListGrouped
+                    groupedActivities.Add(new ActivityListGrouped
                     {
-                        GameContext = x.GameContext,
-                        DtString = x.DateActivity.ToString("yyyy-MM-dd"),
-                        TimeAgo = x.TimeAgo,
+                        GameContext = activity.GameContext,
+                        DtString = activity.DateActivity.ToString("yyyy-MM-dd"),
+                        TimeAgo = activity.TimeAgo,
                         Activities = new List<Activity>
+                        {
+                            new Activity
                             {
-                                new Activity
-                                {
-                                    DateActivity = x.DateActivity,
-                                    Value = x.Value,
-                                    Type = x.Type
-                                }
+                                DateActivity = activity.DateActivity,
+                                Value = activity.Value,
+                                Type = activity.Type
                             }
+                        }
                     });
                 }
-            });
+            }
 
-            // Order grouped activities
-            activityListsGrouped.ForEach(x =>
+            // Step 4: Sort activities within each group
+            foreach (var group in groupedActivities)
             {
-                _ = x.Activities.OrderByDescending(y => y.DateActivity).ThenBy(y => y.Type);
-            });
+                group.Activities = group.Activities
+                    .OrderByDescending(a => a.DateActivity)
+                    .ThenBy(a => a.Type)
+                    .ToList();
+            }
 
-            return activityListsGrouped;
+            return groupedActivities;
         }
+
         #endregion
 
+        #region Friends Data Management
 
-        public List<PlayerFriends> GetFriends(PlayerActivities plugin, bool force = false)
+        private FriendsData LoadFriendsData()
         {
-            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
+            if (File.Exists(friendsFilePath))
+            {
+                try
+                {
+                    return Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false);
+                }
+            }
+            return new FriendsData();
+        }
+
+        /// <summary>
+        /// Retrieves the list of player friends from all enabled platforms (GOG, Steam, Origin, Epic).
+        /// If force is true, fetches fresh data from each platform and updates the local cache.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
+        /// <param name="force">If true, forces a refresh from all sources.</param>
+        /// <returns>List of PlayerFriends objects.</returns>
+        public FriendsData GetFriends(PlayerActivities plugin, bool force = false)
+        {
+            var friendsData = new FriendsData();
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
 
             if (force)
             {
-                List<PlayerFriends> gogs = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableGogFriends)
+                // Helper to fetch friends from a platform if enabled and not canceled
+                List<PlayerFriend> FetchFriends(bool enabled, string sourceName, Func<List<PlayerFriend>> getFriendsFunc)
                 {
+                    if (!enabled || FriendsDataIsCanceled)
+                    {
+                        return new List<PlayerFriend>();
+                    }
+
                     FriendsDataLoading.FriendName = string.Empty;
                     FriendsDataLoading.ActualCount = 0;
                     FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Gog";
-
-                    GogFriends gogFriends = new GogFriends();
-                    gogs = gogFriends.GetFriends();
+                    FriendsDataLoading.SourceName = sourceName;
+                    return getFriendsFunc();
                 }
 
-                List<PlayerFriends> steams = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableSteamFriends && !FriendsDataIsCanceled)
+                var gog = FetchFriends(PluginSettings.Settings.EnableGogFriends, "Gog", () => new GogFriends().GetFriends());
+                var steam = FetchFriends(PluginSettings.Settings.EnableSteamFriends, "Steam", () => new SteamFriends().GetFriends());
+                var ea = FetchFriends(PluginSettings.Settings.EnableOriginFriends, "EA app", () => new EaFriends().GetFriends());
+                var epic = FetchFriends(PluginSettings.Settings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
+
+                friendsData.PlayerFriends = gog.Concat(steam).Concat(ea).Concat(epic).ToList();
+                friendsData.LastUpdate = DateTime.UtcNow;
+
+                if (FriendsDataIsCanceled)
                 {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Steam";
-
-                    SteamFriends steamFriends = new SteamFriends();
-                    steams = steamFriends.GetFriends();
+                    return LoadFriendsData();
                 }
 
-                List<PlayerFriends> origin = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableOriginFriends && !FriendsDataIsCanceled)
+                try
                 {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Origin";
-
-                    OriginFriends originFriends = new OriginFriends();
-                    origin = originFriends.GetFriends();
+                    File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
                 }
-
-                List<PlayerFriends> epic = new List<PlayerFriends>();
-                if (PluginSettings.Settings.EnableEpicFriends && !FriendsDataIsCanceled)
+                catch (Exception ex)
                 {
-                    FriendsDataLoading.FriendName = string.Empty;
-                    FriendsDataLoading.ActualCount = 0;
-                    FriendsDataLoading.FriendCount = 0;
-                    FriendsDataLoading.SourceName = "Epic";
-
-                    EpicFriends epicFriends = new EpicFriends();
-                    epic = epicFriends.GetFriends();
+                    Common.LogError(ex, false);
                 }
-
-                playerFriends = playerFriends.Concat(gogs).Concat(steams).Concat(origin).Concat(epic).ToList();
-
-                PluginSettings.Settings.LastFriendsRefresh = DateTime.Now;
-                plugin.SavePluginSettings(PluginSettings.Settings);
-
-                File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
             }
             else
             {
-                string PathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
-                if (File.Exists(PathPlayerFriends))
-                {
-                    try
-                    {
-                        playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(PathPlayerFriends);
-                    }
-                    catch (Exception ex)
-                    {
-                        Common.LogError(ex, false);
-                    }
-                }
+                return LoadFriendsData();
             }
 
-            return playerFriends;
+            return friendsData;
         }
 
+        /// <summary>
+        /// Asynchronously refreshes friends data, updates the database, and shows a loading window.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
         public async Task RefreshFriendsDataLoader(PlayerActivities plugin)
         {
             FriendsDataIsDownloaded = false;
@@ -649,10 +761,14 @@ namespace PlayerActivities.Services
                 }));
 
                 _ = GetFriends(plugin, true);
-                FriendsDataLoaderClose(string.Empty);
+                FriendsDataLoaderClose(string.Empty, string.Empty);
             });
         }
 
+        /// <summary>
+        /// Synchronously refreshes friends data and updates the database.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
         public void RefreshFriends(PlayerActivities plugin)
         {
             FriendsDataIsDownloaded = false;
@@ -664,24 +780,31 @@ namespace PlayerActivities.Services
             Database.SetGameInfo<Activity>();
 
             _ = GetFriends(plugin, true);
-            FriendsDataLoaderClose(string.Empty);
+            FriendsDataLoaderClose(string.Empty, string.Empty);
         }
 
-        public void RefreshFriends(PlayerActivities plugin, string clientName, PlayerFriends pf)
+        /// <summary>
+        /// Refreshes friends data for a specific client and friend, updating the local cache.
+        /// </summary>
+        /// <param name="plugin">The PlayerActivities plugin instance.</param>
+        /// <param name="clientName">The name of the client (e.g., "STEAM").</param>
+        /// <param name="pf">The PlayerFriends object to update.</param>
+        public void RefreshFriends(PlayerActivities plugin, string clientName, PlayerFriend pf)
         {
             FriendsDataIsDownloaded = false;
 
             StopWatchFriendsDataLoading = new Stopwatch();
             StopWatchFriendsDataLoading.Start();
 
-            List<PlayerFriends> playerFriends = new List<PlayerFriends>();
+            List<PlayerFriend> playerFriends = new List<PlayerFriend>();
 
-            string pathPlayerFriends = Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json");
-            if (File.Exists(pathPlayerFriends))
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
+            if (File.Exists(friendsFilePath))
             {
                 try
                 {
-                    playerFriends = Serialization.FromJsonFile<List<PlayerFriends>>(pathPlayerFriends);
+                    FriendsData friendsData = Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                    playerFriends = friendsData.PlayerFriends;
                 }
                 catch (Exception ex)
                 {
@@ -689,42 +812,51 @@ namespace PlayerActivities.Services
                 }
             }
 
-
+            // Refresh friend data based on client
             if (PluginSettings.Settings.EnableGogFriends && clientName.IsEqual("GOG"))
             {
-                GogFriends gogFriends = new GogFriends();
-                pf = gogFriends.GetFriends(pf);
+                pf = new GogFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
+            else if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
             {
-                SteamFriends steamFriends = new SteamFriends();
-                pf = steamFriends.GetFriends(pf);
+                pf = new SteamFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
+            else if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
             {
-                OriginFriends originFriends = new OriginFriends();
-                pf = originFriends.GetFriends(pf);
+                pf = new EaFriends().GetFriends(pf);
             }
-
-            if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
+            else if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
             {
-                EpicFriends epicFriends = new EpicFriends();
-                pf = epicFriends.GetFriends(pf);
+                pf = new EpicFriends().GetFriends(pf);
             }
 
-            int index = playerFriends.FindIndex(item => item.FriendId.IsEqual(pf.FriendId));
-            if (index != -1)
+            // Update existing entry
+            var index = playerFriends.FindIndex(f => f.FriendId.IsEqual(pf.FriendId));
+            if (index >= 0)
             {
                 playerFriends[index] = pf;
             }
 
-            File.WriteAllText(Path.Combine(Paths.PluginUserDataPath, "PlayerFriends.json"), Serialization.ToJson(playerFriends));
-            FriendsDataLoaderClose(pf.FriendPseudo);
+            // Save updated data
+            try
+            {
+                FriendsData friendsData = new FriendsData { PlayerFriends = playerFriends };
+                File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false);
+            }
+
+            FriendsDataLoaderClose(pf.FriendPseudo, pf.ClientName);
         }
 
-        private void FriendsDataLoaderClose(string pseudo)
+        /// <summary>
+        /// Closes the friends data loading window and logs the operation duration.
+        /// </summary>
+        /// <param name="pseudo">Optional friend pseudo to log.</param>
+        /// <param name="clientName">The name of the client (e.g., "STEAM").</param>
+        private void FriendsDataLoaderClose(string pseudo, string clientName)
         {
             if (WindowFriendsDataLoading != null)
             {
@@ -737,13 +869,14 @@ namespace PlayerActivities.Services
             StopWatchFriendsDataLoading.Stop();
             TimeSpan ts = StopWatchFriendsDataLoading.Elapsed;
             Logger.Info($"RefreshFriendsDataLoader" + (FriendsDataIsCanceled ? " (canceled) " : "")
-                + (!pseudo.IsNullOrEmpty() ? $" - {pseudo} " : "")
+                + (!pseudo.IsNullOrEmpty() ? $" - {pseudo} ({clientName})" : "")
                 + $" - {string.Format("{0:00}:{1:00}.{2:00}", ts.Minutes, ts.Seconds, ts.Milliseconds / 10)}");
 
             FriendsDataIsCanceled = false;
             FriendsDataIsDownloaded = true;
         }
 
+        #endregion
 
         public override void SetThemesResources(Game game)
         {

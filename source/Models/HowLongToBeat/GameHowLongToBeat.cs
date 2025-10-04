@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PlayerActivities.Models.HowLongToBeat
 {
     public class GameHowLongToBeat
     {
-        public List<HltbDataUser> Items { get; set; }
+        public List<HltbDataUser> Items { get; set; } = new List<HltbDataUser>();
 
         public HltbDataUser GetData()
         {
@@ -16,7 +13,6 @@ namespace PlayerActivities.Models.HowLongToBeat
             {
                 return null;
             }
-
             return Items.First();
         }
     }

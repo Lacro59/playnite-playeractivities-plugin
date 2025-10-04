@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">تمكين أصدقاء Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">تمكين أصدقاء GOG</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">تمكين أصدقاء Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
@@ -33,11 +33,11 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">لقد فتحت {0} إنجازات.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">لقد وصلت إلى {0}% من الإنجازات.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">لقد أخذت {0} لقطة شاشة.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">لقد أخذت {0} لقطة شاشة.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">لقد أكملت اللعبة.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">منذ {0} </sys:String>
+    <sys:String x:Key="LOCPaDayAgo">منذ {0}</sys:String>
     <sys:String x:Key="LOCPaDaysAgo">منذ {0} أيّا</sys:String>
     <sys:String x:Key="LOCPaMonthAgo">منذ {0} شهر</sys:String>
     <sys:String x:Key="LOCPaMonthsAgo">منذ {0} أشهر</sys:String>
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">شائع</sys:String>
+    <sys:String x:Key="LOCPaCommon">شائع</sys:String>
 
 
     <!-- Menus -->

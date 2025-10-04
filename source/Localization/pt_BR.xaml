@@ -3,23 +3,23 @@
 
     <!-- MainView -->
 
-    <sys:String x:Key="LOCPa">EventosAtividade</sys:String>
+    <sys:String x:Key="LOCPa">Atividades do jogador</sys:String>
 
     <sys:String x:Key="LOCPaRefreshFriendsData">Atualizar dados de amigos</sys:String>
     <sys:String x:Key="LOCPaView">Visualizar atividades do jogador</sys:String>
 
-    <sys:String x:Key="LOCPaActivities">Atividades do Jogador</sys:String>
+    <sys:String x:Key="LOCPaActivities">Atividades do jogador</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Exibir dados do SuccessStory (plugin SuccessStory necessário)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Exibir dados da ScreenshotsVisualizer (plugin necessário para ScreenshotsVisualizer)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Exibir dados HowLongToBeat (é necessário HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Exibir dados do SuccessStory (Plugin SuccessStory necessário)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Exibir dados do ScreenshotVisualizer (Plugin ScreenshotVisualizer necessário)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Exibir dados do HowLongToBeat (Plugin HowLongToBeat necessário)</sys:String>
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Ativar amigos Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Ativar amigos GOG</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Ativar amigos Origin</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Ativar amigos EA</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Ativar amigos Epic</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Exibir atividades de jogo</sys:String>
@@ -31,9 +31,9 @@
     <sys:String x:Key="LOCPaPlaytimeGoal">Você alcançou {0} horas de jogo.</sys:String>
     
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Você desbloqueou {0} conquistas.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">Você alcançou {0}% de conquistas.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">Você alcançou {0}% das conquistas.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Você fez {0} capturas de tela.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Você fez {0} capturas de tela.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Você completou o jogo.</sys:String>
 
@@ -44,21 +44,21 @@
     <sys:String x:Key="LOCPaYearAgo">{0} ano atrás</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} anos atrás</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Jogo Possuído</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Jogos Finalizados</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Jogo possuído</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Jogos concluídos</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Amigos 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Seu 🏆</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Amigos 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Seu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Conquistas</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Comum</sys:String>
+    <sys:String x:Key="LOCPaCommon">Comum</sys:String>
 
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Mostrar jogo na biblioteca</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Atualizar dados de jogo</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Exibir jogo na biblioteca</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Atualizar dados do jogo</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">Visualizar dados do HowLongToBeat</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryPluginView">Visualizar dados do SuccessStory</sys:String>

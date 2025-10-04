@@ -44,14 +44,17 @@
       <HintPath>packages\AngleSharp.0.9.9\lib\net45\AngleSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Ardalis.GuardClauses, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\Ardalis.GuardClauses.5.0.0\lib\netstandard2.0\Ardalis.GuardClauses.dll</HintPath>
+    </Reference>
     <Reference Include="FuzzySharp, Version=1.0.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>packages\FuzzySharp.2.0.2\lib\net461\FuzzySharp.dll</HintPath>
     </Reference>
     <Reference Include="NodaTime, Version=3.2.2.0, Culture=neutral, PublicKeyToken=4226afe0d9b296d1, processorArchitecture=MSIL">
       <HintPath>packages\NodaTime.3.2.2\lib\netstandard2.0\NodaTime.dll</HintPath>
     </Reference>
-    <Reference Include="Playnite.SDK, Version=6.11.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\PlayniteSDK.6.11.0\lib\net462\Playnite.SDK.dll</HintPath>
+    <Reference Include="Playnite.SDK, Version=6.13.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\PlayniteSDK.6.13.0\lib\net462\Playnite.SDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="PresentationCore" />
@@ -94,7 +97,7 @@
     <Compile Include="Clients\GenericFriends.cs" />
     <Compile Include="Clients\EpicFriends.cs" />
     <Compile Include="Clients\GogFriends.cs" />
-    <Compile Include="Clients\OriginFriends.cs" />
+    <Compile Include="Clients\EaFriends.cs" />
     <Compile Include="Clients\SteamFriends.cs" />
     <Compile Include="Controls\HowLongToBeatControl.cs" />
     <Compile Include="Controls\PluginActivities.xaml.cs">
@@ -103,8 +106,9 @@
     <Compile Include="Controls\ScreenshotsVisualizerControl.cs" />
     <Compile Include="Controls\SuccessStoryControl.cs" />
     <Compile Include="Models\Activity.cs" />
-    <Compile Include="Models\ActivityElement.cs" />
     <Compile Include="Models\ActivityList.cs" />
+    <Compile Include="Models\Enumerations\ActivityType.cs" />
+    <Compile Include="Models\FriendsData.cs" />
     <Compile Include="Models\FriendsDataLoading.cs" />
     <Compile Include="Models\GameActivity\Activity.cs" />
     <Compile Include="Models\GameActivity\GameActivities.cs" />
@@ -113,7 +117,9 @@
     <Compile Include="Models\HowLongToBeat\HltbUserStats.cs" />
     <Compile Include="Models\PlayerActivitiesData.cs" />
     <Compile Include="Models\PlayerActivitiesCollection.cs" />
-    <Compile Include="Models\PlayerFriends.cs" />
+    <Compile Include="Models\PlayerFriend.cs" />
+    <Compile Include="Models\PlayerGame.cs" />
+    <Compile Include="Models\PlayerStats.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\GameScreenshots.cs" />
     <Compile Include="Models\ScreenshotsVisualizer\Screenshot.cs" />
     <Compile Include="Models\SuccessStory\Achievements.cs" />

@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlayerActivities.Views" 
              xmlns:controls="clr-namespace:PlayerActivities.Controls"
-             xmlns:enum="clr-namespace:PlayerActivities.Models" 
+             xmlns:enum="clr-namespace:PlayerActivities.Models.Enumerations"
              xmlns:convertersshared="clr-namespace:CommonPluginsShared.Converters" 
              xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" 
              xmlns:controls2="clr-namespace:CommonPluginsControls.Controls" 
@@ -19,6 +19,7 @@
         <convertersshared:LocalDateConverter x:Key="LocalDateConverter" />
         <convertersshared:PlayTimeToStringConverterWithZero x:Key="PlayTimeToStringConverterWithZero" />
         <convertersshared:LocalDateTimeConverter x:Key="LocalDateTimeConverter" />
+        <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
         <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
@@ -199,7 +200,8 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <Border Margin="0,0,0,10" BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
+                                <GroupBox Margin="0,0,0,10" Header="{Binding GameContext.Name}"
+                                          BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
                                     <Grid Margin="5" Name="PART_Root" Tag="{Binding}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="100" />
@@ -259,13 +261,13 @@
                                                                 <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
                                                             </DockPanel>
 
-                                                            <!-- ScreenshotsTaked  -->
+                                                            <!-- ScreenshotsTaken  -->
                                                             <DockPanel>
                                                                 <DockPanel.Style>
                                                                     <Style TargetType="DockPanel">
                                                                         <Setter Property="Visibility" Value="Collapsed" />
                                                                         <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaked}">
+                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaken}">
                                                                                 <Setter Property="Visibility" Value="Visible" />
                                                                             </DataTrigger>
                                                                         </Style.Triggers>
@@ -275,7 +277,7 @@
                                                                 <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
                                                                     <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
                                                                     <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaked}" />
+                                                                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
                                                                 </DockPanel>
 
                                                                 <controls:ScreenshotsVisualizerPluginListScreenshots GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
@@ -341,7 +343,7 @@
                                             </ItemsControl>
                                         </ScrollViewer>
                                     </Grid>
-                                </Border>
+                                </GroupBox>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
@@ -437,7 +439,7 @@
                                     <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding LastRefresh, Converter={StaticResource LocalDateTimeConverter}}">
+                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding LastUpdate, Converter={StaticResource LocalDateTimeConverter}}">
                                     <GridViewColumnHeader Content="{DynamicResource LOCCommonLastUpdate}" />
                                 </GridViewColumn>
                             </GridView>
@@ -461,11 +463,18 @@
                                     <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="Name" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock ToolTip="{Binding Link}">
-                                                <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding Link}">
-                                                    <controls2:TextBlockTrimmed Text="{Binding Name}" Style="{DynamicResource ListExtendStyleTextBlock}" />
-                                                </Hyperlink>
-                                            </TextBlock>
+                                            <StackPanel>
+                                                <TextBlock ToolTip="{Binding Link}"
+                                                           Visibility="{Binding Link, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}">
+                                                    <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding Link}">
+                                                        <controls2:TextBlockTrimmed Text="{Binding Name}" Style="{DynamicResource ListExtendStyleTextBlock}" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+
+
+                                                <TextBlock Text="{Binding Name}"
+                                                           Visibility="{Binding Link, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}, ConverterParameter=Inverted}" />
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -474,7 +483,7 @@
                                     <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
                                 </GridViewColumn>
                                 <GridViewColumn Width="90">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCPaCommun}" Tag="IsCommun" />
+                                    <GridViewColumnHeader Content="{DynamicResource LOCPaCommon}" Tag="IsCommun" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding IsCommun}" HorizontalAlignment="Center" />
@@ -512,7 +521,7 @@
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
 
-                    <DockPanel Margin="0,0,10,0" Name="PART_DataRerefsh">
+                    <DockPanel Margin="0,0,10,0" Name="PART_DataRerefsh" HorizontalAlignment="Center" Width="300">
                         <Label Content="{Binding FriendsDataLoading.SourceName, FallbackValue=SourceName}" />
                         <Grid Margin="10,0,0,0">
                             <ProgressBar Maximum="{Binding FriendsDataLoading.FriendCount}" Value="{Binding FriendsDataLoading.ActualCount}" Name="PART_Pb" Grid.Row="2" Height="30">
@@ -530,9 +539,9 @@
                             <Label Grid.Row="2" HorizontalAlignment="Center" Content="{Binding FriendsDataLoading.FriendName, FallbackValue=FriendName}" />
                         </Grid>
                     </DockPanel>
-                    
-                    <Label Grid.Column="1" Content="{DynamicResource LOCCommonLastUpdate}" />
-                    <Label Grid.Column="3" Content="{Binding LastFriendsRefresh, Converter={StaticResource LocalDateTimeConverter}}" />
+
+                    <Label Grid.Column="1" Visibility="{Binding ElementName=PART_DtUpdate, Path=Content, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" Content="{DynamicResource LOCCommonLastUpdate}" />
+                    <Label Grid.Column="3" Name="PART_DtUpdate" Content="{Binding LastFriendsRefresh, Converter={StaticResource LocalDateTimeConverter}}" />
                     <Button Name="PART_BtFriends" Grid.Column="5" Content="{DynamicResource LOCPaRefreshFriendsData}" Click="Button_RefreshFriendsData" />
                 </Grid>
             </Grid>

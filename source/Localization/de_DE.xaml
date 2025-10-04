@@ -19,8 +19,8 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam Freunde aktivieren</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG Freunde aktivieren</sys:String>
-    <sys:String x:Key="LOCPaEnableOriginFriends">Origin Freunde aktivieren</sys:String>
-    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Epic Store Freunde aktivieren</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Spiele Aktivitäten anzeigen</sys:String>
 
@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Sie haben {0} Errungenschaften freigeschaltet.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Sie haben {0}% Errungenschaften erreicht.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Sie haben {0} Screenshots aufgenommen.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Sie haben {0} Screenshots aufgenommen.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Sie haben das Spiel abgeschlossen.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Deine 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Errungenschaften</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Gemeinsam</sys:String>
+    <sys:String x:Key="LOCPaCommon">Gemeinsam</sys:String>
 
 
     <!-- Menus -->

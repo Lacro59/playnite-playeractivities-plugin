@@ -7,34 +7,47 @@ using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Controls
 {
+    /// <summary>
+    /// Utility class to interface with the SuccessStory plugin.
+    /// </summary>
     public class SuccessStoryPlugin
     {
+        // Cached instance of the SuccessStory plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == GetPluginId(ExternalPlugin.SuccessStory));
+
+        // Reference to the PlayerActivities plugin database
         private static PlayerActivitiesDatabase PluginDatabase => PlayerActivities.PluginDatabase;
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
 
-        public static bool IsInstalled => Plugin != null;
+        /// <summary>
+        /// Indicates whether the SuccessStory plugin is installed.
+        /// </summary>
+        public static bool IsInstalled => CachedPlugin != null;
 
+        /// <summary>
+        /// Opens the SuccessStory view for the specified game.
+        /// </summary>
+        /// <param name="game">Target game</param>
         public static void SuccessStoryView(Game game)
         {
-            if (game == null || Plugin == null)
+            if (game == null || CachedPlugin == null)
             {
                 return;
             }
 
             try
             {
-                IEnumerable<GameMenuItem> pluginMenus = Plugin.GetGameMenuItems(new GetGameMenuItemsArgs { Games = new List<Game> { game }, IsGlobalSearchRequest = false });
-                if (pluginMenus.Count() > 0)
+                var pluginMenus = CachedPlugin.GetGameMenuItems(new GetGameMenuItemsArgs
                 {
-                    pluginMenus.First().Action.Invoke(null);
-                }
+                    Games = new List<Game> { game },
+                    IsGlobalSearchRequest = false
+                });
+                pluginMenus?.FirstOrDefault()?.Action?.Invoke(null);
             }
             catch (Exception ex)
             {
@@ -43,16 +56,27 @@ namespace PlayerActivities.Controls
         }
     }
 
+    /// <summary>
+    /// Custom control to host SuccessStory plugin UI for a specific game.
+    /// </summary>
     public class SuccessStoryControl : ContentControl
     {
-        private static Plugin Plugin => API.Instance?.Addons?.Plugins?.FirstOrDefault(p => p.Id == Guid.Parse("cebe6d32-8c46-4459-b993-5a5189d60788")) ?? null;
+        // Cached instance of the SuccessStory plugin for better performance
+        private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
+            .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
 
         private PluginUserControl Control { get; }
 
-        public static bool IsInstalled => Plugin != null;
+        /// <summary>
+        /// Indicates whether the SuccessStory plugin is installed.
+        /// </summary>
+        public static bool IsInstalled => CachedPlugin != null;
 
+        #region Dependency Properties
 
-        #region Properties
+        /// <summary>
+        /// The game context used for the control.
+        /// </summary>
         public Game GameContext
         {
             get => (Game)GetValue(GameContextProperty);
@@ -65,6 +89,9 @@ namespace PlayerActivities.Controls
             typeof(SuccessStoryControl),
             new FrameworkPropertyMetadata(null, ControlsPropertyChangedCallback));
 
+        /// <summary>
+        /// The date when an achievement was unlocked.
+        /// </summary>
         public DateTime DateUnlocked
         {
             get => (DateTime)GetValue(DateUnlockedProperty);
@@ -78,52 +105,57 @@ namespace PlayerActivities.Controls
             new FrameworkPropertyMetadata(DateTime.Now, ControlsPropertyChangedCallback));
         #endregion
 
+        #region Property Change Handler
 
-        #region OnPropertyChange
-        // When a control properties is changed
+        // Called when a dependency property is changed
         internal static void ControlsPropertyChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            if (sender is SuccessStoryControl obj && e.NewValue != e.OldValue && e.NewValue is DateTime)
+            var obj = sender as SuccessStoryControl;
+
+            if (obj?.Control != null)
             {
-                if (obj.Control != null)
+                if (e.Property == DateUnlockedProperty && e.NewValue is DateTime newDate)
                 {
-                    obj.Control.Tag = (DateTime)e.NewValue;
-                    obj.Control.GameContext = obj.GameContext;
-                    obj.Control.GameContextChanged(null, obj.GameContext);
+                    obj.Control.Tag = newDate;
                 }
+
+                obj.Control.GameContext = obj.GameContext;
+                obj.Control.GameContextChanged(null, obj.GameContext);
             }
         }
         #endregion
 
-
+        /// <summary>
+        /// Initializes the control and loads the plugin UI for the given control name.
+        /// </summary>
+        /// <param name="controlName">Name of the plugin view to load.</param>
         public SuccessStoryControl(string controlName)
         {
-            if (Plugin == null)
+            if (!IsInstalled)
             {
                 return;
             }
 
-            Control = Plugin.GetGameViewControl(new GetGameViewControlArgs
+            Control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
             {
                 Name = controlName,
-                Mode = ApplicationMode.Desktop,
+                Mode = ApplicationMode.Desktop
             }) as PluginUserControl;
 
-            if (Control == null)
+            if (Control != null)
             {
-                return;
+                Content = Control;
             }
-
-            Content = Control;
         }
     }
 
-
+    /// <summary>
+    /// Derived control to load the 'PluginCompactUnlocked' view from the SuccessStory plugin.
+    /// </summary>
     public class SuccessStoryPluginCompactUnlocked : SuccessStoryControl
     {
         public SuccessStoryPluginCompactUnlocked() : base("PluginCompactUnlocked")
         {
-
         }
     }
 }
