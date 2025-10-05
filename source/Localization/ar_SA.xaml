@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">لقد فتحت {0} إنجازات.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">لقد وصلت إلى {0}% من الإنجازات.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">لقد أخذت {0} لقطة شاشة.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">You have taken {0} screenshots.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">لقد أكملت اللعبة.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">الإنجازات</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">شائع</sys:String>
+    <sys:String x:Key="LOCPaCommon">Common</sys:String>
 
 
     <!-- Menus -->
