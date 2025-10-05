@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Has desbloqueado {0} logros.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Has alcanzado el {0}% de logros.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaked">Has tomado {0} capturas de pantalla.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">You have taken {0} screenshots.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Has completado el juego.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Tu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Logros</sys:String>
 
-    <sys:String x:Key="LOCPaCommun">Común</sys:String>
+    <sys:String x:Key="LOCPaCommon">Common</sys:String>
 
 
     <!-- Menus -->
