@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} başarımın kilidini açtınız.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">%{0} başarıma ulaştınız.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaken">You have taken {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">{0} ekran görüntüsü aldınız.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Oyunu tamamladınız.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Sizin 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Başarımlar</sys:String>
 
-    <sys:String x:Key="LOCPaCommon">Common</sys:String>
+    <sys:String x:Key="LOCPaCommon">Sıradan</sys:String>
 
 
     <!-- Menus -->
