@@ -33,7 +33,7 @@
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Você desbloqueou {0} conquistas.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Você alcançou {0}% das conquistas.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaken">You have taken {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">Você fez {0} capturas de tela.</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatCompleted">Você completou o jogo.</sys:String>
 
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Seu 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Conquistas</sys:String>
 
-    <sys:String x:Key="LOCPaCommon">Common</sys:String>
+    <sys:String x:Key="LOCPaCommon">Comum</sys:String>
 
 
     <!-- Menus -->
