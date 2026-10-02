@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
@@ -46,10 +46,10 @@
     
     <sys:String x:Key="LOCPaGameOwned">Игры имеющиеся</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Завершенные игры</sys:String>
-    <sys:String x:Key="LOCPaFriendAchievements">Friends 🏆</sys:String>
-    <sys:String x:Key="LOCPaYourAchievements">Your 🏆</sys:String>
-    <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
-    <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
+    <sys:String x:Key="LOCPaFriendAchievements">Друзья 🏆</sys:String>
+    <sys:String x:Key="LOCPaYourAchievements">Ваш 🏆</sys:String>
+    <sys:String x:Key="LOCPaFriendPlaytime">Друзья 🕒</sys:String>
+    <sys:String x:Key="LOCPaYourPlaytime">Ваш 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Достижения</sys:String>
 
     <sys:String x:Key="LOCPaCommon">Общее</sys:String>
