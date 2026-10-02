@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
@@ -19,7 +19,7 @@
     
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam Freunde aktivieren</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG Freunde aktivieren</sys:String>
-    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">EA Freunde aktivieren</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Epic Store Freunde aktivieren</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Spiele Aktivitäten anzeigen</sys:String>

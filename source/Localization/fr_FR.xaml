@@ -1,4 +1,4 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
@@ -52,7 +52,7 @@
     <sys:String x:Key="LOCPaYourPlaytime">Votre 🕒</sys:String>
     <sys:String x:Key="LOCPaAchievements">Succès</sys:String>
 
-    <sys:String x:Key="LOCPaCommon">Common</sys:String>
+    <sys:String x:Key="LOCPaCommon">Commun</sys:String>
 
 
     <!-- Menus -->

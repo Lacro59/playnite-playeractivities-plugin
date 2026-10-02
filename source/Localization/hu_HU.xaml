@@ -1,11 +1,11 @@
-﻿<?xml version="1.0"?>
+<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
 
     <sys:String x:Key="LOCPa">PlayerActivities</sys:String>
 
-    <sys:String x:Key="LOCPaRefreshFriendsData">Refresh friends data</sys:String>
+    <sys:String x:Key="LOCPaRefreshFriendsData">Barátok adatainak frissítése</sys:String>
     <sys:String x:Key="LOCPaView">View player activities</sys:String>
 
     <sys:String x:Key="LOCPaActivities">Player activities</sys:String>
@@ -13,55 +13,55 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display SuccessStory data (required SuccessStory plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Display ScreenshotsVisualizer data (required ScreenshotsVisualizer plugin)</sys:String>
-    <sys:String x:Key="LOCPaEnableHowLongToBeatData">Display HowLongToBeat data (required HowLongToBeat plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">SuccessStory adat mutatása (SuccessStory bővítmény szükséges)</sys:String>
+    <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">ScreenshotsVisualizer adat mutatása (ScreenshotsVisualizer bővítmény szükséges)</sys:String>
+    <sys:String x:Key="LOCPaEnableHowLongToBeatData">HowLongToBeat adat mutatása (HowLongToBeat bővítmény szükséges)</sys:String>
     
-    <sys:String x:Key="LOCPaEnableSteamFriends">Enable Steam friends</sys:String>
-    <sys:String x:Key="LOCPaEnableGogFriends">Enable GOG friends</sys:String>
-    <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
-    <sys:String x:Key="LOCPaEnableEpicFriends">Enable Epic friends</sys:String>
+    <sys:String x:Key="LOCPaEnableSteamFriends">Steam barátok bekapcsolása</sys:String>
+    <sys:String x:Key="LOCPaEnableGogFriends">GOG barátok bekapcsolása</sys:String>
+    <sys:String x:Key="LOCPaEnableEAFriends">EA barátok bekapcsolása</sys:String>
+    <sys:String x:Key="LOCPaEnableEpicFriends">Epic barátok bekapcsolása</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
     
     <!-- ActivitiesView -->
 
-    <sys:String x:Key="LOCPaPlaytimeFirst">You played for the first time.</sys:String>
-    <sys:String x:Key="LOCPaPlaytimeGoal">You have reached {0} hours of play.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeFirst">Először játszottál.</sys:String>
+    <sys:String x:Key="LOCPaPlaytimeGoal">Elértél {0} óra játékot.</sys:String>
     
-    <sys:String x:Key="LOCPaSuccessStoryUnlocked">You have unlocked {0} achievements.</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryGoal">You have reached {0}% achievements.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryUnlocked">Feloldottál {0} eredményt.</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryGoal">{0}% eredményt értél el.</sys:String>
 
-    <sys:String x:Key="LOCPaScreenshotsTaken">You have taken {0} screenshots.</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsTaken">{0} képernyőképet csináltál.</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatCompleted">You have completed the game.</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatCompleted">Befejezted a játékot.</sys:String>
 
-    <sys:String x:Key="LOCPaDayAgo">{0} day ago</sys:String>
-    <sys:String x:Key="LOCPaDaysAgo">{0} days ago</sys:String>
-    <sys:String x:Key="LOCPaMonthAgo">{0} month ago</sys:String>
-    <sys:String x:Key="LOCPaMonthsAgo">{0} months ago</sys:String>
-    <sys:String x:Key="LOCPaYearAgo">{0} year ago</sys:String>
-    <sys:String x:Key="LOCPaYearsAgo">{0} years ago</sys:String>
+    <sys:String x:Key="LOCPaDayAgo">{0} napja</sys:String>
+    <sys:String x:Key="LOCPaDaysAgo">{0} napja</sys:String>
+    <sys:String x:Key="LOCPaMonthAgo">{0} hónapja</sys:String>
+    <sys:String x:Key="LOCPaMonthsAgo">{0} hónapja</sys:String>
+    <sys:String x:Key="LOCPaYearAgo">{0} éve</sys:String>
+    <sys:String x:Key="LOCPaYearsAgo">{0} éve</sys:String>
     
-    <sys:String x:Key="LOCPaGameOwned">Game owned</sys:String>
-    <sys:String x:Key="LOCPaGameCompleted">Completed games</sys:String>
+    <sys:String x:Key="LOCPaGameOwned">Birtokolt játékok</sys:String>
+    <sys:String x:Key="LOCPaGameCompleted">Befejezett játékok</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
     <sys:String x:Key="LOCPaYourAchievements">Your</sys:String>
     <sys:String x:Key="LOCPaFriendPlaytime">Friends 🕒</sys:String>
     <sys:String x:Key="LOCPaYourPlaytime">Your 🕒</sys:String>
-    <sys:String x:Key="LOCPaAchievements">Achievements</sys:String>
+    <sys:String x:Key="LOCPaAchievements">Eredmények</sys:String>
 
     <sys:String x:Key="LOCPaCommon">Common</sys:String>
 
 
     <!-- Menus -->
 
-    <sys:String x:Key="LOCPaShowGameInLibrary">Show game in library</sys:String>
-    <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
+    <sys:String x:Key="LOCPaShowGameInLibrary">Játék mutatása a könyvtárban</sys:String>
+    <sys:String x:Key="LOCPaRefreshGameData">Játék adatok frissítése</sys:String>
 
-    <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
-    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
+    <sys:String x:Key="LOCPaHowLongToBeatPluginView">HowLongToBeat adatok megtekintése</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">SuccessStory adatok megtekintése</sys:String>
+    <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">ScreenshotsVisualizer adatok megtekintése</sys:String>
 
 </ResourceDictionary>
