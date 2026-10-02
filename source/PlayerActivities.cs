@@ -37,7 +37,7 @@ namespace PlayerActivities
         public static GogApi GogApi { get; set; }
         public static EpicApi EpicApi { get; set; }
 
-        public PlayerActivities(IPlayniteAPI api) : base(api)
+        public PlayerActivities(IPlayniteAPI api) : base(api, "PlayerActivities")
         {
             // Custom theme button
             EventManager.RegisterClassHandler(typeof(Button), Button.ClickEvent, new RoutedEventHandler(OnCustomThemeButtonClick));
@@ -53,7 +53,7 @@ namespace PlayerActivities
             AddSettingsSupport(new AddSettingsSupportArgs
             {
                 SourceName = "PlayerActivities",
-                SettingsRoot = $"{nameof(PluginSettings)}.{nameof(PluginSettings.Settings)}"
+                SettingsRoot = $"{nameof(PluginSettingsViewModel)}.{nameof(PluginSettingsViewModel.Settings)}"
             });
 
             // Initialize top & side bar
@@ -130,7 +130,7 @@ namespace PlayerActivities
         public override IEnumerable<MainMenuItem> GetMainMenuItems(GetMainMenuItemsArgs args)
         {
             string MenuInExtensions = string.Empty;
-            if (PluginSettings.Settings.MenuInExtensions)
+            if (PluginSettingsViewModel.Settings.MenuInExtensions)
             {
                 MenuInExtensions = "@";
             }
@@ -150,7 +150,8 @@ namespace PlayerActivities
                         ShowCloseButton = true,
                         CanBeResizable = true,
                         Width = 1280,
-                        Height = 740
+                        Height = 740,
+                        WindowPersistenceKey = "PlayerActivities.PaView"
                     };
 
                     PaView ViewExtension = new PaView(this);
@@ -327,24 +328,24 @@ namespace PlayerActivities
         // Add code to be executed when Playnite is initialized.
         public override void OnApplicationStarted(OnApplicationStartedEventArgs args)
         {
-            if (PluginSettings.Settings.IsFirstRun)
+            if (PluginSettingsViewModel.Settings.IsFirstRun)
             {
                 PluginDatabase.InitializePluginData();
-                PluginSettings.Settings.IsFirstRun = false;
-                this.SavePluginSettings(PluginSettings.Settings);
+                PluginSettingsViewModel.Settings.IsFirstRun = false;
+                this.SavePluginSettings(PluginSettingsViewModel.Settings);
             }
 
             // StoreAPI intialization
             SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            SteamApi.Initialization(PluginDatabase.PluginSettings.Settings.SteamStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.Settings.EnableSteamFriends);
+            SteamApi.Initialization(PluginDatabase.PluginSettings.SteamStoreSettings, PluginDatabase.PluginSettings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.EnableSteamFriends);
 
             EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            EpicApi.Initialization(PluginDatabase.PluginSettings.Settings.EpicStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.Settings.EnableEpicFriends);
+            EpicApi.Initialization(PluginDatabase.PluginSettings.EpicStoreSettings, PluginDatabase.PluginSettings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.EnableEpicFriends);
 
             GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
-            GogApi.Initialization(PluginDatabase.PluginSettings.Settings.GogStoreSettings, PluginDatabase.PluginSettings.Settings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.Settings.EnableGogFriends);
+            GogApi.Initialization(PluginDatabase.PluginSettings.GogStoreSettings, PluginDatabase.PluginSettings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.EnableGogFriends);
 
-            // TODO TEMP
+            // Temporary one-shot migration PlayerFriends.json → FriendsData.json (see .tasks/TODO-FIXME.md).
             _ = SpinWait.SpinUntil(() => PluginDatabase.IsLoaded, -1);
             string friendsFilePath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "PlayerFriends.json");
             string friendsFilePathNew = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "FriendsData.json");
@@ -353,7 +354,7 @@ namespace PlayerActivities
                 FriendsData friendsData = new FriendsData
                 {
                     PlayerFriends = playerFriends,
-                    LastUpdate = PluginSettings.Settings.LastFriendsRefresh
+                    LastUpdate = PluginSettingsViewModel.Settings.LastFriendsRefresh
                 };
 
                 try
@@ -386,7 +387,7 @@ namespace PlayerActivities
 
         public override ISettings GetSettings(bool firstRunSettings)
         {
-            return PluginSettings;
+            return PluginSettingsViewModel;
         }
 
         public override UserControl GetSettingsView(bool firstRunSettings)

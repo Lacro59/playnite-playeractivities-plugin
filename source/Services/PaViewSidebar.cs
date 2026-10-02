@@ -29,7 +29,7 @@ namespace PlayerActivities.Services
 
                 return plugin.SidebarItemControl;
             };
-            Visible = plugin.PluginSettings.Settings.EnableIntegrationButtonSide;
+            Visible = plugin.PluginSettingsViewModel.Settings.EnableIntegrationButtonSide;
         }
     }
 }

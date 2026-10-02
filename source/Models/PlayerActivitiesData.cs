@@ -4,13 +4,16 @@ using System.Linq;
 
 namespace PlayerActivities.Models
 {
-    public class PlayerActivitiesData : PluginDataBaseGame<Activity>
+    /// <summary>
+    /// Per-game activity entry stored by PlayerActivities (typed item list).
+    /// </summary>
+    public class PlayerActivitiesData : PluginGameCollection<Activity>
     {
         /// <summary>
-        /// Determines whether there are any items of type `ActivityType.PlaytimeFirst` in the collection.
+        /// Determines whether there are any items of type <see cref="ActivityType.PlaytimeFirst"/> in the collection.
         /// </summary>
         /// <returns>
-        ///   <c>true</c> if there are any items of type `ActivityType.PlaytimeFirst`; otherwise, <c>false</c>.
+        /// <c>true</c> if there are any items of type <see cref="ActivityType.PlaytimeFirst"/>; otherwise, <c>false</c>.
         /// </returns>
         public bool HasFirst()
         {

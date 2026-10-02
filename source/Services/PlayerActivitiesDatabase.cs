@@ -26,7 +26,7 @@ using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Services
 {
-    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettingsViewModel, PlayerActivitiesCollection, PlayerActivitiesData, Activity>
+    public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettings, PlayerActivitiesData, Activity>
     {
         #region Fields and Properties
 
@@ -100,7 +100,12 @@ namespace PlayerActivities.Services
 
         #endregion
 
-        public PlayerActivitiesDatabase(PlayerActivitiesSettingsViewModel pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
+        /// <summary>
+        /// Initialises paths to sibling plugin data folders used for activity import.
+        /// </summary>
+        /// <param name="pluginSettings">Live plugin settings model.</param>
+        /// <param name="pluginUserDataPath">Root directory for this plugin's user data.</param>
+        public PlayerActivitiesDatabase(PlayerActivitiesSettings pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
             SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory).ToString(), "SuccessStory");
             GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.GameActivity).ToString(), "GameActivity");
@@ -149,32 +154,38 @@ namespace PlayerActivities.Services
 
             _ = API.Instance.Dialogs.ActivateGlobalProgress((activateGlobalProgress) =>
             {
-                Database.BeginBufferUpdate();
-                Thread.Sleep(5000);
-
-                // Remove existing data
-                if (forced)
+                PluginItemCollection<PlayerActivitiesData> database = GetDatabaseSafe();
+                if (database == null)
                 {
-                    Database.ForEach(y =>
-                    {
-                        if (id == default || y.Game?.Id == id)
-                        {
-                            y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
-                            y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
-                        }
-                    });
+                    return;
                 }
 
-                FirstScanSuccessStory(id);
-                FirstScanScreenshotsVisualizer(id);
-                FirstScanHowLongToBeat(id);
-                FirstScanGameActivity(id);
+                using (database.BufferedUpdate())
+                {
+                    Thread.Sleep(5000);
 
-                Database.EndBufferUpdate();
+                    // Remove existing data
+                    if (forced)
+                    {
+                        foreach (PlayerActivitiesData y in database.ToList())
+                        {
+                            if (id == default || y.Game?.Id == id)
+                            {
+                                y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsGoal);
+                                y.Items.RemoveAll(x => x.Type == ActivityType.AchievementsUnlocked);
+                                y.Items.RemoveAll(x => x.Type == ActivityType.ScreenshotsTaken);
+                                y.Items.RemoveAll(x => x.Type == ActivityType.HowLongToBeatCompleted);
+                                y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeGoal);
+                                y.Items.RemoveAll(x => x.Type == ActivityType.PlaytimeFirst);
+                            }
+                        }
+                    }
+
+                    FirstScanSuccessStory(id);
+                    FirstScanScreenshotsVisualizer(id);
+                    FirstScanHowLongToBeat(id);
+                    FirstScanGameActivity(id);
+                }
             }, globalProgressOptions);
         }
 
@@ -567,7 +578,7 @@ namespace PlayerActivities.Services
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
         {
             // Step 1: Flatten all activity items from games that exist in the database
-            var activityLists = Database
+            var activityLists = GetAllCache()
                 .Where(x => x.GameExist)
                 .SelectMany(x => x.Items.Select(y => new ActivityList
                 {
@@ -582,17 +593,17 @@ namespace PlayerActivities.Services
             // Step 2: Build the list of activity types to include based on plugin settings
             var activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
 
-            if (PluginSettings.Settings.EnableHowLongToBeatData)
+            if (PluginSettings.EnableHowLongToBeatData)
             {
                 activityTypes.Add(ActivityType.HowLongToBeatCompleted);
             }
 
-            if (PluginSettings.Settings.EnableScreenshotsVisualizerData)
+            if (PluginSettings.EnableScreenshotsVisualizerData)
             {
                 activityTypes.Add(ActivityType.ScreenshotsTaken);
             }
 
-            if (PluginSettings.Settings.EnableSuccessStoryData)
+            if (PluginSettings.EnableSuccessStoryData)
             {
                 activityTypes.Add(ActivityType.AchievementsGoal);
                 activityTypes.Add(ActivityType.AchievementsUnlocked);
@@ -700,10 +711,10 @@ namespace PlayerActivities.Services
                     return getFriendsFunc();
                 }
 
-                var gog = FetchFriends(PluginSettings.Settings.EnableGogFriends, "Gog", () => new GogFriends().GetFriends());
-                var steam = FetchFriends(PluginSettings.Settings.EnableSteamFriends, "Steam", () => new SteamFriends().GetFriends());
-                var ea = FetchFriends(PluginSettings.Settings.EnableOriginFriends, "EA app", () => new EaFriends().GetFriends());
-                var epic = FetchFriends(PluginSettings.Settings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
+                var gog = FetchFriends(PluginSettings.EnableGogFriends, "Gog", () => new GogFriends().GetFriends());
+                var steam = FetchFriends(PluginSettings.EnableSteamFriends, "Steam", () => new SteamFriends().GetFriends());
+                var ea = FetchFriends(PluginSettings.EnableOriginFriends, "EA app", () => new EaFriends().GetFriends());
+                var epic = FetchFriends(PluginSettings.EnableEpicFriends, "Epic", () => new EpicFriends().GetFriends());
 
                 friendsData.PlayerFriends = gog.Concat(steam).Concat(ea).Concat(epic).ToList();
                 friendsData.LastUpdate = DateTime.UtcNow;
@@ -742,15 +753,13 @@ namespace PlayerActivities.Services
                 StopWatchFriendsDataLoading = new Stopwatch();
                 StopWatchFriendsDataLoading.Start();
 
-                Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
-                Database.SetGameInfo<Activity>();
-
                 WindowOptions windowOptions = new WindowOptions
                 {
                     ShowMinimizeButton = false,
                     ShowMaximizeButton = false,
                     ShowCloseButton = false,
-                    CanBeResizable = false
+                    CanBeResizable = false,
+                    EnableWindowPersistence = false
                 };
 
                 _ = Application.Current.Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
@@ -775,9 +784,6 @@ namespace PlayerActivities.Services
 
             StopWatchFriendsDataLoading = new Stopwatch();
             StopWatchFriendsDataLoading.Start();
-
-            Database = new PlayerActivitiesCollection(Paths.PluginDatabasePath);
-            Database.SetGameInfo<Activity>();
 
             _ = GetFriends(plugin, true);
             FriendsDataLoaderClose(string.Empty, string.Empty);
@@ -813,19 +819,19 @@ namespace PlayerActivities.Services
             }
 
             // Refresh friend data based on client
-            if (PluginSettings.Settings.EnableGogFriends && clientName.IsEqual("GOG"))
+            if (PluginSettings.EnableGogFriends && clientName.IsEqual("GOG"))
             {
                 pf = new GogFriends().GetFriends(pf);
             }
-            else if (PluginSettings.Settings.EnableSteamFriends && clientName.IsEqual("STEAM"))
+            else if (PluginSettings.EnableSteamFriends && clientName.IsEqual("STEAM"))
             {
                 pf = new SteamFriends().GetFriends(pf);
             }
-            else if (PluginSettings.Settings.EnableOriginFriends && clientName.IsEqual("EA"))
+            else if (PluginSettings.EnableOriginFriends && clientName.IsEqual("EA"))
             {
                 pf = new EaFriends().GetFriends(pf);
             }
-            else if (PluginSettings.Settings.EnableEpicFriends && clientName.IsEqual("EPIC"))
+            else if (PluginSettings.EnableEpicFriends && clientName.IsEqual("EPIC"))
             {
                 pf = new EpicFriends().GetFriends(pf);
             }
@@ -880,7 +886,7 @@ namespace PlayerActivities.Services
 
         public override void SetThemesResources(Game game)
         {
-            PluginSettings.Settings.HasData = Database.Get(game.Id)?.HasData ?? false;
+            PluginSettings.HasData = GetOnlyCache(game.Id)?.HasData ?? false;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CommonPluginsShared.Plugins;
+﻿using CommonPluginsShared.Interfaces;
+using CommonPluginsShared.Plugins;
 using CommonPluginsStores.Models;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -31,6 +32,8 @@ namespace PlayerActivities
         public bool EnableScreenshotsVisualizerData { get; set; } = true;
         public bool EnableHowLongToBeatData { get; set; } = true;
 
+        public bool SaveColumnOrder { get; set; } = false;
+
 
         public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
@@ -44,7 +47,10 @@ namespace PlayerActivities
         #endregion
     }
 
-    public class PlayerActivitiesSettingsViewModel : ObservableObject, ISettings
+    /// <summary>
+    /// Playnite settings view-model for PlayerActivities (edit lifecycle + store sync).
+    /// </summary>
+    public class PlayerActivitiesSettingsViewModel : PluginSettingsViewModel, IPluginSettingsViewModel
     {
         private PlayerActivities Plugin { get; }
         private PlayerActivitiesSettings EditingClone { get; set; }
@@ -52,7 +58,7 @@ namespace PlayerActivities
         private PlayerActivitiesSettings _settings;
         public PlayerActivitiesSettings Settings { get => _settings; set => SetValue(ref _settings, value); }
 
-
+        IPluginSettings IPluginSettingsViewModel.Settings => Settings;
 
         public PlayerActivitiesSettingsViewModel(PlayerActivities plugin)
         {
@@ -65,7 +71,7 @@ namespace PlayerActivities
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
 
-            // TODO TEMP
+            // Temporary: force Steam auth until store settings migration is complete (see .tasks/TODO-FIXME.md).
             Settings.SteamStoreSettings.ForceAuth = true;
         }
 
@@ -79,7 +85,7 @@ namespace PlayerActivities
         // This method should revert any changes made to Option1 and Option2.
         public void CancelEdit()
         {
-            Settings = EditingClone;
+            CopySettingsValues(EditingClone, Settings);
         }
 
         // Code executed when user decides to confirm changes made since BeginEdit was called.
@@ -91,8 +97,8 @@ namespace PlayerActivities
             PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends);
             PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends);
 
-            Plugin.SavePluginSettings(Settings);
-            PlayerActivities.PluginDatabase.PluginSettings = this;
+            PersistSettings(Plugin, Settings);
+            PlayerActivities.PluginDatabase.PluginSettings = Settings;
 
             if (API.Instance.ApplicationInfo.Mode == ApplicationMode.Desktop)
             {

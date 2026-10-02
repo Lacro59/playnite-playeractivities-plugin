@@ -9,12 +9,12 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+using System.Windows;
 
 namespace PlayerActivities.Controls
 {
     /// <summary>
-    /// Logique d'interaction pour PluginActivities.xaml
+    /// Theme control listing recent player activities for the selected game (or all games).
     /// </summary>
     public partial class PluginActivities : PluginUserControlExtend
     {
@@ -25,44 +25,66 @@ namespace PlayerActivities.Controls
         protected override IDataContext controlDataContext
         {
             get => ControlDataContext;
-            set => ControlDataContext = (PluginActivitiesDataContext)controlDataContext;
+            set => ControlDataContext = (PluginActivitiesDataContext)value;
         }
-
 
         public PluginActivities()
         {
             InitializeComponent();
-            this.DataContext = ControlDataContext;
+            DataContext = ControlDataContext;
+            Loaded += OnLoaded;
+        }
 
-            _ = Task.Run(() =>
+        /// <inheritdoc/>
+        protected override void AttachStaticEvents()
+        {
+            base.AttachStaticEvents();
+
+            AttachPluginEvents(PluginDatabase.PluginName, () =>
             {
-                // Wait extension database are loaded
-                _ = System.Threading.SpinWait.SpinUntil(() => PluginDatabase.IsLoaded, -1);
-
-                this.Dispatcher?.BeginInvoke((Action)delegate
-                {
-                    PluginDatabase.PluginSettings.PropertyChanged += PluginSettings_PropertyChanged;
-                    PluginDatabase.Database.ItemUpdated += Database_ItemUpdated;
-                    PluginDatabase.Database.ItemCollectionChanged += Database_ItemCollectionChanged;
-                    API.Instance.Database.Games.ItemUpdated += Games_ItemUpdated;
-
-                    // Apply settings
-                    PluginSettings_PropertyChanged(null, null);
-                });
+                PluginDatabase.PluginSettings.PropertyChanged += CreatePluginSettingsHandler();
+                PluginDatabase.DatabaseItemUpdated += CreateDatabaseItemUpdatedHandler<PlayerActivitiesData>();
+                PluginDatabase.DatabaseItemCollectionChanged += CreateDatabaseCollectionChangedHandler<PlayerActivitiesData>();
             });
         }
 
-
+        /// <inheritdoc/>
         public override void SetDefaultDataContext()
         {
-            ControlDataContext.IsActivated = PluginDatabase.PluginSettings.Settings.EnableIntegrationActivities;
+            ControlDataContext.IsActivated = PluginDatabase.PluginSettings.EnableIntegrationActivities;
         }
 
-
-        public override void SetData(Game newContext, PluginDataBaseGameBase PluginGameData)
+        /// <inheritdoc/>
+        public override void SetData(Game newContext, PluginGameEntry pluginGameData)
         {
             ControlDataContext.ShowImage = newContext == null;
-            ControlDataContext.Items = newContext == null ? PluginDatabase.GetActivitiesData() : PluginDatabase.GetActivitiesData(newContext.Id);
+            ControlDataContext.Items = newContext == null
+                ? PluginDatabase.GetActivitiesData()
+                : PluginDatabase.GetActivitiesData(newContext.Id);
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// When no game is selected the control lists all activities — refresh on any item update.
+        /// </remarks>
+        protected override void OnDatabaseItemUpdated(List<Guid> updatedIds)
+        {
+            if (GameContext == null)
+            {
+                ScheduleDataRefresh("database-item-updated");
+                return;
+            }
+
+            base.OnDatabaseItemUpdated(updatedIds);
+        }
+
+        /// <inheritdoc/>
+        /// <remarks>
+        /// Always refresh: the all-games list must update when items are added or removed.
+        /// </remarks>
+        protected override void OnDatabaseCollectionChanged()
+        {
+            ScheduleDataRefresh("database-collection-changed");
         }
 
         private void DockPanel_LayoutUpdated(object sender, EventArgs e)
@@ -71,7 +93,9 @@ namespace PlayerActivities.Controls
         }
     }
 
-
+    /// <summary>
+    /// Data context for <see cref="PluginActivities"/>.
+    /// </summary>
     public class PluginActivitiesDataContext : ObservableObject, IDataContext
     {
         private bool _isActivated;

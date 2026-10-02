@@ -1,5 +1,6 @@
 ﻿using CommonPlayniteShared.Commands;
 using CommonPluginsShared;
+using CommonPluginsShared.Commands;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
 using PlayerActivities.Controls;
@@ -10,6 +11,7 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,6 +66,8 @@ namespace PlayerActivities.Views
             InitializeComponent();
             DataContext = ControlDataContext;
 
+            ConfigureListViewColumnPersistence();
+
             PART_DataLoad.Visibility = Visibility.Visible;
             PART_Data.Visibility = Visibility.Hidden;
             PART_DataRerefsh.Visibility = Visibility.Collapsed;
@@ -71,23 +75,60 @@ namespace PlayerActivities.Views
             GetData();
             GetFriends();
 
+            PluginDatabase.DatabaseItemUpdated += Database_ItemUpdated;
+            PluginDatabase.DatabaseItemCollectionChanged += Database_ItemCollectionChanged;
+            Unloaded += PaView_Unloaded;
 
-            PluginDatabase.Database.ItemUpdated += Database_ItemUpdated;
-
-            PluginDatabase.Database.Select(x => PlayniteTools.GetSourceName(x.Game)).Distinct().ForEach(x =>
+            PluginDatabase.GetAllCache().Select(x => PlayniteTools.GetSourceName(x.Game)).Distinct().ForEach(x =>
             {
                 string icon = TransformIcon.Get(x) + " ";
                 ControlDataContext.FilterSourceItems.Add(new ListSource { SourceName = ((icon.Length == 2) ? icon : string.Empty) + x, SourceNameShort = x, IsCheck = false });
             });
 
 
-            if (!PluginDatabase.PluginSettings.Settings.EnableEpicFriends && !PluginDatabase.PluginSettings.Settings.EnableGogFriends && !PluginDatabase.PluginSettings.Settings.EnableOriginFriends && !PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            if (!PluginDatabase.PluginSettings.EnableEpicFriends && !PluginDatabase.PluginSettings.EnableGogFriends && !PluginDatabase.PluginSettings.EnableOriginFriends && !PluginDatabase.PluginSettings.EnableSteamFriends)
             {
                 PART_BtFriends.IsEnabled = false;
             }
         }
 
+        private void ConfigureListViewColumnPersistence()
+        {
+            try
+            {
+                string columnsPath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "ListViewColumns.json");
+                bool saveOrder = PluginDatabase.PluginSettings.SaveColumnOrder;
+                Common.LogDebug($"[PaView] Column persistence enabled={saveOrder}, path={columnsPath}");
+
+                PART_LvFriends.EnableColumnPersistence = saveOrder;
+                PART_LvFriends.ColumnConfigurationFilePath = columnsPath;
+                PART_LvFriends.ColumnConfigurationScope = ColumnConfigurationScope.Custom;
+                PART_LvFriends.ColumnConfigurationKey = "PlayerActivities.PaView.Friends";
+
+                PART_LvFriendsDetails.EnableColumnPersistence = saveOrder;
+                PART_LvFriendsDetails.ColumnConfigurationFilePath = columnsPath;
+                PART_LvFriendsDetails.ColumnConfigurationScope = ColumnConfigurationScope.Custom;
+                PART_LvFriendsDetails.ColumnConfigurationKey = "PlayerActivities.PaView.FriendsDetails";
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, false, PluginDatabase.PluginName);
+            }
+        }
+
+        private void PaView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
+            PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
+            Unloaded -= PaView_Unloaded;
+        }
+
         private void Database_ItemUpdated(object sender, ItemUpdatedEventArgs<PlayerActivitiesData> e)
+        {
+            GetData();
+        }
+
+        private void Database_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<PlayerActivitiesData> e)
         {
             GetData();
         }
@@ -293,7 +334,7 @@ namespace PlayerActivities.Views
             => API.Instance.InstallGame(game.Id));
 
         public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game)
-            => Commands.GoToGame.Execute(game.Id));
+            => CommandsNavigation.GoToGame.Execute(game.Id));
 
         public RelayCommand<Game> RefreshGameDataCommand { get; } = new RelayCommand<Game>((game) =>
         {

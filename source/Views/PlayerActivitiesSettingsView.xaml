@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:pcmd="clr-namespace:CommonPluginsShared"
+             xmlns:pcmd="clr-namespace:CommonPluginsShared.Commands"
              xmlns:AttachedProperties="clr-namespace:CommonPluginsShared.Controls"
+             xmlns:settings="clr-namespace:CommonPluginsControls.Settings"
              xmlns:PlayerActivities="clr-namespace:PlayerActivities" 
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
              xmlns:Gog="clr-namespace:CommonPluginsControls.Stores.Gog"
@@ -21,9 +22,13 @@
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,20,0,0">
                     <CheckBox IsChecked="{Binding Settings.MenuInExtensions}" VerticalAlignment="Center"
-                                  Command="{x:Static pcmd:Commands.RestartRequired}" 
+                                  Command="{x:Static pcmd:CommandsPlugin.CmdRestartRequired}" 
                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
                         <Label Content="{DynamicResource LOCCommonMenuInExtensions}" />
+                    </CheckBox>
+
+                    <CheckBox IsChecked="{Binding Settings.SaveColumnOrder}" VerticalAlignment="Center" Margin="0,15,0,0">
+                        <Label Content="{DynamicResource LOCCommonSaveColumOrder}" />
                     </CheckBox>
 
                     <CheckBox IsChecked="{Binding Settings.EnableSuccessStoryData}" VerticalAlignment="Center" Margin="0,30,0,0">
@@ -134,6 +139,10 @@
                                 ForceAuth="True"
                                 UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
             </StackPanel>
+        </TabItem>
+
+        <TabItem Header="{DynamicResource LOCCommonDebugTab}">
+            <settings:PluginDebugSettingsSection PluginName="PlayerActivities" Margin="10" />
         </TabItem>
     </TabControl>
 </UserControl>

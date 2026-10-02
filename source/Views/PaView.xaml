@@ -361,16 +361,18 @@
                 </Grid.RowDefinitions>
                 
                 <Grid Name="PART_GridFriendsContener" Grid.Row="0">
-                    <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
+                    <controls1:ListViewExtend x:Name="PART_LvFriends"
+                                              Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
                                               FontSize="24" Style="{StaticResource {x:Type ListView}}" 
-                                              SortingEnable="True" SortingDefaultDataName="Stats.HoursPlayed" SortingSortDirection="Descending"
+                                              SortingEnable="True" SortingDefaultDataName="Stats.Playtime" SortingSortDirection="Descending"
                                               SelectionChanged="ListViewExtend_SelectionChanged"
                                               ItemsSource="{Binding FriendsSource}">
 
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="65">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCActionsLabel}" Tag="noSort" />
+                                <GridViewColumn Width="65"
+                                                controls1:ListViewColumnOptions.DisableSorting="True">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCActionsLabel}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Button ToolTip="{DynamicResource LOCCommonRefreshGameData}" HorizontalAlignment="Center"
@@ -380,8 +382,9 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                                 
-                                <GridViewColumn Width="50">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCGameIconTitle}" Tag="noSort" />
+                                <GridViewColumn Width="50"
+                                                controls1:ListViewColumnOptions.DisableSorting="True">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCGameIconTitle}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Image HorizontalAlignment="Center" Height="32" VerticalAlignment="Center" Width="32" 
@@ -390,11 +393,13 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding FriendPseudo}">
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding FriendPseudo}"
+                                                controls1:ListViewColumnOptions.ForceHidden="True">
                                     <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
                                 </GridViewColumn>
-                                <GridViewColumn Width="140">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="FriendPseudo" />
+                                <GridViewColumn Width="140"
+                                                controls1:ListViewColumnOptions.SortMemberPath="FriendPseudo">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <TextBlock ToolTip="{Binding FriendsLink}">
@@ -406,11 +411,13 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding ClientName}">
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding ClientName}"
+                                                controls1:ListViewColumnOptions.ForceHidden="True">
                                     <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
                                 </GridViewColumn>
-                                <GridViewColumn Width="75">
-                                    <GridViewColumnHeader Name="lvSourceIcon" Content="{DynamicResource LOCSourceLabel}" Tag="ClientName" />
+                                <GridViewColumn Width="75"
+                                                controls1:ListViewColumnOptions.SortMemberPath="ClientName">
+                                    <GridViewColumnHeader Name="lvSourceIcon" Content="{DynamicResource LOCSourceLabel}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <Label Content="{Binding ClientIcon}" FontFamily="{DynamicResource CommonFont}" 
@@ -456,11 +463,13 @@
 
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding Name}">
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding Name}"
+                                                controls1:ListViewColumnOptions.ForceHidden="True">
                                     <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
                                 </GridViewColumn>
-                                <GridViewColumn Width="170">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" Tag="Name" />
+                                <GridViewColumn Width="170"
+                                                controls1:ListViewColumnOptions.SortMemberPath="Name">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel>
@@ -479,11 +488,13 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding IsCommun}">
+                                <GridViewColumn Width="0" DisplayMemberBinding="{Binding IsCommun}"
+                                                controls1:ListViewColumnOptions.ForceHidden="True">
                                     <controls1:GridViewColumnHeaderExtend Style="{StaticResource {x:Type GridViewColumnHeader}}" IsHitTestVisible="False" />
                                 </GridViewColumn>
-                                <GridViewColumn Width="90">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCPaCommon}" Tag="IsCommun" />
+                                <GridViewColumn Width="90"
+                                                controls1:ListViewColumnOptions.SortMemberPath="IsCommun">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCPaCommon}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox IsChecked="{Binding IsCommun}" HorizontalAlignment="Center" />

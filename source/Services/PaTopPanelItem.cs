@@ -28,14 +28,15 @@ namespace PlayerActivities.Services
                     ShowCloseButton = true,
                     CanBeResizable = true,
                     Width = 1280,
-                    Height = 740
+                    Height = 740,
+                    WindowPersistenceKey = "PlayerActivities.PaView"
                 };
 
                 PaView ViewExtension = new PaView(plugin);
                 Window windowExtension = PlayniteUiHelper.CreateExtensionWindow(ResourceProvider.GetString("LOCPa"), ViewExtension, windowOptions);
                 _ = windowExtension.ShowDialog();
             };
-            Visible = plugin.PluginSettings.Settings.EnableIntegrationButtonHeader;
+            Visible = plugin.PluginSettingsViewModel.Settings.EnableIntegrationButtonHeader;
         }
     }
 }
