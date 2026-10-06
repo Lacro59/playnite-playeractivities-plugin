@@ -314,6 +314,7 @@ namespace PlayerActivities
                     PluginDatabase.SetHowLongToBeat(args.Game.Id);
 
                     PluginDatabase.AddOrUpdate(playerActivities);
+                    Common.LogDebug($"[PlayerActivities] OnGameStopped AddOrUpdate done Id={args.Game.Id}");
                 }
                 catch (Exception ex)
                 {

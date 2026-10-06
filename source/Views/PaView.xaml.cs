@@ -58,6 +58,7 @@ namespace PlayerActivities.Views
 
         private bool IsDataFinished = false;
         private bool IsFriendsFinished = false;
+        private bool _friendsLoadStarted = false;
 
         public PaView(PlayerActivities plugin)
         {
@@ -72,11 +73,9 @@ namespace PlayerActivities.Views
             PART_Data.Visibility = Visibility.Hidden;
             PART_DataRerefsh.Visibility = Visibility.Collapsed;
 
-            GetData();
-            GetFriends();
-
-            PluginDatabase.DatabaseItemUpdated += Database_ItemUpdated;
-            PluginDatabase.DatabaseItemCollectionChanged += Database_ItemCollectionChanged;
+            // Sidebar reuses the same PaView instance: subscribe on Loaded, unsubscribe on Unloaded
+            // (ctor-only subscribe breaks after the first Unloaded — see PaViewSidebar Opened cache).
+            Loaded += PaView_Loaded;
             Unloaded += PaView_Unloaded;
 
             PluginDatabase.GetAllCache().Select(x => PlayniteTools.GetSourceName(x.Game)).Distinct().ForEach(x =>
@@ -116,33 +115,84 @@ namespace PlayerActivities.Views
             }
         }
 
+        private void PaView_Loaded(object sender, RoutedEventArgs e)
+        {
+            PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
+            PluginDatabase.DatabaseItemUpdated += Database_ItemUpdated;
+            PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
+            PluginDatabase.DatabaseItemCollectionChanged += Database_ItemCollectionChanged;
+
+            Common.LogDebug("[PaView] Loaded — subscribed to database events");
+
+            GetData("Loaded");
+            if (!_friendsLoadStarted)
+            {
+                _friendsLoadStarted = true;
+                GetFriends();
+            }
+        }
+
         private void PaView_Unloaded(object sender, RoutedEventArgs e)
         {
             PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
             PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
-            Unloaded -= PaView_Unloaded;
+            Common.LogDebug("[PaView] Unloaded — unsubscribed from database events");
         }
 
         private void Database_ItemUpdated(object sender, ItemUpdatedEventArgs<PlayerActivitiesData> e)
         {
-            GetData();
+            int updatedCount = e?.UpdatedItems?.Count ?? 0;
+            Common.LogDebug($"[PaView] DatabaseItemUpdated count={updatedCount}");
+            GetData("ItemUpdated");
         }
 
         private void Database_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<PlayerActivitiesData> e)
         {
-            GetData();
+            Common.LogDebug("[PaView] DatabaseItemCollectionChanged");
+            GetData("CollectionChanged");
         }
 
         #region Data
 
-        private void GetData()
+        private void GetData(string reason = "GetData")
         {
             _ = Task.Run(() =>
             {
-                ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
+                try
+                {
+                    ObservableCollection<ActivityListGrouped> data = PluginDatabase.GetActivitiesData();
+                    int count = data?.Count ?? 0;
 
-                IsDataFinished = true;
-                IsFinish();
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        try
+                        {
+                            ControlDataContext.ItemsSource = data;
+
+                            if (PART_LbTimeLine?.ItemsSource != null)
+                            {
+                                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+                                if (view != null)
+                                {
+                                    view.Filter = TimeLineFilter;
+                                }
+                            }
+
+                            Common.LogDebug($"[PaView] refresh timeline reason={reason} count={count}");
+
+                            IsDataFinished = true;
+                            IsFinish();
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] GetData UI update failed", false, PluginDatabase.PluginName);
+                        }
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] GetData refresh failed", false, PluginDatabase.PluginName);
+                }
             });
         }
 
