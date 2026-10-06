@@ -27,6 +27,12 @@ namespace PlayerActivities
 
         public bool IsFirstRun { get; set; } = true;
 
+        /// <summary>
+        /// One-shot flag: <c>true</c> after historical <c>PlaytimeFirst</c> duplicates have been cleaned at application start.
+        /// Defaults to <c>false</c> so existing installs run the cleanup once.
+        /// </summary>
+        public bool PlaytimeFirstDedupDone { get; set; } = false;
+
 
         public bool EnableSuccessStoryData { get; set; } = true;
         public bool EnableScreenshotsVisualizerData { get; set; } = true;

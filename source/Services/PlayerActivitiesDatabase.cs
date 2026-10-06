@@ -136,6 +136,45 @@ namespace PlayerActivities.Services
             return playerActivities;
         }
 
+        /// <summary>
+        /// Removes duplicate <see cref="ActivityType.PlaytimeFirst"/> entries across the cache, keeping the oldest date per game.
+        /// </summary>
+        /// <returns>Total number of duplicate entries removed.</returns>
+        public int DeduplicatePlaytimeFirstActivities()
+        {
+            Logger.Debug("PlaytimeFirst dedup: started");
+            int removedTotal = 0;
+            int gamesTouched = 0;
+
+            foreach (PlayerActivitiesData data in GetAllCache())
+            {
+                if (data == null)
+                {
+                    continue;
+                }
+
+                int removed = data.DeduplicatePlaytimeFirst();
+                if (removed > 0)
+                {
+                    gamesTouched++;
+                    removedTotal += removed;
+                    AddOrUpdate(data);
+                    Logger.Debug($"PlaytimeFirst dedup: game Id={data.Id}, removed={removed}");
+                }
+            }
+
+            if (removedTotal > 0)
+            {
+                Logger.Info($"PlaytimeFirst dedup completed: games={gamesTouched}, removed={removedTotal}");
+            }
+            else
+            {
+                Logger.Info("PlaytimeFirst dedup completed: no duplicates found");
+            }
+
+            return removedTotal;
+        }
+
         #region Plugin data
 
         /// <summary>

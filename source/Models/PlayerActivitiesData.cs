@@ -1,5 +1,6 @@
 ﻿using CommonPluginsShared.Collections;
 using PlayerActivities.Models.Enumerations;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PlayerActivities.Models
@@ -18,6 +19,32 @@ namespace PlayerActivities.Models
         public bool HasFirst()
         {
             return Items.Any(x => x.Type == ActivityType.PlaytimeFirst);
+        }
+
+        /// <summary>
+        /// Keeps a single <see cref="ActivityType.PlaytimeFirst"/> entry (oldest <see cref="Activity.DateActivity"/>) and removes duplicates.
+        /// </summary>
+        /// <returns>Number of duplicate entries removed.</returns>
+        public int DeduplicatePlaytimeFirst()
+        {
+            List<Activity> firsts = Items.Where(x => x.Type == ActivityType.PlaytimeFirst).ToList();
+            if (firsts.Count <= 1)
+            {
+                return 0;
+            }
+
+            Activity keep = firsts.OrderBy(x => x.DateActivity).First();
+            int removed = 0;
+            for (int i = Items.Count - 1; i >= 0; i--)
+            {
+                if (Items[i].Type == ActivityType.PlaytimeFirst && !ReferenceEquals(Items[i], keep))
+                {
+                    Items.RemoveAt(i);
+                    removed++;
+                }
+            }
+
+            return removed;
         }
     }
 }

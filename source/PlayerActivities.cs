@@ -251,12 +251,13 @@ namespace PlayerActivities
             try
             {
                 PlayerActivitiesData playerActivities = PluginDatabase.Get(args.Game);
-                if (playerActivities.HasFirst())
+                if (!playerActivities.HasFirst())
                 {
                     playerActivities.Items.Add(new Activity
                     {
                         Type = ActivityType.PlaytimeFirst
                     });
+                    Logger.Debug($"PlaytimeFirst added on game start: Id={args.Game?.Id}");
                 }
             }
             catch (Exception ex)
@@ -365,6 +366,22 @@ namespace PlayerActivities
                 catch (Exception ex)
                 {
                     Common.LogError(ex, false);
+                }
+            }
+
+            // One-shot: deduplicate historical PlaytimeFirst entries once after upgrade.
+            if (!PluginSettingsViewModel.Settings.PlaytimeFirstDedupDone)
+            {
+                try
+                {
+                    Logger.Info("PlaytimeFirst dedup one-shot: running");
+                    PluginDatabase.DeduplicatePlaytimeFirstActivities();
+                    PluginSettingsViewModel.Settings.PlaytimeFirstDedupDone = true;
+                    SavePluginSettings(PluginSettingsViewModel.Settings);
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, true, PluginDatabase.PluginName);
                 }
             }
         }
