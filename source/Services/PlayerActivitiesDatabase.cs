@@ -616,6 +616,8 @@ namespace PlayerActivities.Services
         /// </returns>
         public ObservableCollection<ActivityListGrouped> GetActivitiesData(bool grouped = true)
         {
+            Stopwatch stopWatch = Stopwatch.StartNew();
+
             // Step 1: Flatten all activity items from games that exist in the database
             var activityLists = GetAllCache()
                 .Where(x => x.GameExist)
@@ -629,8 +631,12 @@ namespace PlayerActivities.Services
                 .OrderByDescending(x => x.DateActivity)
                 .ToList();
 
-            // Step 2: Build the list of activity types to include based on plugin settings
-            var activityTypes = new List<ActivityType> { ActivityType.PlaytimeFirst, ActivityType.PlaytimeGoal };
+            // Step 2: Build the set of activity types to include based on plugin settings
+            var activityTypes = new HashSet<ActivityType>
+            {
+                ActivityType.PlaytimeFirst,
+                ActivityType.PlaytimeGoal
+            };
 
             if (PluginSettings.EnableHowLongToBeatData)
             {
@@ -648,56 +654,59 @@ namespace PlayerActivities.Services
                 activityTypes.Add(ActivityType.AchievementsUnlocked);
             }
 
-            // Step 3: Filter and group activity data
-            var filteredActivities = activityLists.Where(x => activityTypes.Contains(x.Type));
+            // Step 3: Filter and group activity data (O(n) via dictionary — preserves first-seen order)
+            var groupsByKey = new Dictionary<string, ActivityListGrouped>(StringComparer.Ordinal);
+            var orderedGroups = new List<ActivityListGrouped>();
 
-            var groupedActivities = new ObservableCollection<ActivityListGrouped>();
-
-            foreach (var activity in filteredActivities)
+            foreach (ActivityList activity in activityLists)
             {
-                var existingGroup = groupedActivities.FirstOrDefault(g =>
-                    g.GameContext.Id == activity.GameContext.Id &&
-                    (!grouped || g.TimeAgo.IsEqual(activity.TimeAgo)));
-
-                if (existingGroup != null)
+                if (!activityTypes.Contains(activity.Type) || activity.GameContext == null)
                 {
-                    existingGroup.Activities.Add(new Activity
-                    {
-                        DateActivity = activity.DateActivity,
-                        Value = activity.Value,
-                        Type = activity.Type
-                    });
+                    continue;
                 }
-                else
+
+                string timeAgoKey = (activity.TimeAgo ?? string.Empty).Trim();
+                string key = grouped
+                    ? activity.GameContext.Id.ToString("N") + "|" + timeAgoKey.ToUpperInvariant()
+                    : activity.GameContext.Id.ToString("N");
+
+                ActivityListGrouped existingGroup;
+                if (!groupsByKey.TryGetValue(key, out existingGroup))
                 {
-                    groupedActivities.Add(new ActivityListGrouped
+                    existingGroup = new ActivityListGrouped
                     {
                         GameContext = activity.GameContext,
                         DtString = activity.DateActivity.ToString("yyyy-MM-dd"),
                         TimeAgo = activity.TimeAgo,
-                        Activities = new List<Activity>
-                        {
-                            new Activity
-                            {
-                                DateActivity = activity.DateActivity,
-                                Value = activity.Value,
-                                Type = activity.Type
-                            }
-                        }
-                    });
+                        SourceName = PlayniteTools.GetSourceName(activity.GameContext),
+                        Activities = new List<Activity>()
+                    };
+                    groupsByKey[key] = existingGroup;
+                    orderedGroups.Add(existingGroup);
                 }
+
+                existingGroup.Activities.Add(new Activity
+                {
+                    DateActivity = activity.DateActivity,
+                    Value = activity.Value,
+                    Type = activity.Type
+                });
             }
 
-            // Step 4: Sort activities within each group
-            foreach (var group in groupedActivities)
+            // Step 4: Sort activities within each group and fill display caches once
+            foreach (ActivityListGrouped group in orderedGroups)
             {
                 group.Activities = group.Activities
                     .OrderByDescending(a => a.DateActivity)
                     .ThenBy(a => a.Type)
                     .ToList();
+                group.FinalizeDisplayCaches();
             }
 
-            return groupedActivities;
+            stopWatch.Stop();
+            Common.LogDebug($"[PlayerActivitiesDatabase] GetActivitiesData grouped={grouped} flat={activityLists.Count} groups={orderedGroups.Count} elapsedMs={stopWatch.ElapsedMilliseconds}");
+
+            return new ObservableCollection<ActivityListGrouped>(orderedGroups);
         }
 
         #endregion

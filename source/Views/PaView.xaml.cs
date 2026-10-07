@@ -11,6 +11,7 @@ using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -34,24 +35,31 @@ namespace PlayerActivities.Views
 
         internal static PaViewData ControlDataContext { get; set; } = new PaViewData();
 
-        private List<string> SearchSources { get; set; } = new List<string>();
+        /// <summary>
+        /// Invokes an immediate timeline rebuild when PaView is loaded (e.g. context-menu refresh).
+        /// </summary>
+        internal static Action<string> RequestTimelineRefresh { get; private set; }
+
+        private HashSet<string> SearchSources { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly DispatcherTimer _searchDebounceTimer;
+        private readonly DispatcherTimer _dataRefreshDebounceTimer;
+        private string _pendingDataRefreshReason;
+        private const int SearchDebounceMs = 250;
+        private const int DataRefreshDebounceMs = 300;
 
         private bool TimeLineFilter(object item)
         {
-            if (item == null)
+            ActivityListGrouped el = item as ActivityListGrouped;
+            if (el?.GameContext == null)
             {
                 return false;
             }
 
-            ActivityListGrouped el = item as ActivityListGrouped;
+            string search = TextboxSearch?.Text ?? string.Empty;
+            bool txtFilter = search.Length == 0
+                || (el.GameContext.Name?.IndexOf(search, StringComparison.InvariantCultureIgnoreCase) ?? -1) >= 0;
 
-            bool txtFilter = el.GameContext.Name.Contains(TextboxSearch.Text, StringComparison.InvariantCultureIgnoreCase);
-
-            bool sourceFilter = true;
-            if (SearchSources.Count > 0)
-            {
-                sourceFilter = SearchSources.Where(x => PlayniteTools.GetSourceName(el.GameContext).IsEqual(x)).Count() > 0;
-            }
+            bool sourceFilter = SearchSources.Count == 0 || SearchSources.Contains(el.SourceName ?? string.Empty);
 
             return txtFilter && sourceFilter;
         }
@@ -59,6 +67,7 @@ namespace PlayerActivities.Views
         private bool IsDataFinished = false;
         private bool IsFriendsFinished = false;
         private bool _friendsLoadStarted = false;
+        private bool _timelineReadyLogged = false;
 
         public PaView(PlayerActivities plugin)
         {
@@ -66,6 +75,18 @@ namespace PlayerActivities.Views
 
             InitializeComponent();
             DataContext = ControlDataContext;
+
+            _searchDebounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(SearchDebounceMs)
+            };
+            _searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
+
+            _dataRefreshDebounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(DataRefreshDebounceMs)
+            };
+            _dataRefreshDebounceTimer.Tick += DataRefreshDebounceTimer_Tick;
 
             ConfigureListViewColumnPersistence();
 
@@ -121,6 +142,7 @@ namespace PlayerActivities.Views
             PluginDatabase.DatabaseItemUpdated += Database_ItemUpdated;
             PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
             PluginDatabase.DatabaseItemCollectionChanged += Database_ItemCollectionChanged;
+            RequestTimelineRefresh = GetData;
 
             Common.LogDebug("[PaView] Loaded — subscribed to database events");
 
@@ -134,6 +156,10 @@ namespace PlayerActivities.Views
 
         private void PaView_Unloaded(object sender, RoutedEventArgs e)
         {
+            _searchDebounceTimer.Stop();
+            _dataRefreshDebounceTimer.Stop();
+            _pendingDataRefreshReason = null;
+            RequestTimelineRefresh = null;
             PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
             PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
             Common.LogDebug("[PaView] Unloaded — unsubscribed from database events");
@@ -142,14 +168,28 @@ namespace PlayerActivities.Views
         private void Database_ItemUpdated(object sender, ItemUpdatedEventArgs<PlayerActivitiesData> e)
         {
             int updatedCount = e?.UpdatedItems?.Count ?? 0;
-            Common.LogDebug($"[PaView] DatabaseItemUpdated count={updatedCount}");
-            GetData("ItemUpdated");
+            ScheduleDataRefresh($"ItemUpdated count={updatedCount}");
         }
 
         private void Database_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<PlayerActivitiesData> e)
         {
-            Common.LogDebug("[PaView] DatabaseItemCollectionChanged");
-            GetData("CollectionChanged");
+            ScheduleDataRefresh("CollectionChanged");
+        }
+
+        private void ScheduleDataRefresh(string reason)
+        {
+            _pendingDataRefreshReason = reason;
+            _dataRefreshDebounceTimer.Stop();
+            _dataRefreshDebounceTimer.Start();
+            Common.LogDebug($"[PaView] ScheduleDataRefresh reason={reason} debounceMs={DataRefreshDebounceMs}");
+        }
+
+        private void DataRefreshDebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _dataRefreshDebounceTimer.Stop();
+            string reason = _pendingDataRefreshReason ?? "Debounced";
+            _pendingDataRefreshReason = null;
+            GetData(reason);
         }
 
         #region Data
@@ -160,13 +200,17 @@ namespace PlayerActivities.Views
             {
                 try
                 {
+                    Stopwatch swAgg = Stopwatch.StartNew();
                     ObservableCollection<ActivityListGrouped> data = PluginDatabase.GetActivitiesData();
+                    swAgg.Stop();
                     int count = data?.Count ?? 0;
+                    Common.LogDebug($"[PaView] GetActivitiesData reason={reason} count={count} elapsedMs={swAgg.ElapsedMilliseconds}");
 
                     _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                     {
                         try
                         {
+                            Stopwatch swUi = Stopwatch.StartNew();
                             ControlDataContext.ItemsSource = data;
 
                             if (PART_LbTimeLine?.ItemsSource != null)
@@ -178,7 +222,8 @@ namespace PlayerActivities.Views
                                 }
                             }
 
-                            Common.LogDebug($"[PaView] refresh timeline reason={reason} count={count}");
+                            swUi.Stop();
+                            Common.LogDebug($"[PaView] apply timeline UI reason={reason} count={count} elapsedMs={swUi.ElapsedMilliseconds}");
 
                             IsDataFinished = true;
                             IsFinish();
@@ -217,6 +262,12 @@ namespace PlayerActivities.Views
                 {
                     PART_DataLoad.Visibility = Visibility.Hidden;
                     PART_Data.Visibility = Visibility.Visible;
+                    if (!_timelineReadyLogged)
+                    {
+                        _timelineReadyLogged = true;
+                        int groupCount = ControlDataContext.ItemsSource?.Count ?? 0;
+                        Logger.Info($"[PaView] Timeline and friends UI ready — groups={groupCount}");
+                    }
                 }));
 
                 _ = Task.Run(() =>
@@ -225,8 +276,23 @@ namespace PlayerActivities.Views
 
                     _ = (Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                     {
-                        CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
-                        view.Filter = TimeLineFilter;
+                        try
+                        {
+                            if (PART_LbTimeLine?.ItemsSource == null)
+                            {
+                                return;
+                            }
+
+                            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+                            if (view != null)
+                            {
+                                view.Filter = TimeLineFilter;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] IsFinish filter reapply failed", false, PluginDatabase.PluginName);
+                        }
                     })));
                 });
             }
@@ -238,7 +304,14 @@ namespace PlayerActivities.Views
 
         private void TextboxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
+            _searchDebounceTimer.Stop();
+            _searchDebounceTimer.Start();
+        }
+
+        private void SearchDebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _searchDebounceTimer.Stop();
+            RefreshTimeLineFilter("TextSearch");
         }
 
         private void ChkSource_Checked(object sender, RoutedEventArgs e)
@@ -253,24 +326,45 @@ namespace PlayerActivities.Views
 
         private void FilterCbSource(CheckBox sender)
         {
-            FilterSource.Text = string.Empty;
+            if (sender?.Tag == null)
+            {
+                return;
+            }
 
+            string source = sender.Tag.ToString();
             if ((bool)sender.IsChecked)
             {
-                SearchSources.Add((string)sender.Tag);
+                SearchSources.Add(source);
             }
             else
             {
-                SearchSources.Remove((string)sender.Tag);
+                SearchSources.Remove(source);
             }
 
-            if (SearchSources.Count != 0)
+            FilterSource.Text = SearchSources.Count == 0
+                ? string.Empty
+                : string.Join(", ", SearchSources);
+
+            RefreshTimeLineFilter("SourceFilter");
+        }
+
+        private void RefreshTimeLineFilter(string reason)
+        {
+            if (PART_LbTimeLine?.ItemsSource == null)
             {
-                FilterSource.Text = string.Join(", ", SearchSources);
+                return;
             }
 
-            CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
+            System.ComponentModel.ICollectionView view = CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+            if (view == null)
+            {
+                return;
+            }
 
+            Stopwatch sw = Stopwatch.StartNew();
+            view.Refresh();
+            sw.Stop();
+            Common.LogDebug($"[PaView] CollectionView.Refresh reason={reason} searchLen={TextboxSearch?.Text?.Length ?? 0} sources={SearchSources.Count} elapsedMs={sw.ElapsedMilliseconds}");
         }
 
         #endregion
@@ -393,8 +487,30 @@ namespace PlayerActivities.Views
                 return;
             }
 
-            PluginDatabase.InitializePluginData(true, game.Id);
-            PaView.ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    PluginDatabase.InitializePluginData(true, game.Id);
+                    Action<string> refresh = PaView.RequestTimelineRefresh;
+                    if (refresh != null)
+                    {
+                        Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new Action(() => refresh("RefreshGameData")));
+                    }
+                    else
+                    {
+                        ObservableCollection<ActivityListGrouped> data = PluginDatabase.GetActivitiesData();
+                        Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                        {
+                            PaView.ControlDataContext.ItemsSource = data;
+                        }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] RefreshGameDataCommand failed", false, PluginDatabase.PluginName);
+                }
+            });
         });
 
         public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) 

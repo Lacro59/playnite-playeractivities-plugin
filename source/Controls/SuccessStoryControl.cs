@@ -9,10 +9,102 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using static CommonPluginsShared.PlayniteTools;
 
 namespace PlayerActivities.Controls
 {
+    /// <summary>
+    /// Serializes lazy plugin-host creation on the UI thread so scrolling does not flood GetGameViewControl / ffprobe.
+    /// </summary>
+    internal static class LazyPluginHostScheduler
+    {
+        private static readonly object Sync = new object();
+        private static readonly Queue<Action> Pending = new Queue<Action>();
+        private static bool _pumpScheduled;
+
+        public static void Enqueue(Action action)
+        {
+            if (action == null)
+            {
+                return;
+            }
+
+            lock (Sync)
+            {
+                Pending.Enqueue(action);
+                if (_pumpScheduled)
+                {
+                    return;
+                }
+
+                _pumpScheduled = true;
+            }
+
+            Dispatcher dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
+            {
+                action();
+                return;
+            }
+
+            _ = dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(Pump));
+        }
+
+        private static void Pump()
+        {
+            Action next = null;
+            lock (Sync)
+            {
+                if (Pending.Count > 0)
+                {
+                    next = Pending.Dequeue();
+                }
+                else
+                {
+                    _pumpScheduled = false;
+                    return;
+                }
+            }
+
+            try
+            {
+                next();
+            }
+            finally
+            {
+                ScheduleNextPumpIfNeeded();
+            }
+        }
+
+        private static void ScheduleNextPumpIfNeeded()
+        {
+            bool more;
+            lock (Sync)
+            {
+                more = Pending.Count > 0;
+                if (!more)
+                {
+                    _pumpScheduled = false;
+                }
+            }
+
+            if (!more)
+            {
+                return;
+            }
+
+            Dispatcher dispatcher = Application.Current?.Dispatcher;
+            if (dispatcher == null)
+            {
+                Pump();
+                return;
+            }
+
+            _ = dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(Pump));
+        }
+    }
+
     /// <summary>
     /// Utility class to interface with the SuccessStory plugin.
     /// </summary>
@@ -58,21 +150,21 @@ namespace PlayerActivities.Controls
 
     /// <summary>
     /// Custom control to host SuccessStory plugin UI for a specific game.
+    /// The plugin view is created lazily when the control is loaded and visible (avoids UI freezes on virtualized lists).
     /// </summary>
     public class SuccessStoryControl : ContentControl
     {
-        // Cached instance of the SuccessStory plugin for better performance
         private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
             .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory));
 
-        private PluginUserControl Control { get; }
+        private readonly string _controlName;
+        private PluginUserControl _control;
+        private bool _ensureScheduled;
 
         /// <summary>
         /// Indicates whether the SuccessStory plugin is installed.
         /// </summary>
         public static bool IsInstalled => CachedPlugin != null;
-
-        #region Dependency Properties
 
         /// <summary>
         /// The game context used for the control.
@@ -103,49 +195,111 @@ namespace PlayerActivities.Controls
             typeof(DateTime),
             typeof(SuccessStoryControl),
             new FrameworkPropertyMetadata(DateTime.Now, ControlsPropertyChangedCallback));
-        #endregion
 
-        #region Property Change Handler
-
-        // Called when a dependency property is changed
         internal static void ControlsPropertyChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var obj = sender as SuccessStoryControl;
-
-            if (obj?.Control != null)
-            {
-                if (e.Property == DateUnlockedProperty && e.NewValue is DateTime newDate)
-                {
-                    obj.Control.Tag = newDate;
-                }
-
-                obj.Control.GameContext = obj.GameContext;
-                obj.Control.GameContextChanged(null, obj.GameContext);
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// Initializes the control and loads the plugin UI for the given control name.
-        /// </summary>
-        /// <param name="controlName">Name of the plugin view to load.</param>
-        public SuccessStoryControl(string controlName)
-        {
-            if (!IsInstalled)
+            SuccessStoryControl obj = sender as SuccessStoryControl;
+            if (obj == null)
             {
                 return;
             }
 
-            Control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
-            {
-                Name = controlName,
-                Mode = ApplicationMode.Desktop
-            }) as PluginUserControl;
+            obj.ScheduleEnsurePluginControl();
+            obj.ApplyContextToPlugin();
+        }
 
-            if (Control != null)
+        /// <summary>
+        /// Initializes the host; plugin UI is created later when visible.
+        /// </summary>
+        /// <param name="controlName">Name of the plugin view to load.</param>
+        public SuccessStoryControl(string controlName)
+        {
+            _controlName = controlName;
+            Loaded += (s, e) => ScheduleEnsurePluginControl();
+            Unloaded += (s, e) => TearDownPluginControl();
+            IsVisibleChanged += (s, e) =>
             {
-                Content = Control;
+                if (IsVisible)
+                {
+                    ScheduleEnsurePluginControl();
+                }
+                else
+                {
+                    TearDownPluginControl();
+                }
+            };
+        }
+
+        private void ScheduleEnsurePluginControl()
+        {
+            if (_control != null || !IsInstalled || _ensureScheduled)
+            {
+                return;
             }
+
+            if (!IsLoaded || !IsVisible)
+            {
+                return;
+            }
+
+            _ensureScheduled = true;
+            LazyPluginHostScheduler.Enqueue(() =>
+            {
+                _ensureScheduled = false;
+                EnsurePluginControl();
+            });
+        }
+
+        private void EnsurePluginControl()
+        {
+            if (_control != null || !IsInstalled || !IsLoaded || !IsVisible)
+            {
+                return;
+            }
+
+            try
+            {
+                _control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
+                {
+                    Name = _controlName,
+                    Mode = ApplicationMode.Desktop
+                }) as PluginUserControl;
+
+                if (_control != null)
+                {
+                    Content = _control;
+                    ApplyContextToPlugin();
+                    Common.LogDebug($"[SuccessStoryControl] Created '{_controlName}' for '{GameContext?.Name}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, $"[SuccessStoryControl] Failed to create '{_controlName}'", false, PlayerActivities.PluginDatabase.PluginName);
+            }
+        }
+
+        private void TearDownPluginControl()
+        {
+            if (_control == null && Content == null)
+            {
+                return;
+            }
+
+            Content = null;
+            _control = null;
+            _ensureScheduled = false;
+        }
+
+        private void ApplyContextToPlugin()
+        {
+            if (_control == null)
+            {
+                return;
+            }
+
+            _control.Tag = DateUnlocked;
+            _control.GameContext = GameContext;
+            _control.GameContextChanged(null, GameContext);
         }
     }
 

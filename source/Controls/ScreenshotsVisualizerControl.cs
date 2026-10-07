@@ -58,21 +58,21 @@ namespace PlayerActivities.Controls
 
     /// <summary>
     /// Custom control to host ScreenshotsVisualizer plugin UI for a specific game.
+    /// The plugin view is created lazily when the control is loaded and visible (avoids UI freezes / ffprobe storms on virtualized lists).
     /// </summary>
     public class ScreenshotsVisualizerControl : ContentControl
     {
-        // Cached instance of the ScreenshotsVisualizer plugin
         private static readonly Plugin CachedPlugin = API.Instance?.Addons?.Plugins?
             .FirstOrDefault(p => p.Id == PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer));
 
-        private PluginUserControl Control { get; }
+        private readonly string _controlName;
+        private PluginUserControl _control;
+        private bool _ensureScheduled;
 
         /// <summary>
         /// Indicates whether the ScreenshotsVisualizer plugin is installed.
         /// </summary>
         public static bool IsInstalled => CachedPlugin != null;
-
-        #region Dependency Properties
 
         /// <summary>
         /// The game context used for the control.
@@ -103,49 +103,111 @@ namespace PlayerActivities.Controls
             typeof(DateTime),
             typeof(ScreenshotsVisualizerControl),
             new FrameworkPropertyMetadata(DateTime.Now, ControlsPropertyChangedCallback));
-        #endregion
 
-        #region Property Change Handler
-
-        // Called when any of the dependency properties are changed
         internal static void ControlsPropertyChangedCallback(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
-            var obj = sender as ScreenshotsVisualizerControl;
-
-            if (obj?.Control != null)
-            {
-                if (e.Property == DateTakedProperty && e.NewValue is DateTime newDate)
-                {
-                    obj.Control.Tag = newDate;
-                }
-
-                obj.Control.GameContext = obj.GameContext;
-                obj.Control.GameContextChanged(null, obj.GameContext);
-            }
-        }
-        #endregion
-
-        /// <summary>
-        /// Initializes the control and loads the plugin view with the given control name.
-        /// </summary>
-        /// <param name="controlName">Name of the control to load from plugin.</param>
-        public ScreenshotsVisualizerControl(string controlName)
-        {
-            if (!IsInstalled)
+            ScreenshotsVisualizerControl obj = sender as ScreenshotsVisualizerControl;
+            if (obj == null)
             {
                 return;
             }
 
-            Control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
-            {
-                Name = controlName,
-                Mode = ApplicationMode.Desktop
-            }) as PluginUserControl;
+            obj.ScheduleEnsurePluginControl();
+            obj.ApplyContextToPlugin();
+        }
 
-            if (Control != null)
+        /// <summary>
+        /// Initializes the host; plugin UI is created later when visible.
+        /// </summary>
+        /// <param name="controlName">Name of the control to load from plugin.</param>
+        public ScreenshotsVisualizerControl(string controlName)
+        {
+            _controlName = controlName;
+            Loaded += (s, e) => ScheduleEnsurePluginControl();
+            Unloaded += (s, e) => TearDownPluginControl();
+            IsVisibleChanged += (s, e) =>
             {
-                Content = Control;
+                if (IsVisible)
+                {
+                    ScheduleEnsurePluginControl();
+                }
+                else
+                {
+                    TearDownPluginControl();
+                }
+            };
+        }
+
+        private void ScheduleEnsurePluginControl()
+        {
+            if (_control != null || !IsInstalled || _ensureScheduled)
+            {
+                return;
             }
+
+            if (!IsLoaded || !IsVisible)
+            {
+                return;
+            }
+
+            _ensureScheduled = true;
+            LazyPluginHostScheduler.Enqueue(() =>
+            {
+                _ensureScheduled = false;
+                EnsurePluginControl();
+            });
+        }
+
+        private void EnsurePluginControl()
+        {
+            if (_control != null || !IsInstalled || !IsLoaded || !IsVisible)
+            {
+                return;
+            }
+
+            try
+            {
+                _control = CachedPlugin.GetGameViewControl(new GetGameViewControlArgs
+                {
+                    Name = _controlName,
+                    Mode = ApplicationMode.Desktop
+                }) as PluginUserControl;
+
+                if (_control != null)
+                {
+                    Content = _control;
+                    ApplyContextToPlugin();
+                    Common.LogDebug($"[ScreenshotsVisualizerControl] Created '{_controlName}' for '{GameContext?.Name}'");
+                }
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, $"[ScreenshotsVisualizerControl] Failed to create '{_controlName}'", false, PlayerActivities.PluginDatabase.PluginName);
+            }
+        }
+
+        private void TearDownPluginControl()
+        {
+            if (_control == null && Content == null)
+            {
+                return;
+            }
+
+            Content = null;
+            _control = null;
+            _ensureScheduled = false;
+        }
+
+        private void ApplyContextToPlugin()
+        {
+            if (_control == null)
+            {
+                return;
+            }
+
+            _control.Tag = DateTaked;
+            _control.GameContext = GameContext;
+            _control.GameContextChanged(null, GameContext);
         }
     }
 
