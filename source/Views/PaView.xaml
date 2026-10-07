@@ -5,7 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:PlayerActivities.Views" 
              xmlns:controls="clr-namespace:PlayerActivities.Controls"
-             xmlns:enum="clr-namespace:PlayerActivities.Models.Enumerations"
              xmlns:convertersshared="clr-namespace:CommonPluginsShared.Converters" 
              xmlns:controls1="clr-namespace:CommonPluginsShared.Controls" 
              xmlns:controls2="clr-namespace:CommonPluginsControls.Controls" 
@@ -22,6 +21,73 @@
         <converters:StringNullOrEmptyToVisibilityConverter x:Key="StringNullOrEmptyToVisibilityConverter" />
         <converters:InvertedBooleanToVisibilityConverter x:Key="InvertedBooleanToVisibilityConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+        <!-- One template per ActivityType ; SS/SV strips read ExtensionsData (no GetGameViewControl) -->
+        <DataTemplate x:Key="PaActivityAchievementsUnlocked">
+            <DockPanel Margin="0,0,0,10">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
+                </DockPanel>
+                <controls:PaAchievementStrip
+                    GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                    DateUnlocked="{Binding DateActivity}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PaActivityAchievementsGoal">
+            <DockPanel Margin="0,0,0,10">
+                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PaActivityScreenshotsTaken">
+            <DockPanel Margin="0,0,0,10">
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
+                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
+                </DockPanel>
+                <controls:PaScreenshotStrip
+                    GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                    DateTaked="{Binding DateActivity}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PaActivityPlaytimeFirst">
+            <DockPanel Margin="0,0,0,10">
+                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaPlaytimeFirst}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PaActivityPlaytimeGoal">
+            <DockPanel Margin="0,0,0,10">
+                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <DataTemplate x:Key="PaActivityHowLongToBeatCompleted">
+            <DockPanel Margin="0,0,0,10">
+                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
+                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
+                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaHowLongToBeatCompleted}" />
+            </DockPanel>
+        </DataTemplate>
+
+        <local:ActivityTypeTemplateSelector x:Key="PaActivityTypeTemplateSelector"
+                                            AchievementsUnlockedTemplate="{StaticResource PaActivityAchievementsUnlocked}"
+                                            AchievementsGoalTemplate="{StaticResource PaActivityAchievementsGoal}"
+                                            ScreenshotsTakenTemplate="{StaticResource PaActivityScreenshotsTaken}"
+                                            PlaytimeFirstTemplate="{StaticResource PaActivityPlaytimeFirst}"
+                                            PlaytimeGoalTemplate="{StaticResource PaActivityPlaytimeGoal}"
+                                            HowLongToBeatCompletedTemplate="{StaticResource PaActivityHowLongToBeatCompleted}" />
 
         <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
             <Setter Property="ContextMenu">
@@ -167,13 +233,23 @@
                 </Border>
 
                 <!-- Player time line -->
-                <Grid Name="PART_GridContener" Grid.Row="2">
-                    <ListBox ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
-                             ScrollViewer.VerticalScrollBarVisibility="Auto" 
-                             Name="PART_LbTimeLine"
-                             ItemsSource="{Binding ItemsSource}" BorderThickness="0"
+                <Grid Name="PART_GridContener" Grid.Row="2" ClipToBounds="True">
+                    <ListBox Name="PART_LbTimeLine"
+                             ItemsSource="{Binding ItemsSource}"
+                             BorderThickness="0"
                              Width="{Binding ElementName=PART_GridContener, Path=ActualWidth}"
-                             Height="{Binding ElementName=PART_GridContener, Path=ActualHeight}">
+                             Height="{Binding ElementName=PART_GridContener, Path=ActualHeight}"
+                             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                             ScrollViewer.VerticalScrollBarVisibility="Auto"
+                             ScrollViewer.CanContentScroll="True"
+                             VirtualizingPanel.IsVirtualizing="True"
+                             VirtualizingPanel.VirtualizationMode="Recycling">
+
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
 
                         <ListBox.ItemContainerStyle>
                             <Style TargetType="{x:Type ListBoxItem}" BasedOn="{StaticResource {x:Type ListBoxItem}}">
@@ -210,138 +286,14 @@
                                         </Grid.ColumnDefinitions>
 
                                         <controls1:ImageAsync Grid.Column="0" Source="{Binding CoverImage}" Stretch="Uniform"
-                                                              ToolTip="{Binding GameContext.Name}" 
+                                                              ToolTip="{Binding GameContext.Name}"
                                                               MaxHeight="100"
                                                               VerticalAlignment="Top" HorizontalAlignment="Center" />
 
-                                        <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto" MaxHeight="500">
-                                            <ItemsControl Name="PART_ItemsControl" ItemsSource="{Binding ActivitiesOrdered}" >
-                                                <ItemsControl.ItemTemplate>
-                                                    <DataTemplate>
-                                                        <StackPanel Name="PART" Tag="{Binding}" Margin="0,0,0,10">
-                                                            <!-- AchievementsUnlocked  -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsUnlocked}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                                                                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
-                                                                </DockPanel>
-
-                                                                <controls:SuccessStoryPluginCompactUnlocked Grid.Row="2" Grid.ColumnSpan="7"
-                                                                                            GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                            DateUnlocked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
-                                                            </DockPanel>
-
-                                                            <!-- AchievementsGoal  -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.AchievementsGoal}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
-                                                            </DockPanel>
-
-                                                            <!-- ScreenshotsTaken  -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.ScreenshotsTaken}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                                                                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
-                                                                </DockPanel>
-
-                                                                <controls:ScreenshotsVisualizerPluginListScreenshots GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                                  DateTaked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
-                                                            </DockPanel>
-
-                                                            <!-- PlaytimeFirst  -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeFirst}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaPlaytimeFirst}" />
-                                                            </DockPanel>
-
-                                                            <!-- PlaytimeGoal -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.PlaytimeGoal}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
-                                                            </DockPanel>
-
-                                                            <!-- HowLongToBeatCompleted -->
-                                                            <DockPanel>
-                                                                <DockPanel.Style>
-                                                                    <Style TargetType="DockPanel">
-                                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding ElementName=PART, Path=Tag.Type}" Value="{x:Static enum:ActivityType.HowLongToBeatCompleted}">
-                                                                                <Setter Property="Visibility" Value="Visible" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </DockPanel.Style>
-
-                                                                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                                                                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                                                                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaHowLongToBeatCompleted}" />
-                                                            </DockPanel>
-                                                        </StackPanel>
-                                                    </DataTemplate>
-                                                </ItemsControl.ItemTemplate>
-                                            </ItemsControl>
-                                        </ScrollViewer>
+                                        <ItemsControl Grid.Column="2"
+                                                      Name="PART_ItemsControl"
+                                                      ItemsSource="{Binding ActivitiesOrdered}"
+                                                      ItemTemplateSelector="{StaticResource PaActivityTypeTemplateSelector}" />
                                     </Grid>
                                 </GroupBox>
                             </DataTemplate>

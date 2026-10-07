@@ -8,6 +8,16 @@ namespace PlayerActivities.Models.SuccessStory
         private DateTime? _dateUnlocked;
 
         /// <summary>
+        /// Gets or sets the localized achievement name (SuccessStory JSON).
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Gets or sets the unlocked achievement image URL (SuccessStory JSON).
+        /// </summary>
+        public string UrlUnlocked { get; set; }
+
+        /// <summary>
         /// Gets or sets the date and time when the achievement was unlocked.
         /// Converts to local time when reading, and ensures UTC storage when setting.
         /// If the provided value is DateTime.MinValue, it is treated as null.
