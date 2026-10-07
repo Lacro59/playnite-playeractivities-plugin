@@ -189,9 +189,9 @@
                                                         <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
                                                     </DockPanel>
 
-                                                    <local:SuccessStoryPluginCompactUnlocked Grid.Row="2" Grid.ColumnSpan="7"
-                                                                                            GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                            DateUnlocked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
+                                                    <local:PaAchievementStrip
+                                                        GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                                                        DateUnlocked="{Binding DateActivity}" />
                                                 </DockPanel>
 
                                                 <!-- AchievementsGoal  -->
@@ -231,8 +231,9 @@
                                                         <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
                                                     </DockPanel>
 
-                                                    <local:ScreenshotsVisualizerPluginListScreenshots GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
-                                                                                                  DateTaked="{Binding ElementName=PART, Path=Tag.DateActivity}" />
+                                                    <local:PaScreenshotStrip
+                                                        GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
+                                                        DateTaked="{Binding DateActivity}" />
                                                 </DockPanel>
 
                                                 <!-- PlaytimeFirst  -->
