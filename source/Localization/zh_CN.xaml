@@ -9,6 +9,7 @@
     <sys:String x:Key="LOCPaView">查看玩家活动状态</sys:String>
 
     <sys:String x:Key="LOCPaActivities">玩家活动</sys:String>
+    <sys:String x:Key="LOCPaFriends">Friends</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
