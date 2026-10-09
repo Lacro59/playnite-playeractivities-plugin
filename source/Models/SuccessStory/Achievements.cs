@@ -13,6 +13,11 @@ namespace PlayerActivities.Models.SuccessStory
         public string Name { get; set; }
 
         /// <summary>
+        /// Gets or sets the achievement description (SuccessStory JSON), when present.
+        /// </summary>
+        public string Description { get; set; }
+
+        /// <summary>
         /// Gets or sets the unlocked achievement image URL (SuccessStory JSON).
         /// </summary>
         public string UrlUnlocked { get; set; }

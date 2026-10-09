@@ -23,12 +23,21 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
         <!-- One template per ActivityType ; SS/SV strips read ExtensionsData (no GetGameViewControl) -->
+        <!-- SourceIcon is shown once on the card header (PART_Root), not per activity line -->
         <DataTemplate x:Key="PaActivityAchievementsUnlocked">
             <DockPanel Margin="0,0,0,10">
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <TextBlock DockPanel.Dock="Right"
+                               Style="{DynamicResource BaseTextBlockStyle}"
+                               Foreground="{DynamicResource TextBrushDarker}"
+                               ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                               Text="{Binding TimeAgo}" />
+                    <!-- Label: Binding.StringFormat cannot take DynamicResource (XamlParseException) -->
+                    <Label Margin="0,0,10,0" Padding="0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextBrush}"
+                           Content="{Binding Value}"
+                           ContentStringFormat="{DynamicResource LOCPaSuccessStoryUnlocked}" />
                 </DockPanel>
                 <controls:PaAchievementStrip
                     GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
@@ -38,18 +47,32 @@
 
         <DataTemplate x:Key="PaActivityAchievementsGoal">
             <DockPanel Margin="0,0,0,10">
-                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
+                <TextBlock DockPanel.Dock="Right"
+                           Style="{DynamicResource BaseTextBlockStyle}"
+                           Foreground="{DynamicResource TextBrushDarker}"
+                           ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                           Text="{Binding TimeAgo}" />
+                <Label Margin="0,0,10,0" Padding="0"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextBrush}"
+                       Content="{Binding Value}"
+                       ContentStringFormat="{DynamicResource LOCPaSuccessStoryGoal}" />
             </DockPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="PaActivityScreenshotsTaken">
             <DockPanel Margin="0,0,0,10">
-                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,10">
-                    <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                    <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                    <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
+                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                    <TextBlock DockPanel.Dock="Right"
+                               Style="{DynamicResource BaseTextBlockStyle}"
+                               Foreground="{DynamicResource TextBrushDarker}"
+                               ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                               Text="{Binding TimeAgo}" />
+                    <Label Margin="0,0,10,0" Padding="0"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextBrush}"
+                           Content="{Binding Value}"
+                           ContentStringFormat="{DynamicResource LOCPaScreenshotsTaken}" />
                 </DockPanel>
                 <controls:PaScreenshotStrip
                     GameContext="{Binding ElementName=PART_Root, Path=Tag.GameContext}"
@@ -59,25 +82,42 @@
 
         <DataTemplate x:Key="PaActivityPlaytimeFirst">
             <DockPanel Margin="0,0,0,10">
-                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaPlaytimeFirst}" />
+                <TextBlock DockPanel.Dock="Right"
+                           Style="{DynamicResource BaseTextBlockStyle}"
+                           Foreground="{DynamicResource TextBrushDarker}"
+                           ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                           Text="{Binding TimeAgo}" />
+                <TextBlock Style="{DynamicResource BaseTextBlockStyle}"
+                           Margin="0,0,10,0"
+                           Text="{DynamicResource LOCPaPlaytimeFirst}" />
             </DockPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="PaActivityPlaytimeGoal">
             <DockPanel Margin="0,0,0,10">
-                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                <Label Margin="10,0,10,0" Content="{Binding Value}" ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
+                <TextBlock DockPanel.Dock="Right"
+                           Style="{DynamicResource BaseTextBlockStyle}"
+                           Foreground="{DynamicResource TextBrushDarker}"
+                           ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                           Text="{Binding TimeAgo}" />
+                <Label Margin="0,0,10,0" Padding="0"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource TextBrush}"
+                       Content="{Binding Value}"
+                       ContentStringFormat="{DynamicResource LOCPaPlaytimeGoal}" />
             </DockPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="PaActivityHowLongToBeatCompleted">
             <DockPanel Margin="0,0,0,10">
-                <Label DockPanel.Dock="Right" ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}" Content="{Binding TimeAgo}" Foreground="Gray" />
-                <Label Content="{Binding ElementName=PART_Root, Path=Tag.SourceIcon}" FontFamily="{DynamicResource CommonFont}" Foreground="Gray" />
-                <Label Margin="10,0,10,0" Content="{DynamicResource LOCPaHowLongToBeatCompleted}" />
+                <TextBlock DockPanel.Dock="Right"
+                           Style="{DynamicResource BaseTextBlockStyle}"
+                           Foreground="{DynamicResource TextBrushDarker}"
+                           ToolTip="{Binding DateActivity, Converter={StaticResource LocalDateConverter}}"
+                           Text="{Binding TimeAgo}" />
+                <TextBlock Style="{DynamicResource BaseTextBlockStyle}"
+                           Margin="0,0,10,0"
+                           Text="{DynamicResource LOCPaHowLongToBeatCompleted}" />
             </DockPanel>
         </DataTemplate>
 
@@ -191,15 +231,17 @@
 
         <Grid Name="PART_Data">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="20" />
-                <ColumnDefinition Width="*" />
+                <ColumnDefinition x:Name="PART_ColFeed" Width="1.5*" />
+                <ColumnDefinition x:Name="PART_ColFriendsGap" Width="20" />
+                <ColumnDefinition x:Name="PART_ColFriends" Width="*" />
             </Grid.ColumnDefinitions>
 
             <Grid Grid.Column="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="10" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="6" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -232,8 +274,13 @@
                     </Grid>
                 </Border>
 
+                <TextBlock Grid.Row="2"
+                           Style="{DynamicResource SectionHeaderText}"
+                           Text="{DynamicResource LOCPaActivities}"
+                           Margin="0" />
+
                 <!-- Player time line -->
-                <Grid Name="PART_GridContener" Grid.Row="2" ClipToBounds="True">
+                <Grid Name="PART_GridContener" Grid.Row="4" ClipToBounds="True">
                     <ListBox Name="PART_LbTimeLine"
                              ItemsSource="{Binding ItemsSource}"
                              BorderThickness="0"
@@ -276,43 +323,112 @@
 
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <GroupBox Margin="0,0,0,10" Header="{Binding GameContext.Name}"
-                                          BorderThickness="{DynamicResource PopupBorderThickness}" BorderBrush="{DynamicResource NormalBorderBrush}">
-                                    <Grid Margin="5" Name="PART_Root" Tag="{Binding}">
+                                <Border Margin="0,0,0,10"
+                                        Padding="8"
+                                        BorderThickness="{DynamicResource PopupBorderThickness}"
+                                        BorderBrush="{DynamicResource NormalBorderBrush}"
+                                        Background="{DynamicResource PopupBackgroundBrush}"
+                                        CornerRadius="{DynamicResource ControlCornerRadius}">
+                                    <Grid Name="PART_Root" Tag="{Binding}">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="100" />
+                                            <ColumnDefinition Width="80" />
                                             <ColumnDefinition Width="10" />
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
 
-                                        <controls1:ImageAsync Grid.Column="0" Source="{Binding CoverImage}" Stretch="Uniform"
+                                        <controls1:ImageAsync Grid.Column="0"
+                                                              Source="{Binding CoverImage}"
+                                                              Stretch="Uniform"
                                                               ToolTip="{Binding GameContext.Name}"
-                                                              MaxHeight="100"
-                                                              VerticalAlignment="Top" HorizontalAlignment="Center" />
+                                                              DecodePixelHeight="80"
+                                                              MaxHeight="80"
+                                                              VerticalAlignment="Top"
+                                                              HorizontalAlignment="Center" />
 
-                                        <ItemsControl Grid.Column="2"
-                                                      Name="PART_ItemsControl"
-                                                      ItemsSource="{Binding ActivitiesOrdered}"
-                                                      ItemTemplateSelector="{StaticResource PaActivityTypeTemplateSelector}" />
+                                        <DockPanel Grid.Column="2" LastChildFill="True">
+                                            <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8" LastChildFill="True">
+                                                <TextBlock DockPanel.Dock="Right"
+                                                           Style="{DynamicResource BaseTextBlockStyle}"
+                                                           Foreground="{DynamicResource TextBrushDarker}"
+                                                           VerticalAlignment="Center"
+                                                           Text="{Binding TimeAgo}" />
+                                                <TextBlock DockPanel.Dock="Left"
+                                                           Style="{DynamicResource BaseTextBlockStyle}"
+                                                           FontFamily="{DynamicResource CommonFont}"
+                                                           Foreground="{DynamicResource GlyphBrush}"
+                                                           VerticalAlignment="Center"
+                                                           Margin="0,0,8,0"
+                                                           Text="{Binding SourceIcon}"
+                                                           Visibility="{Binding SourceIcon, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" />
+                                                <TextBlock Style="{DynamicResource BaseTextBlockStyle}"
+                                                           FontSize="{DynamicResource FontSizeLarge}"
+                                                           FontWeight="SemiBold"
+                                                           VerticalAlignment="Center"
+                                                           Text="{Binding GameContext.Name}"
+                                                           TextTrimming="CharacterEllipsis" />
+                                            </DockPanel>
+
+                                            <ItemsControl Name="PART_ItemsControl"
+                                                          ItemsSource="{Binding ActivitiesOrdered}"
+                                                          ItemTemplateSelector="{StaticResource PaActivityTypeTemplateSelector}" />
+                                        </DockPanel>
                                     </Grid>
-                                </GroupBox>
+                                </Border>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
                 </Grid>
             </Grid>
 
-            <!-- List of friends -->
-            <Grid Grid.Column="2">
+            <!-- List of friends (collapsed via PART_ColFriends* widths) -->
+            <Grid Grid.Column="2" Name="PART_FriendsPanel">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="6" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="10" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="10" />
                     <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-                
-                <Grid Name="PART_GridFriendsContener" Grid.Row="0">
+
+                <DockPanel Grid.Row="0" LastChildFill="True">
+                    <!-- Chevron &#xEA69; = ModernExpanderStyle (PlayniteBase IcoFont); rotate when collapsed -->
+                    <Button DockPanel.Dock="Right"
+                            Name="PART_BtToggleFriends"
+                            VerticalAlignment="Center"
+                            Margin="8,0,0,0"
+                            Click="Button_ToggleFriendsPanel_Click">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource IconButton}">
+                                <Setter Property="Content" Value="&#xEA69;" />
+                                <Setter Property="ToolTip" Value="{DynamicResource LOCCollapse}" />
+                                <Setter Property="LayoutTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="0" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFriendsPanelExpanded}" Value="False">
+                                        <Setter Property="ToolTip" Value="{DynamicResource LOCExpand}" />
+                                        <Setter Property="LayoutTransform">
+                                            <Setter.Value>
+                                                <RotateTransform Angle="180" />
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                    <TextBlock Name="PART_FriendsHeaderTitle"
+                               Style="{DynamicResource SectionHeaderText}"
+                               Text="{DynamicResource LOCPaFriends}"
+                               VerticalAlignment="Center"
+                               Margin="0" />
+                </DockPanel>
+
+                <Grid Name="PART_GridFriendsContener" Grid.Row="2">
                     <controls1:ListViewExtend x:Name="PART_LvFriends"
                                               Height="{Binding ElementName=PART_GridFriendsContener, Path=ActualHeight}"
                                               FontSize="24" Style="{StaticResource {x:Type ListView}}" 
@@ -372,41 +488,26 @@
                                     <GridViewColumnHeader Name="lvSourceIcon" Content="{DynamicResource LOCSourceLabel}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Label Content="{Binding ClientIcon}" FontFamily="{DynamicResource CommonFont}" 
-                                                       HorizontalAlignment="Center" VerticalAlignment="Stretch" FontSize="30" />
+                                            <Label Content="{Binding ClientIcon}" FontFamily="{DynamicResource CommonFont}"
+                                                   HorizontalAlignment="Center" VerticalAlignment="Stretch" FontSize="30" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding AcceptedAt, Converter={StaticResource LocalDateTimeConverter}}">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCDateAddedLabel}" />
+                                <!-- Phase A: compact leaderboard columns (AcceptedAt / GamesOwned / LastUpdate removed) -->
+                                <GridViewColumn Width="90" DisplayMemberBinding="{Binding Stats.Achievements}">
+                                    <GridViewColumnHeader Content="{DynamicResource LOCPaAchievements}" />
                                 </GridViewColumn>
 
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesOwned}">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCPaGameOwned}" />
-                                </GridViewColumn>
-
-                                <!--GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.GamesCompleted}">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCPaGameCompleted}" />
-                                </GridViewColumn-->
-
-                                <GridViewColumn Width="70" DisplayMemberBinding="{Binding Stats.Achievements}">
-                                    <GridViewColumnHeader Content="🏆" />
-                                </GridViewColumn>
-
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
+                                <GridViewColumn Width="120" DisplayMemberBinding="{Binding Stats.Playtime, Converter={StaticResource PlayTimeToStringConverterWithZero}}">
                                     <GridViewColumnHeader Content="{DynamicResource LOCStatsTotalPlayTime}" />
-                                </GridViewColumn>
-
-                                <GridViewColumn Width="140" DisplayMemberBinding="{Binding LastUpdate, Converter={StaticResource LocalDateTimeConverter}}">
-                                    <GridViewColumnHeader Content="{DynamicResource LOCCommonLastUpdate}" />
                                 </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </controls1:ListViewExtend>
                 </Grid>
 
-                <Grid Name="PART_GridFriendsDetailsContener" Grid.Row="2">
+                <Grid Name="PART_GridFriendsDetailsContener" Grid.Row="4">
                     <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsDetailsContener, Path=ActualHeight}"
                                               FontSize="24" Style="{StaticResource {x:Type ListView}}" 
                                               SortingEnable="True" SortingDefaultDataName="Name" SortingSortDirection="Ascending"
@@ -474,7 +575,7 @@
                     </controls1:ListViewExtend>
                 </Grid>
 
-                <Grid Grid.Row="4">
+                <Grid Name="PART_FriendsFooter" Grid.Row="6">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="auto" />

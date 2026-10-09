@@ -110,6 +110,63 @@ namespace PlayerActivities.Views
             {
                 PART_BtFriends.IsEnabled = false;
             }
+
+            ControlDataContext.IsFriendsPanelExpanded = PluginDatabase.PluginSettings.IsFriendsPanelExpanded;
+            ApplyFriendsPanelLayout();
+        }
+
+        private void ApplyFriendsPanelLayout()
+        {
+            if (PART_ColFeed == null || PART_ColFriendsGap == null || PART_ColFriends == null)
+            {
+                return;
+            }
+
+            bool expanded = ControlDataContext.IsFriendsPanelExpanded;
+            if (expanded)
+            {
+                PART_ColFeed.Width = new GridLength(1.5, GridUnitType.Star);
+                PART_ColFriendsGap.Width = new GridLength(20);
+                PART_ColFriends.Width = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                // Keep a slim strip so the expand chevron stays reachable next to the friends panel.
+                PART_ColFeed.Width = new GridLength(1, GridUnitType.Star);
+                PART_ColFriendsGap.Width = new GridLength(6);
+                PART_ColFriends.Width = new GridLength(36);
+            }
+
+            Visibility bodyVisibility = expanded ? Visibility.Visible : Visibility.Collapsed;
+            if (PART_FriendsHeaderTitle != null)
+            {
+                PART_FriendsHeaderTitle.Visibility = bodyVisibility;
+            }
+
+            if (PART_GridFriendsContener != null)
+            {
+                PART_GridFriendsContener.Visibility = bodyVisibility;
+            }
+
+            if (PART_GridFriendsDetailsContener != null)
+            {
+                PART_GridFriendsDetailsContener.Visibility = bodyVisibility;
+            }
+
+            if (PART_FriendsFooter != null)
+            {
+                PART_FriendsFooter.Visibility = bodyVisibility;
+            }
+        }
+
+        private void Button_ToggleFriendsPanel_Click(object sender, RoutedEventArgs e)
+        {
+            bool expanded = !ControlDataContext.IsFriendsPanelExpanded;
+            ControlDataContext.IsFriendsPanelExpanded = expanded;
+            PluginDatabase.PluginSettings.IsFriendsPanelExpanded = expanded;
+            Plugin.SavePluginSettings(PluginDatabase.PluginSettings);
+            ApplyFriendsPanelLayout();
+            Common.LogDebug($"[PaView] Friends panel expanded={expanded}");
         }
 
         private void ConfigureListViewColumnPersistence()
@@ -417,31 +474,41 @@ namespace PlayerActivities.Views
             }
 
             ListViewExtend lv = sender as ListViewExtend;
-            if (!(lv.SelectedItem is PlayerFriend pf))
+            if (lv == null || !(lv.SelectedItem is PlayerFriend pf))
             {
                 return;
             }
 
-            PlayerFriend pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
+            // Me-row for the same store may be missing (data incomplete / filter) — compare playtime as 0.
+            PlayerFriend pf_us = ControlDataContext.FriendsSource?
+                .FirstOrDefault(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName));
 
             ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
-            pf.Games.ForEach(x =>
+            if (pf.Games != null)
             {
-                listFriendsInfos.Add(new ListFriendsInfo
+                pf.Games.ForEach(x =>
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Achievements = x.Achievements,
-                    IsCommun = pf.IsUser ? true : x.IsCommun,
-                    Link = x.Link,
-                    Playtime = x.Playtime,
-                    UsAchievements = pf_us?.Games?.Find(y => x.Id == y.Id)?.Achievements ?? 0,
-                    UsPlaytime = pf_us?.Games?.Find(y => x.Id == y.Id)?.Playtime ?? 0
+                    if (x == null)
+                    {
+                        return;
+                    }
+
+                    listFriendsInfos.Add(new ListFriendsInfo
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Achievements = x.Achievements,
+                        IsCommun = pf.IsUser ? true : x.IsCommun,
+                        Link = x.Link,
+                        Playtime = x.Playtime,
+                        UsAchievements = pf_us?.Games?.Find(y => x.Id == y.Id)?.Achievements ?? 0,
+                        UsPlaytime = pf_us?.Games?.Find(y => x.Id == y.Id)?.Playtime ?? 0
+                    });
                 });
-            });
+            }
 
             ControlDataContext.FriendsDetailsSource = listFriendsInfos;
-            PART_LvFriendsDetails.Sorting();
+            PART_LvFriendsDetails?.Sorting();
         }
     }
 
@@ -467,6 +534,12 @@ namespace PlayerActivities.Views
 
         private DateTime? _lastFriendsRefresh;
         public DateTime? LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
+
+        private bool _isFriendsPanelExpanded = true;
+        /// <summary>
+        /// Whether the friends column is visible in PaView (bound by the toggle button style).
+        /// </summary>
+        public bool IsFriendsPanelExpanded { get => _isFriendsPanelExpanded; set => SetValue(ref _isFriendsPanelExpanded, value); }
 
 
         #region Menus

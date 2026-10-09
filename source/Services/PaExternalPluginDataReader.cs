@@ -197,6 +197,7 @@ namespace PlayerActivities.Services
                     .Select(x => new PaAchievementDisplay
                     {
                         Name = x.Name ?? string.Empty,
+                        Description = x.Description ?? string.Empty,
                         IconUrl = x.UrlUnlocked ?? string.Empty,
                         DateUnlocked = x.DateWhenUnlocked.Value
                     })

@@ -73,18 +73,6 @@ namespace PlayerActivities.Controls
             Focusable = false;
             Height = height;
 
-            FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(ImageAsync));
-            imageFactory.SetValue(ImageAsync.DecodePixelHeightProperty, height);
-            imageFactory.SetValue(FrameworkElement.HeightProperty, height);
-            imageFactory.SetValue(Image.StretchProperty, Stretch.Uniform);
-            imageFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, ItemRightMargin, 0));
-            if (ItemWidth.HasValue)
-            {
-                imageFactory.SetValue(FrameworkElement.WidthProperty, ItemWidth.Value);
-            }
-
-            ConfigureItemImage(imageFactory);
-
             FrameworkElementFactory panelFactory = new FrameworkElementFactory(typeof(StackPanel));
             panelFactory.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
 
@@ -92,7 +80,7 @@ namespace PlayerActivities.Controls
             {
                 Focusable = false,
                 ItemsPanel = new ItemsPanelTemplate { VisualTree = panelFactory },
-                ItemTemplate = new DataTemplate { VisualTree = imageFactory }
+                ItemTemplate = new DataTemplate { VisualTree = CreateItemFactory() }
             };
 
             Content = new ScrollViewer
@@ -107,6 +95,27 @@ namespace PlayerActivities.Controls
             Visibility = Visibility.Collapsed;
             Loaded += (s, e) => ScheduleRefresh();
             Unloaded += (s, e) => ReleaseImages();
+        }
+
+        /// <summary>
+        /// Creates the visual tree factory for one strip item (default: bare <see cref="ImageAsync"/>).
+        /// </summary>
+        /// <returns>Factory used as the <see cref="DataTemplate"/> visual tree.</returns>
+        protected virtual FrameworkElementFactory CreateItemFactory()
+        {
+            FrameworkElementFactory imageFactory = new FrameworkElementFactory(typeof(ImageAsync));
+            double height = ItemHeight;
+            imageFactory.SetValue(ImageAsync.DecodePixelHeightProperty, height);
+            imageFactory.SetValue(FrameworkElement.HeightProperty, height);
+            imageFactory.SetValue(Image.StretchProperty, Stretch.Uniform);
+            imageFactory.SetValue(FrameworkElement.MarginProperty, new Thickness(0, 0, ItemRightMargin, 0));
+            if (ItemWidth.HasValue)
+            {
+                imageFactory.SetValue(FrameworkElement.WidthProperty, ItemWidth.Value);
+            }
+
+            ConfigureItemImage(imageFactory);
+            return imageFactory;
         }
 
         /// <summary>

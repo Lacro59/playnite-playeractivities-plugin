@@ -40,6 +40,12 @@ namespace PlayerActivities
 
         public bool SaveColumnOrder { get; set; } = false;
 
+        /// <summary>
+        /// When <c>true</c>, PaView shows the friends column; when <c>false</c>, the activity feed uses full width.
+        /// Toggled from PaView (not exposed in the settings UI).
+        /// </summary>
+        public bool IsFriendsPanelExpanded { get; set; } = true;
+
 
         public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
@@ -77,7 +83,7 @@ namespace PlayerActivities
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
 
-            // Temporary: force Steam auth until store settings migration is complete (see .tasks/TODO-FIXME.md).
+            // Keep Steam ForceAuth on until store settings migration lands.
             Settings.SteamStoreSettings.ForceAuth = true;
         }
 
