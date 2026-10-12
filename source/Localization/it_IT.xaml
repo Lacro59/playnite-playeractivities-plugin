@@ -14,10 +14,13 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Mostra i dati di SuccessStory (plugin di SuccessStory richiesto)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Visualizza dati di ScreenshotsVisualizer (plugin ScreenshotsVisualizer richiesto)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Visualizza i dati di HowLongToBeat (plugin HowLongToBeat richiesto)</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">Abilita amici di Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Abilita amici di GOG</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Abilita gli amici EA</sys:String>
@@ -25,12 +28,12 @@
 
     <sys:String x:Key="LOCPaIntegrationActivities">Visualizza attività di gioco</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">Ha giocato per la prima volta.</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">Hai raggiunto le {0} ore di gioco.</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Hai sbloccato {0} obiettivi.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Hai raggiunto {0}% obiettivi.</sys:String>
 
@@ -44,7 +47,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">{0} mesi fa</sys:String>
     <sys:String x:Key="LOCPaYearAgo">{0} anno fa</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} anni fa</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">Gioco posseduto</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Giochi completati</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">🏆 degli amici</sys:String>
@@ -62,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Aggiorna dati del gioco</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">Visualizza dati di HowLongToBeat</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">Visualizza dati di SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Visualizza dati di ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
