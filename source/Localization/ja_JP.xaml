@@ -14,10 +14,13 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">SuccessStory データを表示（SuccessStory プラグインが必要）</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">ScreenshotsVisualizer データを表示（ScreenshotsVisualizer プラグインが必要）</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">HowLongToBeat データを表示（HowLongToBeat プラグインが必要）</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">EA フレンドを有効にする</sys:String>
@@ -25,12 +28,12 @@
 
     <sys:String x:Key="LOCPaIntegrationActivities">ゲームアクティビティを表示</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">初めてプレイしました。</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">プレイ時間が {0} 時間に達しました。</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} 個の実績を解除しました。</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">実績解除率が {0}% に達しました。</sys:String>
 
@@ -44,7 +47,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">{0} ヶ月前</sys:String>
     <sys:String x:Key="LOCPaYearAgo">{0} 年前</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} 年前</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">所有済みゲーム</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">完了済みゲーム</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">フレンド 🏆</sys:String>
@@ -62,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">ゲームデータを更新</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">HowLongToBeat データを表示</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">SuccessStory データを表示</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">ScreenshotsVisualizer データを表示</sys:String>
 
 </ResourceDictionary>
