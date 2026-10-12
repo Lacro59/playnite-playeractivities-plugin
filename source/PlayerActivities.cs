@@ -1,4 +1,4 @@
-﻿using CommonPluginsShared;
+using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
 using CommonPluginsStores.Epic;
@@ -338,13 +338,13 @@ namespace PlayerActivities
             }
 
             // StoreAPI intialization
-            SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
+            SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
             SteamApi.Initialization(PluginDatabase.PluginSettings.SteamStoreSettings, PluginDatabase.PluginSettings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.EnableSteamFriends);
 
-            EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
+            EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
             EpicApi.Initialization(PluginDatabase.PluginSettings.EpicStoreSettings, PluginDatabase.PluginSettings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.EnableEpicFriends);
 
-            GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.SuccessStory);
+            GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
             GogApi.Initialization(PluginDatabase.PluginSettings.GogStoreSettings, PluginDatabase.PluginSettings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.EnableGogFriends);
 
             // Temporary one-shot migration PlayerFriends.json → FriendsData.json (see .tasks/TODO-FIXME.md).
