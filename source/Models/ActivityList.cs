@@ -2,6 +2,7 @@
 using PlayerActivities.Controls;
 using PlayerActivities.Models.Enumerations;
 using PlayerActivities.Services;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using System.Collections.Generic;
@@ -123,7 +124,7 @@ namespace PlayerActivities.Models
                 }
             }
 
-            ShowSuccessStoryMenu = hasSuccessStory && SuccessStoryPlugin.IsInstalled;
+            ShowSuccessStoryMenu = hasSuccessStory && PaAchievementsView.IsSelectedProviderInstalled;
             ShowScreenshotsVisualizerMenu = hasScreenshots && ScreenshotsVisualizerPlugin.IsInstalled;
         }
     }

@@ -2,7 +2,7 @@ using CommonPlayniteShared;
 using CommonPluginsShared;
 using PlayerActivities.Models;
 using PlayerActivities.Models.ScreenshotsVisualizer;
-using PlayerActivities.Models.SuccessStory;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Concurrent;
@@ -14,7 +14,7 @@ using static CommonPluginsShared.PlayniteTools;
 namespace PlayerActivities.Services
 {
     /// <summary>
-    /// Reads SuccessStory / ScreenshotsVisualizer JSON under ExtensionsData on demand,
+    /// Reads achievements (selected provider) / ScreenshotsVisualizer JSON under ExtensionsData on demand,
     /// caches display DTOs per game, and filters by activity day.
     /// </summary>
     public sealed class PaExternalPluginDataReader
@@ -27,7 +27,6 @@ namespace PlayerActivities.Services
             ".webp", ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tif", ".tiff", ".jfif", ".avif"
         };
 
-        private readonly string _successStoryPath;
         private readonly string _screenshotsVisualizerPath;
         private readonly ConcurrentDictionary<Guid, List<PaAchievementDisplay>> _achievementsByGame =
             new ConcurrentDictionary<Guid, List<PaAchievementDisplay>>();
@@ -36,6 +35,9 @@ namespace PlayerActivities.Services
         private readonly ConcurrentDictionary<string, bool> _pathExistsCache =
             new ConcurrentDictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
 
+        private bool? _cachedAchievementsEnabled;
+        private AchievementsProviderKind? _cachedAchievementsProvider;
+
         /// <summary>
         /// Gets the shared reader instance (process-wide memory cache).
         /// </summary>
@@ -43,10 +45,6 @@ namespace PlayerActivities.Services
 
         private PaExternalPluginDataReader()
         {
-            _successStoryPath = Path.Combine(
-                PlaynitePaths.ExtensionsDataPath,
-                GetPluginId(ExternalPlugin.SuccessStory).ToString(),
-                "SuccessStory");
             _screenshotsVisualizerPath = Path.Combine(
                 PlaynitePaths.ExtensionsDataPath,
                 GetPluginId(ExternalPlugin.ScreenshotsVisualizer).ToString(),
@@ -58,7 +56,7 @@ namespace PlayerActivities.Services
         /// </summary>
         /// <param name="gameId">Playnite game id.</param>
         /// <param name="day">Activity day (date portion used).</param>
-        /// <returns>Filtered display rows; empty when JSON is missing or has no match.</returns>
+        /// <returns>Filtered display rows; empty when data is missing or has no match.</returns>
         public IReadOnlyList<PaAchievementDisplay> GetUnlockedForDay(Guid gameId, DateTime day)
         {
             if (gameId == Guid.Empty)
@@ -132,11 +130,15 @@ namespace PlayerActivities.Services
             _achievementsByGame.Clear();
             _screenshotsByGame.Clear();
             _pathExistsCache.Clear();
+            _cachedAchievementsEnabled = null;
+            _cachedAchievementsProvider = null;
             Common.LogDebug("[PaExternalPluginDataReader] cache cleared");
         }
 
         private List<PaAchievementDisplay> GetOrLoadAchievements(Guid gameId)
         {
+            InvalidateAchievementsCacheIfSettingsChanged();
+
             if (_achievementsByGame.TryGetValue(gameId, out List<PaAchievementDisplay> cached))
             {
                 return cached;
@@ -150,6 +152,24 @@ namespace PlayerActivities.Services
             }
 
             return _achievementsByGame[gameId];
+        }
+
+        private void InvalidateAchievementsCacheIfSettingsChanged()
+        {
+            PlayerActivitiesSettings settings = PlayerActivities.PluginDatabase?.PluginSettings;
+            bool enabled = settings != null && settings.EnableSuccessStoryData;
+            AchievementsProviderKind kind = settings != null
+                ? settings.SelectedAchievementsProvider
+                : AchievementsProviderKind.SuccessStory;
+
+            if (_cachedAchievementsEnabled == enabled && _cachedAchievementsProvider == kind)
+            {
+                return;
+            }
+
+            _achievementsByGame.Clear();
+            _cachedAchievementsEnabled = enabled;
+            _cachedAchievementsProvider = kind;
         }
 
         private List<PaScreenshotDisplay> GetOrLoadScreenshots(Guid gameId)
@@ -171,35 +191,35 @@ namespace PlayerActivities.Services
 
         private List<PaAchievementDisplay> LoadAchievements(Guid gameId)
         {
-            string pathData = Path.Combine(_successStoryPath, gameId + ".json");
-            if (!File.Exists(pathData))
+            PlayerActivitiesSettings settings = PlayerActivities.PluginDatabase?.PluginSettings;
+            if (settings == null || !settings.EnableSuccessStoryData)
             {
-                Common.LogDebug($"[PaExternalPluginDataReader] achievements missing path={pathData}");
+                return new List<PaAchievementDisplay>();
+            }
+
+            IPaAchievementsProvider provider = PaAchievementsProviderFactory.Create(settings.SelectedAchievementsProvider);
+            if (!provider.IsAvailable)
+            {
+                Common.LogDebug($"[PaExternalPluginDataReader] achievements unavailable kind={provider.Kind} gameId={gameId}");
                 return new List<PaAchievementDisplay>();
             }
 
             try
             {
-                bool ok = Serialization.TryFromJsonFile(pathData, out GameAchievements obj, out Exception ex);
-                if (!ok || ex != null)
-                {
-                    Common.LogDebug($"[PaExternalPluginDataReader] achievements parseFailed gameId={gameId} msg={ex?.Message}");
-                    return new List<PaAchievementDisplay>();
-                }
-
-                if (obj?.Items == null || obj.Items.Count == 0)
+                PaGameAchievementsData data = provider.GetGameAchievements(gameId);
+                if (data?.Items == null || data.Items.Count == 0)
                 {
                     return new List<PaAchievementDisplay>();
                 }
 
-                return obj.Items
-                    .Where(x => x != null && x.IsUnlock && x.DateWhenUnlocked.HasValue)
+                return data.Items
+                    .Where(x => x != null && x.Unlocked && x.UnlockTimeLocal.HasValue)
                     .Select(x => new PaAchievementDisplay
                     {
-                        Name = x.Name ?? string.Empty,
+                        Name = x.DisplayName ?? string.Empty,
                         Description = x.Description ?? string.Empty,
-                        IconUrl = x.UrlUnlocked ?? string.Empty,
-                        DateUnlocked = x.DateWhenUnlocked.Value
+                        IconUrl = x.UnlockedIconPath ?? string.Empty,
+                        DateUnlocked = x.UnlockTimeLocal.Value
                     })
                     .OrderBy(x => x.DateUnlocked)
                     .ToList();

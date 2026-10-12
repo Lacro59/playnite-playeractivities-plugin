@@ -30,8 +30,14 @@ namespace PlayerActivities.Controls
         /// <param name="game">Target game</param>
         public static void SuccessStoryView(Game game)
         {
-            if (game == null || CachedPlugin == null)
+            if (game == null)
             {
+                return;
+            }
+
+            if (CachedPlugin == null)
+            {
+                Common.LogDebug($"[SuccessStoryPlugin] SuccessStoryView skipped installed=false gameId={game.Id}");
                 return;
             }
 

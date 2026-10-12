@@ -6,6 +6,7 @@ using CommonPluginsShared.Extensions;
 using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using System;
@@ -544,10 +545,10 @@ namespace PlayerActivities.Views
 
         #region Menus
 
-        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game)
             => API.Instance.StartGame(game.Id));
 
-        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game)
             => API.Instance.InstallGame(game.Id));
 
         public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game)
@@ -586,15 +587,15 @@ namespace PlayerActivities.Views
             });
         });
 
-        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) 
-            => SuccessStoryPlugin.SuccessStoryView(game));
+        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game)
+            => PaAchievementsView.Open(game));
 
-        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game)
             => HowLongToBeatPlugin.HowLongToBeatView(game));
 
-        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game)
             => ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game));
-        
+
         #endregion
     }
 

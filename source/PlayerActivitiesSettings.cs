@@ -1,6 +1,7 @@
 ﻿using CommonPluginsShared.Interfaces;
 using CommonPluginsShared.Plugins;
 using CommonPluginsStores.Models;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
@@ -34,7 +35,17 @@ namespace PlayerActivities
         public bool PlaytimeFirstDedupDone { get; set; } = false;
 
 
+        /// <summary>
+        /// When <c>true</c>, achievements activities / bandeau use the selected provider.
+        /// Kept for JSON backward compatibility (historical SuccessStory-only toggle).
+        /// </summary>
         public bool EnableSuccessStoryData { get; set; } = true;
+
+        /// <summary>
+        /// Achievements data source when <see cref="EnableSuccessStoryData"/> is enabled. Default SuccessStory.
+        /// </summary>
+        public AchievementsProviderKind SelectedAchievementsProvider { get; set; } = AchievementsProviderKind.SuccessStory;
+
         public bool EnableScreenshotsVisualizerData { get; set; } = true;
         public bool EnableHowLongToBeatData { get; set; } = true;
 
@@ -98,6 +109,7 @@ namespace PlayerActivities
         public void CancelEdit()
         {
             CopySettingsValues(EditingClone, Settings);
+            OnPropertyChanged(nameof(Settings));
         }
 
         // Code executed when user decides to confirm changes made since BeginEdit was called.

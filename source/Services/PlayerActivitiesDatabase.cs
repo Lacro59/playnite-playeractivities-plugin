@@ -5,7 +5,7 @@ using PlayerActivities.Models;
 using PlayerActivities.Models.GameActivity;
 using PlayerActivities.Models.HowLongToBeat;
 using PlayerActivities.Models.ScreenshotsVisualizer;
-using PlayerActivities.Models.SuccessStory;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using Playnite.SDK.Models;
@@ -29,11 +29,6 @@ namespace PlayerActivities.Services
     public class PlayerActivitiesDatabase : PluginDatabaseObject<PlayerActivitiesSettings, PlayerActivitiesData, Activity>
     {
         #region Fields and Properties
-
-        /// <summary>
-        /// Path to the SuccessStory plugin data directory.
-        /// </summary>
-        private string SuccessStoryPath { get; }
 
         /// <summary>
         /// Path to the GameActivity plugin data directory.
@@ -107,7 +102,6 @@ namespace PlayerActivities.Services
         /// <param name="pluginUserDataPath">Root directory for this plugin's user data.</param>
         public PlayerActivitiesDatabase(PlayerActivitiesSettings pluginSettings, string pluginUserDataPath) : base(pluginSettings, "PlayerActivities", pluginUserDataPath)
         {
-            SuccessStoryPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.SuccessStory).ToString(), "SuccessStory");
             GameActivityPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.GameActivity).ToString(), "GameActivity");
             ScreenshotsVisuliazerPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.ScreenshotsVisualizer).ToString(), "ScreenshotsVisualizer");
             HowLongToBeatPath = Path.Combine(Paths.PluginUserDataPath, "..", PlayniteTools.GetPluginId(ExternalPlugin.HowLongToBeat).ToString(), "HowLongToBeat");
@@ -229,29 +223,36 @@ namespace PlayerActivities.Services
         }
 
         /// <summary>
-        /// Scans the SuccessStory plugin data directory and imports achievements for all or a specific game.
+        /// Scans the selected achievements provider and imports achievements for all or a specific game.
         /// </summary>
         /// <param name="id">Optional game Guid to target.</param>
         public void FirstScanSuccessStory(Guid id = default)
         {
-            if (Directory.Exists(SuccessStoryPath))
+            if (!PluginSettings.EnableSuccessStoryData)
             {
-                _ = Parallel.ForEach(Directory.EnumerateFiles(SuccessStoryPath, "*.json"),
-                    (objectFile) =>
-                    {
-                        if (Guid.TryParse(Path.GetFileNameWithoutExtension(objectFile), out Guid fileId))
-                        {
-                            if (id == default || fileId == id)
-                            {
-                                SetAchievements(fileId);
-                            }
-                        }
-                    });
+                return;
             }
+
+            IPaAchievementsProvider provider = PaAchievementsProviderFactory.Create(PluginSettings.SelectedAchievementsProvider);
+            if (!provider.IsAvailable)
+            {
+                Logger.Warn($"[PlayerActivitiesDatabase] achievementsScan skipped kind={provider.Kind} available=false");
+                return;
+            }
+
+            if (id != default)
+            {
+                Logger.Info($"[PlayerActivitiesDatabase] achievementsScan kind={provider.Kind} mode=one gameId={id}");
+                SetAchievements(id);
+                return;
+            }
+
+            Logger.Info($"[PlayerActivitiesDatabase] achievementsScan kind={provider.Kind} mode=all");
+            _ = Parallel.ForEach(provider.EnumerateGameIds(), SetAchievements);
         }
 
         /// <summary>
-        /// Imports and processes achievement data for a specific game from SuccessStory.
+        /// Imports and processes achievement data for a specific game from the selected provider.
         /// Adds achievement unlocks and progression goals as activities.
         /// </summary>
         /// <param name="id">Game Guid.</param>
@@ -259,79 +260,87 @@ namespace PlayerActivities.Services
         {
             try
             {
-                List<ulong> achievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
-
-                string pathData = Path.Combine(SuccessStoryPath, id + ".json");
-                if (File.Exists(pathData))
+                if (!PluginSettings.EnableSuccessStoryData)
                 {
-                    _ = Serialization.TryFromJsonFile(pathData, out GameAchievements obj, out Exception ex);
-                    if (ex != null)
+                    return;
+                }
+
+                IPaAchievementsProvider provider = PaAchievementsProviderFactory.Create(PluginSettings.SelectedAchievementsProvider);
+                if (!provider.IsAvailable)
+                {
+                    Common.LogDebug($"[PlayerActivitiesDatabase] SetAchievements skipped kind={provider.Kind} gameId={id} available=false");
+                    return;
+                }
+
+                List<ulong> achievementsGoals = new List<ulong> { 100, 90, 75, 50, 25 };
+                PaGameAchievementsData obj = provider.GetGameAchievements(id);
+
+                if (obj?.Items == null || obj.Items.Count == 0 || obj.Progression <= 0)
+                {
+                    return;
+                }
+
+                PlayerActivitiesData playerActivitiesData = Get(id);
+                if (playerActivitiesData == null)
+                {
+                    return;
+                }
+
+                int unlocked = 0;
+                List<PaAchievementItem> unlockedItems = obj.Items
+                    .Where(x => x != null && x.Unlocked)
+                    .ToList();
+
+                List<DateTime?> distinctDates = unlockedItems
+                    .Select(x => x.UnlockTimeLocal?.Date)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToList();
+
+                foreach (DateTime? date in distinctDates)
+                {
+                    if (date == null)
                     {
-                        Common.LogError(ex, false, true, PluginName);
+                        continue;
                     }
 
-                    if (obj.Items?.Count() > 0 && obj.Progression > 0)
+                    List<PaAchievementItem> achievements = unlockedItems
+                        .Where(y => y.UnlockTimeLocal?.Date == date)
+                        .ToList();
+
+                    ulong value = (ulong)achievements.Count;
+
+                    playerActivitiesData.Items.Add(new Activity
                     {
-                        PlayerActivitiesData playerActivitiesData = Get(id);
-                        if (playerActivitiesData == null)
+                        DateActivity = date.Value,
+                        Type = ActivityType.AchievementsUnlocked,
+                        Value = value
+                    });
+
+                    unlocked += achievements.Count;
+                    ulong progression = (ulong)Math.Ceiling((double)(unlocked * 100 / obj.Items.Count));
+
+                    foreach (ulong goal in achievementsGoals)
+                    {
+                        if (progression >= goal
+                            && !playerActivitiesData.Items.Any(y => y.DateActivity == date.Value && y.Type == ActivityType.AchievementsGoal)
+                            && !playerActivitiesData.Items.Any(y => y.Type == ActivityType.AchievementsGoal && y.Value == goal))
                         {
-                            return;
-                        }
-
-                        int unlocked = 0;
-                        var unlockedItems = obj.Items.Where(x => x.IsUnlock).ToList();
-
-                        var distinctDates = unlockedItems
-                            .Select(x => x.DateWhenUnlocked?.Date)
-                            .Distinct()
-                            .OrderBy(x => x)
-                            .ToList();
-
-                        foreach (var date in distinctDates)
-                        {
-                            if (date == null) continue;
-
-                            // by day
-                            var achievements = unlockedItems
-                                .Where(y => y.DateWhenUnlocked?.Date == date)
-                                .ToList();
-
-                            var value = (ulong)achievements.Count;
-
                             playerActivitiesData.Items.Add(new Activity
                             {
                                 DateActivity = date.Value,
-                                Type = ActivityType.AchievementsUnlocked,
-                                Value = value
+                                Type = ActivityType.AchievementsGoal,
+                                Value = goal
                             });
-
-                            // by goal
-                            unlocked += achievements.Count;
-                            ulong progression = (ulong)Math.Ceiling((double)(unlocked * 100 / obj.Items.Count()));
-
-                            foreach (var goal in achievementsGoals)
-                            {
-                                if (progression >= goal
-                                    && !playerActivitiesData.Items.Any(y => y.DateActivity == date.Value && y.Type == ActivityType.AchievementsGoal)
-                                    && !playerActivitiesData.Items.Any(y => y.Type == ActivityType.AchievementsGoal && y.Value == goal))
-                                {
-                                    playerActivitiesData.Items.Add(new Activity
-                                    {
-                                        DateActivity = date.Value,
-                                        Type = ActivityType.AchievementsGoal,
-                                        Value = goal
-                                    });
-                                }
-                            }
                         }
-
-                        AddOrUpdate(playerActivitiesData);
                     }
                 }
+
+                AddOrUpdate(playerActivitiesData);
             }
             catch (Exception ex)
             {
-                Common.LogError(ex, false);
+                Common.LogError(ex, false, $"[PlayerActivitiesDatabase] SetAchievements failed gameId={id}", false, PluginName);
             }
         }
 

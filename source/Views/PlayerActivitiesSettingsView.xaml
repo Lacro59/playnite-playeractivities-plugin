@@ -6,7 +6,8 @@
              xmlns:pcmd="clr-namespace:CommonPluginsShared.Commands"
              xmlns:AttachedProperties="clr-namespace:CommonPluginsShared.Controls"
              xmlns:settings="clr-namespace:CommonPluginsControls.Settings"
-             xmlns:PlayerActivities="clr-namespace:PlayerActivities" 
+             xmlns:PlayerActivities="clr-namespace:PlayerActivities"
+             xmlns:achievements="clr-namespace:PlayerActivities.Services.Achievements"
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
              xmlns:Gog="clr-namespace:CommonPluginsControls.Stores.Gog"
              xmlns:Epic="clr-namespace:CommonPluginsControls.Stores.Epic"
@@ -22,7 +23,7 @@
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                 <StackPanel Margin="0,20,0,0">
                     <CheckBox IsChecked="{Binding Settings.MenuInExtensions}" VerticalAlignment="Center"
-                                  Command="{x:Static pcmd:CommandsPlugin.CmdRestartRequired}" 
+                                  Command="{x:Static pcmd:CommandsPlugin.CmdRestartRequired}"
                                   CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
                         <Label Content="{DynamicResource LOCCommonMenuInExtensions}" />
                     </CheckBox>
@@ -31,9 +32,28 @@
                         <Label Content="{DynamicResource LOCCommonSaveColumOrder}" />
                     </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableSuccessStoryData}" VerticalAlignment="Center" Margin="0,30,0,0">
+                    <CheckBox IsChecked="{Binding Settings.EnableSuccessStoryData}" VerticalAlignment="Center" Margin="0,30,0,0"
+                              Name="PART_AchievementsData">
                         <Label Content="{DynamicResource LOCPaEnableSuccessStoryData}" />
                     </CheckBox>
+
+                    <DockPanel Margin="0,15,0,0" LastChildFill="False"
+                               IsEnabled="{Binding ElementName=PART_AchievementsData, Path=IsChecked}">
+                        <TextBlock Text="{DynamicResource LOCPaAchievementsProvider}"
+                                   Style="{DynamicResource BaseTextBlockStyle}"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,10,0" />
+                        <ComboBox SelectedValue="{Binding Settings.SelectedAchievementsProvider}"
+                                  SelectedValuePath="Tag"
+                                  MinWidth="200"
+                                  HorizontalAlignment="Left"
+                                  VerticalAlignment="Center">
+                            <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.SuccessStory}"
+                                          Content="{DynamicResource LOCPaAchievementsProviderSuccessStory}" />
+                            <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.PlayniteAchievements}"
+                                          Content="{DynamicResource LOCPaAchievementsProviderPlayniteAchievements}" />
+                        </ComboBox>
+                    </DockPanel>
 
                     <CheckBox IsChecked="{Binding Settings.EnableScreenshotsVisualizerData}" VerticalAlignment="Center" Margin="0,15,0,0">
                         <Label Content="{DynamicResource LOCPaEnableScreenshotsVisualizerData}" />
@@ -47,7 +67,7 @@
                     <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0" Name="PART_GOG">
                         <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
                     </CheckBox>
-                    
+
                     <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
                         <Label Content="{DynamicResource LOCPaEnableEAFriends}" />
                     </CheckBox>
@@ -125,8 +145,8 @@
             <StackPanel Margin="10">
                 <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10"
                                  Visibility="{Binding ElementName=PART_STEAM, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
-                                 UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" 
+                                 ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                                 UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
                                  UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
                 <Gog:PanelView x:Name="GogPanel" Margin="0,0,0,10"
@@ -134,7 +154,7 @@
                                ForceAuth="True"
                                UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
-                <Epic:PanelView x:Name="EpicPanel" 
+                <Epic:PanelView x:Name="EpicPanel"
                                 Visibility="{Binding ElementName=PART_EPIC, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
                                 ForceAuth="True"
                                 UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
