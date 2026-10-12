@@ -14,10 +14,13 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">عرض بيانات SuccessStory (إضافة SuccessStory مطلوبة)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">عرض بيانات ScreenshotsVisualizer (إضافة ScreenshotsVisualizer مطلوبة)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">عرض بيانات HowLongToBeat (إضافة HowLongToBeat مطلوبة)</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">تمكين أصدقاء Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">تمكين أصدقاء GOG</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Enable EA friends</sys:String>
@@ -25,12 +28,12 @@
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">لقد لعبت لأول مرة.</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">لقد وصلت إلى {0} ساعة من اللعب.</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">لقد فتحت {0} إنجازات.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">لقد وصلت إلى {0}% من الإنجازات.</sys:String>
 
@@ -44,7 +47,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">منذ {0} أشهر</sys:String>
     <sys:String x:Key="LOCPaYearAgo">منذ {0} عا</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">منذ {0} سنوات</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">لعبة ممل</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">الألعاب المكت</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
@@ -62,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Refresh game data</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">View HowLongToBeat datas</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View SuccessStory datas</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">View ScreenshotsVisualizer datas</sys:String>
 
 </ResourceDictionary>
