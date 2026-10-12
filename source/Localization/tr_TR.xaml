@@ -14,10 +14,13 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">BaşarıÖyküsü verisini görüntüle (BaşarıÖyküsü eklentisi gerekli)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">EkrangörüntüsüGörselleştirici verisini görüntüle (EkrangörüntüsüGörselleştirici- ScreenshotVisualizer eklentisi gerekli)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">BitirmekNeKadarSürdü verisini görüntüle (BitirmekNeKadarSürdü - HowLongToBeat eklentisi gerekli)</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG arkadaşlarını etkinleştir</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">EA arkadaşlarını etkinleştir</sys:String>
@@ -25,12 +28,12 @@
 
     <sys:String x:Key="LOCPaIntegrationActivities">Oyun etkinliklerini görüntüle</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">İlk kez oynadınız.</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">{0} saat oynama süresine ulaştınız.</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">{0} başarımın kilidini açtınız.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">%{0} başarıma ulaştınız.</sys:String>
 
@@ -44,7 +47,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">{0} ay önce</sys:String>
     <sys:String x:Key="LOCPaYearAgo">{0} yıl önce</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} yıl önce</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">Oyuna sahipsiniz</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Tamamlanan oyunlar</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Arkadaşlar 🏆</sys:String>
@@ -62,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Oyun verilerini yenile</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">YenmekNeKadarSürdü verilerini göster</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">BaşarıHikayesi verilerini göster</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">EkranGörüntüsüGörsel verilerini göster</sys:String>
 
 </ResourceDictionary>
