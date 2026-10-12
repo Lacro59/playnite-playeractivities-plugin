@@ -14,10 +14,13 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">SuccessStory adat mutatása (SuccessStory bővítmény szükséges)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">ScreenshotsVisualizer adat mutatása (ScreenshotsVisualizer bővítmény szükséges)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">HowLongToBeat adat mutatása (HowLongToBeat bővítmény szükséges)</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">Steam barátok bekapcsolása</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">GOG barátok bekapcsolása</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">EA barátok bekapcsolása</sys:String>
@@ -25,12 +28,12 @@
 
     <sys:String x:Key="LOCPaIntegrationActivities">Display game activities</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">Először játszottál.</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">Elértél {0} óra játékot.</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Feloldottál {0} eredményt.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">{0}% eredményt értél el.</sys:String>
 
@@ -44,7 +47,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">{0} hónapja</sys:String>
     <sys:String x:Key="LOCPaYearAgo">{0} éve</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} éve</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">Birtokolt játékok</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Befejezett játékok</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">Friends</sys:String>
@@ -62,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Játék adatok frissítése</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">HowLongToBeat adatok megtekintése</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">SuccessStory adatok megtekintése</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">ScreenshotsVisualizer adatok megtekintése</sys:String>
 
 </ResourceDictionary>
