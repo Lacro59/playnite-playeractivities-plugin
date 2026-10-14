@@ -1,5 +1,7 @@
-# Local agent workspaces (not versioned — copy/sync manually or via
-# ai-shared/scripts/sync-versioned.ps1)
+# Source: ai-shared/git/gitignore-agent-workspace.fragment
+# Role: paste at the top of each app repo .gitignore (versioned).
+# Agent workspaces and personal tool configs stay local - deploy/align via sync-versioned.ps1.
+
 .ai/
 .tasks/
 .study/
@@ -9,8 +11,12 @@
 .cursorignore
 .semgrep/
 .semgrepignore
+.graphifyignore
 
-# Graphify (local graph — regenerate with `graphify update .`)
+# Local clones of repos cited by an analysis (own graph, not synced)
+.projects/
+
+# Graphify local graphs
 graphify-out/
 
 # rumdl (markdown linter cache)
