@@ -1,8 +1,9 @@
-﻿using CommonPlayniteShared.Commands;
+using CommonPlayniteShared.Commands;
 using CommonPluginsShared;
 using CommonPluginsShared.Commands;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
+using PlayerActivities.Clients;
 using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
@@ -47,6 +48,8 @@ namespace PlayerActivities.Views
         private string _pendingDataRefreshReason;
         private const int SearchDebounceMs = 250;
         private const int DataRefreshDebounceMs = 300;
+        private int _friendsEnrichGeneration;
+        private CancellationTokenSource _friendsEnrichCts;
 
         private bool TimeLineFilter(object item)
         {
@@ -303,12 +306,51 @@ namespace PlayerActivities.Views
         {
             _ = Task.Run(() =>
             {
-                _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
-                FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
-                ControlDataContext.FriendsSource = friendsData.PlayerFriends.ToObservable();
-                ControlDataContext.LastFriendsRefresh = friendsData.PlayerFriends.Count == 0 ? (DateTime?)null : friendsData.LastUpdate;
-                IsFriendsFinished = true;
-                IsFinish();
+                try
+                {
+                    _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
+
+                    Stopwatch swLoad = Stopwatch.StartNew();
+                    FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
+                    swLoad.Stop();
+
+                    int friendCount = friendsData?.PlayerFriends?.Count ?? 0;
+                    Common.LogDebug($"[PaView] GetFriends load count={friendCount} elapsedMs={swLoad.ElapsedMilliseconds}");
+
+                    ObservableCollection<PlayerFriend> friendsSource = friendsData?.PlayerFriends?.ToObservable()
+                        ?? new ObservableCollection<PlayerFriend>();
+                    DateTime? lastRefresh = friendCount == 0 ? (DateTime?)null : friendsData?.LastUpdate;
+
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        try
+                        {
+                            Stopwatch swUi = Stopwatch.StartNew();
+                            ControlDataContext.FriendsSource = friendsSource;
+                            ControlDataContext.LastFriendsRefresh = lastRefresh;
+                            swUi.Stop();
+                            Common.LogDebug($"[PaView] apply friends UI count={friendCount} elapsedMs={swUi.ElapsedMilliseconds}");
+
+                            IsFriendsFinished = true;
+                            IsFinish();
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] GetFriends UI update failed", false, PluginDatabase.PluginName);
+                            IsFriendsFinished = true;
+                            IsFinish();
+                        }
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] GetFriends refresh failed", false, PluginDatabase.PluginName);
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        IsFriendsFinished = true;
+                        IsFinish();
+                    }));
+                }
             });
         }
 
@@ -484,8 +526,188 @@ namespace PlayerActivities.Views
             PlayerFriend pf_us = ControlDataContext.FriendsSource?
                 .FirstOrDefault(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName));
 
+            ApplyFriendsDetails(pf, pf_us);
+
+            // Epic/EA friends: identity-only — no deferred achievement enrich.
+            if (IsFriendsIdentityOnlyClient(pf.ClientName) && !pf.IsUser)
+            {
+                Common.LogDebug($"[PaView] Friends identity-only skip enrich friend={pf.FriendPseudo} client={pf.ClientName}");
+                return;
+            }
+
+            bool needsEnrich = pf.Games != null && pf.Games.Any(g => GenericFriends.NeedsAchievementsFetch(g));
+            bool needsEnrichUs = pf_us?.Games != null && pf_us.Games.Any(g => GenericFriends.NeedsAchievementsFetch(g));
+            if (!needsEnrich && !needsEnrichUs)
+            {
+                return;
+            }
+
+            // Cancel any in-flight enrich from a previous selection (avoids parallel API storms).
+            CancellationTokenSource previousCts = _friendsEnrichCts;
+            _friendsEnrichCts = new CancellationTokenSource();
+            CancellationToken token = _friendsEnrichCts.Token;
+            previousCts?.Cancel();
+            previousCts?.Dispose();
+
+            int generation = ++_friendsEnrichGeneration;
+            string friendId = pf.FriendId;
+            string clientName = pf.ClientName;
+            PlayerFriend selected = pf;
+            PlayerFriend meRow = pf_us;
+
+            ClearAllFriendsUpdating();
+            if (needsEnrich)
+            {
+                selected.IsUpdating = true;
+            }
+
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    GenericFriends client = GenericFriends.CreateClient(clientName);
+                    if (client == null)
+                    {
+                        _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(selected)));
+                        return;
+                    }
+
+                    // Enrich selected friend first and refresh UI before the (often large) "me" row.
+                    if (needsEnrich)
+                    {
+                        selected = client.EnrichFriendAchievements(selected, token);
+                        PluginDatabase.UpsertFriend(selected);
+                        if (token.IsCancellationRequested)
+                        {
+                            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(selected)));
+                            return;
+                        }
+
+                        PublishFriendEnrichUi(lv, generation, friendId, clientName, selected, meRow: null, clearUpdating: selected);
+                    }
+
+                    if (needsEnrichUs && meRow != null)
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        Dispatcher?.Invoke(() =>
+                        {
+                            if (!token.IsCancellationRequested)
+                            {
+                                meRow.IsUpdating = true;
+                            }
+                        });
+
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        meRow = client.EnrichFriendAchievements(meRow, token);
+                        PluginDatabase.UpsertFriend(meRow);
+                        if (token.IsCancellationRequested)
+                        {
+                            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(meRow)));
+                            return;
+                        }
+
+                        PublishFriendEnrichUi(lv, generation, friendId, clientName, selected, meRow, clearUpdating: meRow);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Common.LogDebug($"[PaView] Friends enrich canceled friend={selected?.FriendPseudo} client={clientName}");
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() =>
+                    {
+                        ClearFriendUpdating(selected);
+                        ClearFriendUpdating(meRow);
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] Deferred friends achievements enrich failed", false, PluginDatabase.PluginName);
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() =>
+                    {
+                        ClearFriendUpdating(selected);
+                        ClearFriendUpdating(meRow);
+                    }));
+                }
+            }, token);
+        }
+
+        /// <summary>
+        /// Pushes enriched friend rows into the list and refreshes details when the same friend is still selected.
+        /// </summary>
+        private void PublishFriendEnrichUi(
+            ListViewExtend lv,
+            int generation,
+            string friendId,
+            string clientName,
+            PlayerFriend selected,
+            PlayerFriend meRow,
+            PlayerFriend clearUpdating)
+        {
+            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(() =>
+            {
+                ClearFriendUpdating(clearUpdating);
+                ReplaceFriendInSource(selected);
+                if (meRow != null)
+                {
+                    ReplaceFriendInSource(meRow);
+                }
+
+                if (generation != _friendsEnrichGeneration)
+                {
+                    return;
+                }
+
+                if (!(lv.SelectedItem is PlayerFriend stillSelected) || !stillSelected.FriendId.IsEqual(friendId))
+                {
+                    return;
+                }
+
+                PlayerFriend detailsFriend = ControlDataContext.FriendsSource?
+                    .FirstOrDefault(x => x != null && x.FriendId.IsEqual(friendId)) ?? selected;
+                PlayerFriend detailsMe = meRow ?? ControlDataContext.FriendsSource?
+                    .FirstOrDefault(x => x.IsUser && x.ClientName.IsEqual(clientName));
+                ApplyFriendsDetails(detailsFriend, detailsMe);
+                Common.LogDebug($"[PaView] Friends details enriched friend={detailsFriend?.FriendPseudo} client={clientName}");
+            }));
+        }
+
+        private static void ClearFriendUpdating(PlayerFriend friend)
+        {
+            if (friend != null)
+            {
+                friend.IsUpdating = false;
+            }
+        }
+
+        private void ClearAllFriendsUpdating()
+        {
+            if (ControlDataContext.FriendsSource == null)
+            {
+                return;
+            }
+
+            foreach (PlayerFriend friend in ControlDataContext.FriendsSource)
+            {
+                ClearFriendUpdating(friend);
+            }
+        }
+
+        private void ApplyFriendsDetails(PlayerFriend pf, PlayerFriend pf_us)
+        {
             ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
-            if (pf.Games != null)
+            if (pf?.Games != null)
             {
                 pf.Games.ForEach(x =>
                 {
@@ -509,7 +731,46 @@ namespace PlayerActivities.Views
             }
 
             ControlDataContext.FriendsDetailsSource = listFriendsInfos;
+            ControlDataContext.FriendsDetailsHint = GetFriendsIdentityOnlyHint(pf, listFriendsInfos.Count);
             PART_LvFriendsDetails?.Sorting();
+        }
+
+        /// <summary>
+        /// Epic and EA store APIs only expose the current user's library — friends stay identity-only.
+        /// </summary>
+        private static bool IsFriendsIdentityOnlyClient(string clientName)
+        {
+            return clientName.IsEqual("Epic") || clientName.IsEqual("EA");
+        }
+
+        private static string GetFriendsIdentityOnlyHint(PlayerFriend pf, int detailsCount)
+        {
+            if (pf == null || pf.IsUser || detailsCount > 0 || !IsFriendsIdentityOnlyClient(pf.ClientName))
+            {
+                return string.Empty;
+            }
+
+            return string.Format(
+                ResourceProvider.GetString("LOCPaFriendsIdentityOnly"),
+                pf.ClientName);
+        }
+
+        private static void ReplaceFriendInSource(PlayerFriend updated)
+        {
+            if (updated == null || ControlDataContext.FriendsSource == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < ControlDataContext.FriendsSource.Count; i++)
+            {
+                PlayerFriend current = ControlDataContext.FriendsSource[i];
+                if (current != null && current.FriendId.IsEqual(updated.FriendId))
+                {
+                    ControlDataContext.FriendsSource[i] = updated;
+                    return;
+                }
+            }
         }
     }
 
@@ -526,6 +787,12 @@ namespace PlayerActivities.Views
 
         private ObservableCollection<ListFriendsInfo> _friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
         public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _friendsDetailsSource; set => SetValue(ref _friendsDetailsSource, value); }
+
+        private string _friendsDetailsHint = string.Empty;
+        /// <summary>
+        /// Empty-state hint when the selected friend is Epic/EA (identity-only, no game details).
+        /// </summary>
+        public string FriendsDetailsHint { get => _friendsDetailsHint; set => SetValue(ref _friendsDetailsHint, value); }
 
         private ObservableCollection<ListSource> _filterSourceItems = new ObservableCollection<ListSource>();
         public ObservableCollection<ListSource> FilterSourceItems { get => _filterSourceItems; set => SetValue(ref _filterSourceItems, value); }

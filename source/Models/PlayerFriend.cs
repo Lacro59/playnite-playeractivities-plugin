@@ -1,4 +1,4 @@
-﻿using CommonPlayniteShared.Commands;
+using CommonPlayniteShared.Commands;
 using CommonPluginsShared;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -11,7 +11,7 @@ namespace PlayerActivities.Models
     /// Represents a friend of the player from a specific game client/platform.
     /// Stores information about the friend, their games, statistics, and related metadata.
     /// </summary>
-    public class PlayerFriend
+    public class PlayerFriend : ObservableObject
     {
         /// <summary>
         /// Name of the client/platform (e.g., Steam, GOG, Epic) where the friend is registered.
@@ -49,6 +49,24 @@ namespace PlayerActivities.Models
         public bool IsUser { get; set; }
 
         /// <summary>
+        /// When true, the friend's game library (or profile) is private/hidden — Games stay empty and the UI shows a private marker.
+        /// </summary>
+        public bool IsPrivate { get; set; }
+
+        private bool _isUpdating;
+
+        /// <summary>
+        /// When true, deferred friend data (e.g. achievement enrich) is running — UI shows an updating marker.
+        /// Not serialized.
+        /// </summary>
+        [DontSerialize]
+        public bool IsUpdating
+        {
+            get => _isUpdating;
+            set => SetValue(ref _isUpdating, value);
+        }
+
+        /// <summary>
         /// Gets the icon associated with the client/platform.
         /// Not serialized.
         /// </summary>
@@ -60,10 +78,16 @@ namespace PlayerActivities.Models
         /// </summary>
         public DateTime? AcceptedAt { get; set; }
 
+        private PlayerStats _stats;
+
         /// <summary>
         /// Statistics related to the friend (e.g., games owned, achievements, playtime).
         /// </summary>
-        public PlayerStats Stats { get; set; }
+        public PlayerStats Stats
+        {
+            get => _stats;
+            set => SetValue(ref _stats, value);
+        }
 
         /// <summary>
         /// List of games associated with the friend.

@@ -369,11 +369,23 @@
                                     <GridViewColumnHeader Content="{DynamicResource LOCGameNameTitle}" />
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <TextBlock ToolTip="{Binding FriendsLink}">
-                                                <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding FriendsLink}">
-                                                    <controls2:TextBlockTrimmed Text="{Binding FriendPseudo}" Style="{DynamicResource ListExtendStyleTextBlock}" />
-                                                </Hyperlink>
-                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock ToolTip="{Binding FriendsLink}" VerticalAlignment="Center">
+                                                    <Hyperlink Command="{Binding NavigateUrl}" CommandParameter="{Binding FriendsLink}">
+                                                        <controls2:TextBlockTrimmed Text="{Binding FriendPseudo}" Style="{DynamicResource ListExtendStyleTextBlock}" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+                                                <ContentControl Content="{DynamicResource HideIcon}"
+                                                                Margin="6,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                ToolTip="{DynamicResource LOCPaFriendLibraryPrivate}"
+                                                                Visibility="{Binding IsPrivate, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                <ContentControl Content="{DynamicResource UpdateDbIcon}"
+                                                                Margin="6,0,0,0"
+                                                                VerticalAlignment="Center"
+                                                                ToolTip="{DynamicResource LOCPaFriendDataUpdating}"
+                                                                Visibility="{Binding IsUpdating, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -407,11 +419,19 @@
                 </Grid>
 
                 <Grid Name="PART_GridFriendsDetailsContener" Grid.Row="4">
+                    <TextBlock Text="{Binding FriendsDetailsHint}"
+                               Style="{DynamicResource BaseTextBlockStyle}"
+                               TextWrapping="Wrap"
+                               Margin="10"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Visibility="{Binding FriendsDetailsHint, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}}" />
                     <controls1:ListViewExtend Height="{Binding ElementName=PART_GridFriendsDetailsContener, Path=ActualHeight}"
                                               FontSize="24" Style="{StaticResource {x:Type ListView}}"
                                               SortingEnable="True" SortingDefaultDataName="Name" SortingSortDirection="Ascending"
                                               x:Name="PART_LvFriendsDetails"
-                                              ItemsSource="{Binding FriendsDetailsSource}">
+                                              ItemsSource="{Binding FriendsDetailsSource}"
+                                              Visibility="{Binding FriendsDetailsHint, Converter={StaticResource StringNullOrEmptyToVisibilityConverter}, ConverterParameter=Inverted}">
 
                         <ListView.View>
                             <GridView>

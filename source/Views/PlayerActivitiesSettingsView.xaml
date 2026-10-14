@@ -68,7 +68,8 @@
                         <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
                     </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0">
+                    <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0"
+                              ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
                         <Label Content="{DynamicResource LOCPaEnableEAFriends}" />
                     </CheckBox>
 
@@ -76,7 +77,8 @@
                         <Label Content="{DynamicResource LOCPaEnableSteamFriends}" />
                     </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableEpicFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_EPIC">
+                    <CheckBox IsChecked="{Binding Settings.EnableEpicFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_EPIC"
+                              ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
                         <Label Content="{DynamicResource LOCPaEnableEpicFriends}" />
                     </CheckBox>
                 </StackPanel>

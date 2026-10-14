@@ -1,4 +1,6 @@
-﻿namespace PlayerActivities.Models
+using System;
+
+namespace PlayerActivities.Models
 {
     /// <summary>
     /// Represents a game associated with a player or a friend.
@@ -32,7 +34,17 @@
         public int Achievements { get; set; }
 
         /// <summary>
-        /// Total playtime in the game, typically measured in minutes.
+        /// Whether <see cref="Achievements"/> was loaded from the store API (deferred enrichment).
+        /// </summary>
+        public bool AchievementsLoaded { get; set; }
+
+        /// <summary>
+        /// UTC timestamp of the last successful achievements fetch for this game (12h cache).
+        /// </summary>
+        public DateTime? AchievementsFetchedAt { get; set; }
+
+        /// <summary>
+        /// Total playtime in the game, in seconds (Playnite convention).
         /// </summary>
         public int Playtime { get; set; }
     }

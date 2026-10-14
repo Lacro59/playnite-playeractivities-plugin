@@ -1,6 +1,8 @@
-﻿using CommonPluginsShared.Interfaces;
+using CommonPluginsShared;
+using CommonPluginsShared.Interfaces;
 using CommonPluginsShared.Plugins;
 using CommonPluginsStores.Models;
+using CommonPluginsStores.Steam;
 using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Data;
@@ -94,7 +96,7 @@ namespace PlayerActivities
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
 
-            // Keep Steam ForceAuth on until store settings migration lands.
+            // Steam friends require login (cookies); API key remains optional in the Steam panel.
             Settings.SteamStoreSettings.ForceAuth = true;
         }
 
@@ -116,7 +118,13 @@ namespace PlayerActivities
         // This method should save settings made to Option1 and Option2.
         public void EndEdit()
         {
-            // StoreAPI intialization
+            AccountInfos steamUser = PlayerActivities.SteamApi?.CurrentAccountInfos;
+            if (steamUser != null)
+            {
+                steamUser.ApiKey = SteamApi.NormalizeSteamWebApiKey(steamUser.ApiKey);
+            }
+
+            // StoreAPI initialization (persists trimmed ApiKey with user when Steam friends are enabled)
             PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends);
             PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends);
             PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends);
@@ -139,7 +147,13 @@ namespace PlayerActivities
         public bool VerifySettings(out List<string> errors)
         {
             errors = new List<string>();
-            return true;
+            string apiKey = SteamApi.NormalizeSteamWebApiKey(PlayerActivities.SteamApi?.CurrentAccountInfos?.ApiKey);
+            if (!apiKey.IsNullOrEmpty() && !SteamApi.IsLikelySteamWebApiKey(apiKey))
+            {
+                errors.Add(ResourceProvider.GetString("LOCSteamApiKeyInvalidSteamId"));
+            }
+
+            return errors.Count == 0;
         }
     }
 }

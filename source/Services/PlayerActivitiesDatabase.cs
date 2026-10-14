@@ -1,4 +1,4 @@
-﻿using CommonPluginsShared;
+using CommonPluginsShared;
 using CommonPluginsShared.Collections;
 using CommonPluginsShared.Extensions;
 using PlayerActivities.Models;
@@ -729,7 +729,21 @@ namespace PlayerActivities.Services
             {
                 try
                 {
-                    return Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                    FriendsData data = Serialization.FromJsonFile<FriendsData>(friendsFilePath);
+                    if (RepairFriendPseudoEncoding(data))
+                    {
+                        try
+                        {
+                            File.WriteAllText(friendsFilePath, Serialization.ToJson(data));
+                            Common.LogDebug("[PlayerActivitiesDatabase] Repaired FriendPseudo UTF-8 mojibake in FriendsData.json.");
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "Failed to persist FriendPseudo encoding repair", false, PluginName);
+                        }
+                    }
+
+                    return data;
                 }
                 catch (Exception ex)
                 {
@@ -737,6 +751,76 @@ namespace PlayerActivities.Services
                 }
             }
             return new FriendsData();
+        }
+
+        /// <summary>
+        /// Fixes persisted friend display names corrupted by UTF-8/Windows-1252 mojibake (e.g. <c>Ã¢â€žÂ¢</c> → <c>™</c>).
+        /// </summary>
+        /// <returns><c>true</c> when at least one pseudo was changed.</returns>
+        private static bool RepairFriendPseudoEncoding(FriendsData data)
+        {
+            if (data?.PlayerFriends == null || data.PlayerFriends.Count == 0)
+            {
+                return false;
+            }
+
+            bool changed = false;
+            foreach (PlayerFriend friend in data.PlayerFriends)
+            {
+                if (friend == null || friend.FriendPseudo.IsNullOrEmpty())
+                {
+                    continue;
+                }
+
+                string fixedPseudo = friend.FriendPseudo.FixUtf8Mojibake();
+                if (!string.Equals(fixedPseudo, friend.FriendPseudo, StringComparison.Ordinal))
+                {
+                    friend.FriendPseudo = fixedPseudo;
+                    changed = true;
+                }
+            }
+
+            return changed;
+        }
+
+        /// <summary>
+        /// Replaces a friend entry in <c>FriendsData.json</c> (e.g. after deferred achievement enrichment).
+        /// </summary>
+        /// <param name="pf">Friend to upsert; matched by <see cref="PlayerFriend.FriendId"/>.</param>
+        public void UpsertFriend(PlayerFriend pf)
+        {
+            if (pf == null || pf.FriendId.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            string friendsFilePath = Path.Combine(Paths.PluginUserDataPath, "FriendsData.json");
+            try
+            {
+                FriendsData friendsData = LoadFriendsData();
+                if (friendsData.PlayerFriends == null)
+                {
+                    friendsData.PlayerFriends = new List<PlayerFriend>();
+                }
+
+                int index = friendsData.PlayerFriends.FindIndex(f => f != null && f.FriendId.IsEqual(pf.FriendId));
+                if (index >= 0)
+                {
+                    friendsData.PlayerFriends[index] = pf;
+                }
+                else
+                {
+                    friendsData.PlayerFriends.Add(pf);
+                }
+
+                friendsData.LastUpdate = DateTime.Now;
+                File.WriteAllText(friendsFilePath, Serialization.ToJson(friendsData));
+                Common.LogDebug($"[PlayerActivitiesDatabase] UpsertFriend friend={pf.FriendPseudo} client={pf.ClientName}");
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, true, PluginName);
+            }
         }
 
         /// <summary>
@@ -775,6 +859,10 @@ namespace PlayerActivities.Services
 
                 friendsData.PlayerFriends = gog.Concat(steam).Concat(ea).Concat(epic).ToList();
                 friendsData.LastUpdate = DateTime.UtcNow;
+
+                // Explicit refresh (PART_BtFriends / menu / loader) invalidates the 12h achievements cache:
+                // do not re-apply AchievementsLoaded / AchievementsFetchedAt from the previous FriendsData.json.
+                Common.LogDebug($"[PlayerActivitiesDatabase] GetFriends force refresh — achievements cache invalidated (friends={friendsData.PlayerFriends.Count})");
 
                 if (FriendsDataIsCanceled)
                 {
