@@ -22,10 +22,17 @@ namespace PlayerActivities
         private bool _enableIntegrationActivities = true;
         public bool EnableIntegrationActivities { get => _enableIntegrationActivities; set => SetValue(ref _enableIntegrationActivities, value); }
 
-        public bool EnableSteamFriends { get; set; } = false;
-        public bool EnableGogFriends { get; set; } = false;
-        public bool EnableEpicFriends { get; set; } = false;
-        public bool EnableOriginFriends { get; set; } = false;
+        private bool _enableSteamFriends;
+        public bool EnableSteamFriends { get => _enableSteamFriends; set => SetValue(ref _enableSteamFriends, value); }
+
+        private bool _enableGogFriends;
+        public bool EnableGogFriends { get => _enableGogFriends; set => SetValue(ref _enableGogFriends, value); }
+
+        private bool _enableEpicFriends;
+        public bool EnableEpicFriends { get => _enableEpicFriends; set => SetValue(ref _enableEpicFriends, value); }
+
+        private bool _enableOriginFriends;
+        public bool EnableOriginFriends { get => _enableOriginFriends; set => SetValue(ref _enableOriginFriends, value); }
 
 
         public bool IsFirstRun { get; set; } = true;
@@ -95,9 +102,6 @@ namespace PlayerActivities
 
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
-
-            // Steam friends require login (cookies); API key remains optional in the Steam panel.
-            Settings.SteamStoreSettings.ForceAuth = true;
         }
 
         // Code executed when settings view is opened and user starts editing values.

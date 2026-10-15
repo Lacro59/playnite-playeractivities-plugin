@@ -6,6 +6,7 @@
              xmlns:pcmd="clr-namespace:CommonPluginsShared.Commands"
              xmlns:AttachedProperties="clr-namespace:CommonPluginsShared.Controls"
              xmlns:settings="clr-namespace:CommonPluginsControls.Settings"
+             xmlns:stores="clr-namespace:CommonPluginsControls.Stores"
              xmlns:PlayerActivities="clr-namespace:PlayerActivities"
              xmlns:achievements="clr-namespace:PlayerActivities.Services.Achievements"
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
@@ -14,157 +15,152 @@
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
-    <UserControl.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </UserControl.Resources>
+    <Grid Margin="20">
+        <TabControl>
+            <TabItem Header="{DynamicResource LOCPa}">
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,20,0,0">
+                        <CheckBox IsChecked="{Binding Settings.MenuInExtensions}" VerticalAlignment="Center"
+                                      Command="{x:Static pcmd:CommandsPlugin.CmdRestartRequired}"
+                                      CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
+                            <Label Content="{DynamicResource LOCCommonMenuInExtensions}" />
+                        </CheckBox>
 
-    <TabControl Margin="20">
-        <TabItem Header="{DynamicResource LOCPa}">
-            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Margin="0,20,0,0">
-                    <CheckBox IsChecked="{Binding Settings.MenuInExtensions}" VerticalAlignment="Center"
-                                  Command="{x:Static pcmd:CommandsPlugin.CmdRestartRequired}"
-                                  CommandParameter="{Binding RelativeSource={RelativeSource Self}}">
-                        <Label Content="{DynamicResource LOCCommonMenuInExtensions}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.SaveColumnOrder}" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <Label Content="{DynamicResource LOCCommonSaveColumOrder}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.SaveColumnOrder}" VerticalAlignment="Center" Margin="0,15,0,0">
-                        <Label Content="{DynamicResource LOCCommonSaveColumOrder}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.EnableSuccessStoryData}" VerticalAlignment="Center" Margin="0,30,0,0"
+                                  Name="PART_AchievementsData">
+                            <Label Content="{DynamicResource LOCPaEnableSuccessStoryData}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableSuccessStoryData}" VerticalAlignment="Center" Margin="0,30,0,0"
-                              Name="PART_AchievementsData">
-                        <Label Content="{DynamicResource LOCPaEnableSuccessStoryData}" />
-                    </CheckBox>
+                        <DockPanel Margin="0,15,0,0" LastChildFill="False"
+                                   IsEnabled="{Binding ElementName=PART_AchievementsData, Path=IsChecked}">
+                            <TextBlock Text="{DynamicResource LOCPaAchievementsProvider}"
+                                       Style="{DynamicResource BaseTextBlockStyle}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0" />
+                            <ComboBox SelectedValue="{Binding Settings.SelectedAchievementsProvider}"
+                                      SelectedValuePath="Tag"
+                                      MinWidth="200"
+                                      HorizontalAlignment="Left"
+                                      VerticalAlignment="Center">
+                                <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.SuccessStory}"
+                                              Content="{DynamicResource LOCPaAchievementsProviderSuccessStory}" />
+                                <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.PlayniteAchievements}"
+                                              Content="{DynamicResource LOCPaAchievementsProviderPlayniteAchievements}" />
+                            </ComboBox>
+                        </DockPanel>
 
-                    <DockPanel Margin="0,15,0,0" LastChildFill="False"
-                               IsEnabled="{Binding ElementName=PART_AchievementsData, Path=IsChecked}">
-                        <TextBlock Text="{DynamicResource LOCPaAchievementsProvider}"
-                                   Style="{DynamicResource BaseTextBlockStyle}"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,10,0" />
-                        <ComboBox SelectedValue="{Binding Settings.SelectedAchievementsProvider}"
-                                  SelectedValuePath="Tag"
-                                  MinWidth="200"
-                                  HorizontalAlignment="Left"
-                                  VerticalAlignment="Center">
-                            <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.SuccessStory}"
-                                          Content="{DynamicResource LOCPaAchievementsProviderSuccessStory}" />
-                            <ComboBoxItem Tag="{x:Static achievements:AchievementsProviderKind.PlayniteAchievements}"
-                                          Content="{DynamicResource LOCPaAchievementsProviderPlayniteAchievements}" />
-                        </ComboBox>
-                    </DockPanel>
+                        <CheckBox IsChecked="{Binding Settings.EnableScreenshotsVisualizerData}" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <Label Content="{DynamicResource LOCPaEnableScreenshotsVisualizerData}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableScreenshotsVisualizerData}" VerticalAlignment="Center" Margin="0,15,0,0">
-                        <Label Content="{DynamicResource LOCPaEnableScreenshotsVisualizerData}" />
-                    </CheckBox>
-
-                    <CheckBox IsChecked="{Binding Settings.EnableHowLongToBeatData}" VerticalAlignment="Center" Margin="0,15,0,0">
-                        <Label Content="{DynamicResource LOCPaEnableHowLongToBeatData}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.EnableHowLongToBeatData}" VerticalAlignment="Center" Margin="0,15,0,0">
+                            <Label Content="{DynamicResource LOCPaEnableHowLongToBeatData}" />
+                        </CheckBox>
 
 
-                    <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0" Name="PART_GOG">
-                        <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.EnableGogFriends}" VerticalAlignment="Center" Margin="0,30,0,0" Name="PART_GOG">
+                            <Label Content="{DynamicResource LOCPaEnableGogFriends}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0"
-                              ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
-                        <Label Content="{DynamicResource LOCPaEnableEAFriends}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.EnableOriginFriends}" VerticalAlignment="Center" Margin="0,15,0,0"
+                                  ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
+                            <Label Content="{DynamicResource LOCPaEnableEAFriends}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_STEAM">
-                        <Label Content="{DynamicResource LOCPaEnableSteamFriends}" />
-                    </CheckBox>
+                        <CheckBox IsChecked="{Binding Settings.EnableSteamFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_STEAM">
+                            <Label Content="{DynamicResource LOCPaEnableSteamFriends}" />
+                        </CheckBox>
 
-                    <CheckBox IsChecked="{Binding Settings.EnableEpicFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_EPIC"
-                              ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
-                        <Label Content="{DynamicResource LOCPaEnableEpicFriends}" />
-                    </CheckBox>
-                </StackPanel>
-            </ScrollViewer>
-        </TabItem>
+                        <CheckBox IsChecked="{Binding Settings.EnableEpicFriends}" VerticalAlignment="Center" Margin="0,15,0,0" Name="PART_EPIC"
+                                  ToolTip="{DynamicResource LOCPaFriendsIdentityOnlyTooltip}">
+                            <Label Content="{DynamicResource LOCPaEnableEpicFriends}" />
+                        </CheckBox>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-        <TabItem Header="{DynamicResource LOCCommonIntegration}">
-            <ScrollViewer>
-                <StackPanel Margin="0,10,0,0">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="10" />
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="10" />
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
+            <TabItem Header="{DynamicResource LOCCommonIntegration}">
+                <ScrollViewer>
+                    <StackPanel Margin="0,10,0,0">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="10" />
+                                <RowDefinition Height="auto" />
+                            </Grid.RowDefinitions>
 
-                        <Expander Grid.Row="0" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
-                            <Expander.Style>
-                                <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                </Style>
-                            </Expander.Style>
+                            <Expander Grid.Row="0" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
+                                <Expander.Style>
+                                    <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                </Expander.Style>
 
-                            <Expander.Header>
-                                <CheckBox IsChecked="{Binding Settings.EnableIntegrationButtonHeader}">
-                                    <Label Content="{DynamicResource LOCCommonIntegrationButtonHeader}" />
-                                </CheckBox>
-                            </Expander.Header>
-                        </Expander>
+                                <Expander.Header>
+                                    <CheckBox IsChecked="{Binding Settings.EnableIntegrationButtonHeader}">
+                                        <Label Content="{DynamicResource LOCCommonIntegrationButtonHeader}" />
+                                    </CheckBox>
+                                </Expander.Header>
+                            </Expander>
 
-                        <Expander Grid.Row="2" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
-                            <Expander.Style>
-                                <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                </Style>
-                            </Expander.Style>
+                            <Expander Grid.Row="2" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
+                                <Expander.Style>
+                                    <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                </Expander.Style>
 
-                            <Expander.Header>
-                                <CheckBox IsChecked="{Binding Settings.EnableIntegrationButtonSide}">
-                                    <Label Content="{DynamicResource LOCCommonIntegrationButtonSide}" />
-                                </CheckBox>
-                            </Expander.Header>
-                        </Expander>
+                                <Expander.Header>
+                                    <CheckBox IsChecked="{Binding Settings.EnableIntegrationButtonSide}">
+                                        <Label Content="{DynamicResource LOCCommonIntegrationButtonSide}" />
+                                    </CheckBox>
+                                </Expander.Header>
+                            </Expander>
 
-                        <Expander Grid.Row="4" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
-                            <Expander.Style>
-                                <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
-                                    <Setter Property="Background" Value="Transparent" />
-                                </Style>
-                            </Expander.Style>
+                            <Expander Grid.Row="4" AttachedProperties:ExpanderAttachedProperties.HideExpanderArrow="True">
+                                <Expander.Style>
+                                    <Style TargetType="{x:Type Expander}" BasedOn="{StaticResource {x:Type Expander}}">
+                                        <Setter Property="Background" Value="Transparent" />
+                                    </Style>
+                                </Expander.Style>
 
-                            <Expander.Header>
-                                <CheckBox IsChecked="{Binding Settings.EnableIntegrationActivities}">
-                                    <Label Content="{DynamicResource LOCPaIntegrationActivities}" />
-                                </CheckBox>
-                            </Expander.Header>
-                        </Expander>
-                    </Grid>
-                </StackPanel>
-            </ScrollViewer>
-        </TabItem>
+                                <Expander.Header>
+                                    <CheckBox IsChecked="{Binding Settings.EnableIntegrationActivities}">
+                                        <Label Content="{DynamicResource LOCPaIntegrationActivities}" />
+                                    </CheckBox>
+                                </Expander.Header>
+                            </Expander>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
 
-        <TabItem Header="{DynamicResource LOCLibraries}">
-            <StackPanel Margin="10">
-                <Steam:PanelView x:Name="SteamPanel" Margin="0,0,0,10"
-                                 Visibility="{Binding ElementName=PART_STEAM, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                 ForceAuth="{Binding DataContext.Settings.SteamStoreSettings.ForceAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
-                                 UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
-                                 UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+            <TabItem Header="{DynamicResource LOCLibraries}">
+                <stores:StoresSettingsView x:Name="StoresSettings" />
+            </TabItem>
 
-                <Gog:PanelView x:Name="GogPanel" Margin="0,0,0,10"
-                               Visibility="{Binding ElementName=PART_GOG, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
-                               ForceAuth="True"
-                               UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+            <TabItem Header="{DynamicResource LOCCommonDebugTab}">
+                <settings:PluginDebugSettingsSection PluginName="PlayerActivities" Margin="10" />
+            </TabItem>
+        </TabControl>
 
-                <Epic:PanelView x:Name="EpicPanel"
-                                Visibility="{Binding ElementName=PART_EPIC, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}"
-                                ForceAuth="True"
-                                UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
-            </StackPanel>
-        </TabItem>
+        <!-- Panels are registered into StoresSettingsView at runtime (only supported stores). -->
+        <StackPanel x:Name="StorePanelsHost" Visibility="Collapsed">
+            <Steam:PanelView x:Name="SteamPanel" ForceAuth="True"
+                             UseApi="{Binding DataContext.Settings.SteamStoreSettings.UseApi, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}"
+                             UseAuth="{Binding DataContext.Settings.SteamStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
 
-        <TabItem Header="{DynamicResource LOCCommonDebugTab}">
-            <settings:PluginDebugSettingsSection PluginName="PlayerActivities" Margin="10" />
-        </TabItem>
-    </TabControl>
+            <Epic:PanelView x:Name="EpicPanel" ForceAuth="True"
+                            UseAuth="{Binding DataContext.Settings.EpicStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+            <Gog:PanelView x:Name="GogPanel" ForceAuth="True"
+                           UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+        </StackPanel>
+    </Grid>
 </UserControl>

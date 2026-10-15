@@ -152,6 +152,10 @@
     <Compile Include="playnite-plugincommon\CommonPluginsControls\Stores\StoreConnectionSection.xaml.cs">
       <DependentUpon>StoreConnectionSection.xaml</DependentUpon>
     </Compile>
+    <Compile Include="playnite-plugincommon\CommonPluginsControls\Stores\StoresSettingsView.xaml.cs">
+      <DependentUpon>StoresSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="playnite-plugincommon\CommonPluginsControls\Stores\StoresSettingsViewModel.cs" />
     <Compile Include="playnite-plugincommon\CommonPluginsControls\Settings\PluginDebugSettingsSection.xaml.cs">
       <DependentUpon>PluginDebugSettingsSection.xaml</DependentUpon>
     </Compile>
@@ -437,6 +441,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="playnite-plugincommon\CommonPluginsControls\Stores\StoreConnectionSection.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="playnite-plugincommon\CommonPluginsControls\Stores\StoresSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
