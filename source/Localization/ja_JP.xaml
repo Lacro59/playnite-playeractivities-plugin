@@ -9,13 +9,13 @@
     <sys:String x:Key="LOCPaView">プレイヤーアクティビティを表示</sys:String>
 
     <sys:String x:Key="LOCPaActivities">プレイヤーアクティビティ</sys:String>
-    <sys:String x:Key="LOCPaFriends">Friends</sys:String>
+    <sys:String x:Key="LOCPaFriends">フレンド</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
-    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">実績データを表示（選択した実績プラグインが必要）</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">実績プロバイダー</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">ScreenshotsVisualizer データを表示（ScreenshotsVisualizer プラグインが必要）</sys:String>
@@ -65,7 +65,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">ゲームデータを更新</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">HowLongToBeat データを表示</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">実績データを表示</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">ScreenshotsVisualizer データを表示</sys:String>
 
 </ResourceDictionary>
