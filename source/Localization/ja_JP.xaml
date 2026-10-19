@@ -25,10 +25,10 @@
     <sys:String x:Key="LOCPaEnableGogFriends">GOG フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">EA フレンドを有効にする</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Epic フレンドを有効にする</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
-    <sys:String x:Key="LOCPaFriendLibraryPrivate">Library data is private</sys:String>
-    <sys:String x:Key="LOCPaFriendDataUpdating">Updating friend data…</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">フレンド情報のみを一覧表示します。このストアのフレンドについては、ゲームライブラリ、プレイ時間、実績を利用できません。</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnly">{0} のフレンドについては、ゲームライブラリ、プレイ時間、実績を利用できません。</sys:String>
+    <sys:String x:Key="LOCPaFriendLibraryPrivate">ライブラリデータは非公開です</sys:String>
+    <sys:String x:Key="LOCPaFriendDataUpdating">フレンドデータを更新中…</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">ゲームアクティビティを表示</sys:String>
 
