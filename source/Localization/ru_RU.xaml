@@ -15,7 +15,7 @@
     <!-- PlayerActivitiesSettingsView -->
 
     <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
-    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Поставщик достижений</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Отображать данные ScreenshotsVisualizer (требуется плагин ScreenshotsVisualizer)</sys:String>
@@ -27,8 +27,8 @@
     <sys:String x:Key="LOCPaEnableEpicFriends">Включить Epic друзей</sys:String>
     <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
     <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
-    <sys:String x:Key="LOCPaFriendLibraryPrivate">Library data is private</sys:String>
-    <sys:String x:Key="LOCPaFriendDataUpdating">Updating friend data…</sys:String>
+    <sys:String x:Key="LOCPaFriendLibraryPrivate">Данные библиотеки приватны</sys:String>
+    <sys:String x:Key="LOCPaFriendDataUpdating">Обновление данных друзей…</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Показать игровые активности</sys:String>
 
@@ -69,7 +69,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Обновить игровые данные</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">Просмотр данных HowLongToBeat</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Просмотр данных о достижениях</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Просмотр данных ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
