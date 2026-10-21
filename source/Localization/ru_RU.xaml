@@ -14,7 +14,7 @@
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Отображать данные о достижениях (требуется выбранный плагин для достижений)</sys:String>
     <sys:String x:Key="LOCPaAchievementsProvider">Поставщик достижений</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
@@ -25,8 +25,8 @@
     <sys:String x:Key="LOCPaEnableGogFriends">Включить GOG друзей</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Включить EA друзей</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Включить Epic друзей</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Отображает только имена друзей. Игровая библиотека, время игры и достижения недоступны для друзей в этом магазине.</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnly">Библиотека игр, время игры и достижения недоступны для друзей на {0}.</sys:String>
     <sys:String x:Key="LOCPaFriendLibraryPrivate">Данные библиотеки приватны</sys:String>
     <sys:String x:Key="LOCPaFriendDataUpdating">Обновление данных друзей…</sys:String>
 
