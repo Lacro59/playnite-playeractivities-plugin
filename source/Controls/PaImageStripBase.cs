@@ -70,8 +70,10 @@ namespace PlayerActivities.Controls
         protected PaImageStripBase()
         {
             double height = ItemHeight;
+            // Reserve theme scrollbar height so Auto bar sits under thumbnails instead of clipping them.
+            double hostHeight = height + SystemParameters.HorizontalScrollBarHeight;
             Focusable = false;
-            Height = height;
+            Height = hostHeight;
 
             FrameworkElementFactory panelFactory = new FrameworkElementFactory(typeof(StackPanel));
             panelFactory.SetValue(StackPanel.OrientationProperty, Orientation.Horizontal);
@@ -89,7 +91,8 @@ namespace PlayerActivities.Controls
                 Content = _itemsControl,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
-                Height = height
+                Height = hostHeight,
+                VerticalAlignment = VerticalAlignment.Top
             };
 
             Visibility = Visibility.Collapsed;
