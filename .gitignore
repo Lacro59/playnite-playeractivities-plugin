@@ -3,11 +3,14 @@
 # Agent workspaces and personal tool configs stay local - deploy/align via sync-versioned.ps1.
 
 .ai/
+.agents/
 .tasks/
 .study/
 .issues/
 .cursor/
 .scripts/
+.docs/
+.assets/
 .cursorignore
 .semgrep/
 .semgrepignore
@@ -31,12 +34,14 @@ graphify-out/
 *.suo
 *.user
 *.userosscache
+*.rsuser
 *.sln.docstates
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
 # Build results
+build/out/
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -153,13 +158,7 @@ AutoTest.Net/
 
 # DocProject is a documentation generator add-in
 DocProject/buildhelp/
-DocProject/Help/*.HxT
-DocProject/Help/*.HxC
-DocProject/Help/*.hhc
-DocProject/Help/*.hhk
-DocProject/Help/*.hhp
-DocProject/Help/Html2
-DocProject/Help/html
+DocProject/Help/
 
 # Click-Once directory
 publish/
@@ -280,6 +279,11 @@ paket-files/
 
 # CodeRush
 .cr/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
 
 # Visual Studio Code stuff
 .vscode/
