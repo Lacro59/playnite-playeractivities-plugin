@@ -12,6 +12,7 @@
              xmlns:Steam="clr-namespace:CommonPluginsControls.Stores.Steam"
              xmlns:Gog="clr-namespace:CommonPluginsControls.Stores.Gog"
              xmlns:Epic="clr-namespace:CommonPluginsControls.Stores.Epic"
+             xmlns:Ea="clr-namespace:CommonPluginsControls.Stores.Ea"
              mc:Ignorable="d" d:DesignWidth="650"
              d:DataContext="{d:DesignInstance PlayerActivities:PlayerActivitiesSettingsViewModel}">
 
@@ -161,6 +162,9 @@
 
             <Gog:PanelView x:Name="GogPanel" ForceAuth="True"
                            UseAuth="{Binding DataContext.Settings.GogStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
+
+            <Ea:PanelView x:Name="EaPanel" ForceAuth="True"
+                          UseAuth="{Binding DataContext.Settings.EaStoreSettings.UseAuth, Mode=TwoWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type UserControl}}}" />
         </StackPanel>
     </Grid>
 </UserControl>

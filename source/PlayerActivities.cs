@@ -1,6 +1,7 @@
 using CommonPluginsShared;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.PlayniteExtended;
+using CommonPluginsStores.Ea;
 using CommonPluginsStores.Epic;
 using CommonPluginsStores.Gog;
 using CommonPluginsStores.Steam;
@@ -36,6 +37,7 @@ namespace PlayerActivities
         public static SteamApi SteamApi { get; set; }
         public static GogApi GogApi { get; set; }
         public static EpicApi EpicApi { get; set; }
+        public static EaApi EaApi { get; set; }
 
         public PlayerActivities(IPlayniteAPI api) : base(api, "PlayerActivities")
         {
@@ -337,15 +339,18 @@ namespace PlayerActivities
                 this.SavePluginSettings(PluginSettingsViewModel.Settings);
             }
 
-            // StoreAPI intialization
+            // StoreAPI initialization (Enable*Friends only — no PluginState library gate)
             SteamApi = new SteamApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
-            SteamApi.Initialization(PluginDatabase.PluginSettings.SteamStoreSettings, PluginDatabase.PluginSettings.PluginState.SteamIsEnabled && PluginDatabase.PluginSettings.EnableSteamFriends);
+            SteamApi.Initialization(PluginDatabase.PluginSettings.SteamStoreSettings, PluginDatabase.PluginSettings.EnableSteamFriends);
 
             EpicApi = new EpicApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
-            EpicApi.Initialization(PluginDatabase.PluginSettings.EpicStoreSettings, PluginDatabase.PluginSettings.PluginState.EpicIsEnabled && PluginDatabase.PluginSettings.EnableEpicFriends);
+            EpicApi.Initialization(PluginDatabase.PluginSettings.EpicStoreSettings, PluginDatabase.PluginSettings.EnableEpicFriends);
 
             GogApi = new GogApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
-            GogApi.Initialization(PluginDatabase.PluginSettings.GogStoreSettings, PluginDatabase.PluginSettings.PluginState.GogIsEnabled && PluginDatabase.PluginSettings.EnableGogFriends);
+            GogApi.Initialization(PluginDatabase.PluginSettings.GogStoreSettings, PluginDatabase.PluginSettings.EnableGogFriends);
+
+            EaApi = new EaApi(PluginDatabase.PluginName, PlayniteTools.ExternalPlugin.PlayerActivities);
+            EaApi.Initialization(PluginDatabase.PluginSettings.EaStoreSettings, PluginDatabase.PluginSettings.EnableOriginFriends);
 
             // Temporary one-shot migration PlayerFriends.json → FriendsData.json (see .tasks/TODO-FIXME.md).
             _ = SpinWait.SpinUntil(() => PluginDatabase.IsLoaded, -1);

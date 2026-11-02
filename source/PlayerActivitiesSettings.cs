@@ -70,6 +70,7 @@ namespace PlayerActivities
         public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         public StoreSettings EpicStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
+        public StoreSettings EaStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         #endregion
 
         // Playnite serializes settings object to a JSON object and saves it as text file.
@@ -129,9 +130,10 @@ namespace PlayerActivities
             }
 
             // StoreAPI initialization (persists trimmed ApiKey with user when Steam friends are enabled)
-            PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends);
-            PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends);
-            PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends);
+            PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.EnableSteamFriends);
+            PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.EnableEpicFriends);
+            PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.EnableGogFriends);
+            PlayerActivities.EaApi.SaveSettings(Settings.EaStoreSettings, Settings.EnableOriginFriends);
 
             PersistSettings(Plugin, Settings);
             PlayerActivities.PluginDatabase.PluginSettings = Settings;

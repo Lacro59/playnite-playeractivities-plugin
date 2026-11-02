@@ -120,7 +120,8 @@ namespace PlayerActivities.Views
 
             return propertyName == nameof(PlayerActivitiesSettings.EnableSteamFriends)
                 || propertyName == nameof(PlayerActivitiesSettings.EnableEpicFriends)
-                || propertyName == nameof(PlayerActivitiesSettings.EnableGogFriends);
+                || propertyName == nameof(PlayerActivitiesSettings.EnableGogFriends)
+                || propertyName == nameof(PlayerActivitiesSettings.EnableOriginFriends);
         }
 
         /// <summary>
@@ -133,6 +134,7 @@ namespace PlayerActivities.Views
             SteamPanel.StoreApi = IsSteamStoreEnabled(settings) ? PlayerActivities.SteamApi : null;
             EpicPanel.StoreApi = IsEpicStoreEnabled(settings) ? PlayerActivities.EpicApi : null;
             GogPanel.StoreApi = IsGogStoreEnabled(settings) ? PlayerActivities.GogApi : null;
+            EaPanel.StoreApi = IsEaStoreEnabled(settings) ? PlayerActivities.EaApi : null;
 
             foreach (StoreSettingsEntry entry in StoresSettings.Stores)
             {
@@ -147,6 +149,10 @@ namespace PlayerActivities.Views
                 else if (entry.Id == "Gog")
                 {
                     entry.IsVisible = IsGogStoreEnabled(settings);
+                }
+                else if (entry.Id == "EA")
+                {
+                    entry.IsVisible = IsEaStoreEnabled(settings);
                 }
             }
 
@@ -173,6 +179,11 @@ namespace PlayerActivities.Views
             if (IsGogStoreEnabled(settings))
             {
                 (GogPanel.DataContext as IStorePanelViewModel)?.RequestBackgroundAuthRefresh();
+            }
+
+            if (IsEaStoreEnabled(settings))
+            {
+                (EaPanel.DataContext as IStorePanelViewModel)?.RequestBackgroundAuthRefresh();
             }
         }
 
@@ -209,6 +220,16 @@ namespace PlayerActivities.Views
                 IsVisible = IsGogStoreEnabled(settings),
                 SortOrder = 2
             });
+
+            StoresSettings.RegisterStore(new StoreSettingsEntry
+            {
+                Id = "EA",
+                NameResourceKey = "LOCCommonStoreEa",
+                CategoryResourceKey = "LOCCommonStoresLaunchers",
+                Panel = EaPanel,
+                IsVisible = IsEaStoreEnabled(settings),
+                SortOrder = 3
+            });
         }
 
         private PlayerActivitiesSettings GetEditingSettings()
@@ -224,23 +245,22 @@ namespace PlayerActivities.Views
 
         private static bool IsSteamStoreEnabled(PlayerActivitiesSettings settings)
         {
-            return settings != null
-                && settings.PluginState.SteamIsEnabled
-                && settings.EnableSteamFriends;
+            return settings != null && settings.EnableSteamFriends;
         }
 
         private static bool IsEpicStoreEnabled(PlayerActivitiesSettings settings)
         {
-            return settings != null
-                && settings.PluginState.EpicIsEnabled
-                && settings.EnableEpicFriends;
+            return settings != null && settings.EnableEpicFriends;
         }
 
         private static bool IsGogStoreEnabled(PlayerActivitiesSettings settings)
         {
-            return settings != null
-                && settings.PluginState.GogIsEnabled
-                && settings.EnableGogFriends;
+            return settings != null && settings.EnableGogFriends;
+        }
+
+        private static bool IsEaStoreEnabled(PlayerActivitiesSettings settings)
+        {
+            return settings != null && settings.EnableOriginFriends;
         }
     }
 }
