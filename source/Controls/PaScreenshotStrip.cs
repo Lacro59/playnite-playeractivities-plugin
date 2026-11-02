@@ -1,3 +1,4 @@
+using CommonPluginsShared.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
 using System;
@@ -5,7 +6,7 @@ using System.Collections;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using CommonPluginsShared.Controls;
+using System.Windows.Input;
 
 namespace PlayerActivities.Controls
 {
@@ -51,6 +52,15 @@ namespace PlayerActivities.Controls
             new FrameworkPropertyMetadata(default(DateTime), OnDayChanged));
 
         /// <inheritdoc />
+        protected override FrameworkElementFactory CreateItemFactory()
+        {
+            FrameworkElementFactory imageFactory = base.CreateItemFactory();
+            imageFactory.SetValue(FrameworkElement.CursorProperty, Cursors.Hand);
+            imageFactory.AddHandler(UIElement.MouseLeftButtonDownEvent, new MouseButtonEventHandler(OnThumbnailMouseLeftButtonDown));
+            return imageFactory;
+        }
+
+        /// <inheritdoc />
         protected override void ConfigureItemImage(FrameworkElementFactory imageFactory)
         {
             imageFactory.SetBinding(ImageAsync.SourceProperty, new Binding(nameof(PaScreenshotDisplay.FilePath)));
@@ -70,6 +80,24 @@ namespace PlayerActivities.Controls
         {
             PaScreenshotStrip strip = d as PaScreenshotStrip;
             strip?.ScheduleRefresh();
+        }
+
+        private void OnThumbnailMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton != MouseButton.Left || e.ClickCount != 2)
+            {
+                return;
+            }
+
+            FrameworkElement element = sender as FrameworkElement;
+            PaScreenshotDisplay item = element?.DataContext as PaScreenshotDisplay;
+            if (item == null || string.IsNullOrEmpty(item.FilePath))
+            {
+                return;
+            }
+
+            e.Handled = true;
+            PaScreenshotViewer.TryShow(item.FilePath);
         }
     }
 }

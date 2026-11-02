@@ -208,6 +208,7 @@
     <Compile Include="Services\Achievements\PlayniteAchievementsDataProvider.cs" />
     <Compile Include="Services\Achievements\SuccessStoryAchievementsProvider.cs" />
     <Compile Include="Services\PaExternalPluginDataReader.cs" />
+    <Compile Include="Services\PaScreenshotViewer.cs" />
     <Compile Include="Services\PaTopPanelItem.cs" />
     <Compile Include="Services\PaViewSidebar.cs" />
     <Compile Include="Services\PlayerActivitiesDatabase.cs" />
