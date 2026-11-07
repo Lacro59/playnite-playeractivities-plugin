@@ -66,3 +66,18 @@ Packages:
       - 'Fixed: Incorrect data'
       - 'Fixed: EA data'
       - 'Fixed: Steam data'
+  - Version: 1.2
+    RequiredApiVersion: 6.13.0
+    ReleaseDate: 2026-11-07
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v1.2/playnite-playeractivities-plugin_1_2.pext
+    Changelog:
+      - 'Added: Selectable achievements provider (SuccessStory or PlayniteAchievements)'
+      - 'Added: Steam friends library recovery and achievements enrichment'
+      - 'Added: Autonomous store panels without library PluginState gates'
+      - 'Improved: PaView layout with cards and collapsible friends'
+      - 'Added: Date-grouped mono-game activity feed'
+      - 'Added: Open screenshots at native size from the strip'
+      - 'Fixed: PlaytimeFirst detection and duplicate entries'
+      - 'Fixed: Horizontal scrollbar overlapping achievement and screenshot strips'
+      - 'Optimized: PaView filters and lazy-loaded plugin hosts'
+      - 'Updated: Localizations'
