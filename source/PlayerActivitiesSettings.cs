@@ -1,5 +1,9 @@
-﻿using CommonPluginsShared.Plugins;
+using CommonPluginsShared;
+using CommonPluginsShared.Interfaces;
+using CommonPluginsShared.Plugins;
 using CommonPluginsStores.Models;
+using CommonPluginsStores.Steam;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
@@ -18,23 +22,55 @@ namespace PlayerActivities
         private bool _enableIntegrationActivities = true;
         public bool EnableIntegrationActivities { get => _enableIntegrationActivities; set => SetValue(ref _enableIntegrationActivities, value); }
 
-        public bool EnableSteamFriends { get; set; } = false;
-        public bool EnableGogFriends { get; set; } = false;
-        public bool EnableEpicFriends { get; set; } = false;
-        public bool EnableOriginFriends { get; set; } = false;
+        private bool _enableSteamFriends;
+        public bool EnableSteamFriends { get => _enableSteamFriends; set => SetValue(ref _enableSteamFriends, value); }
+
+        private bool _enableGogFriends;
+        public bool EnableGogFriends { get => _enableGogFriends; set => SetValue(ref _enableGogFriends, value); }
+
+        private bool _enableEpicFriends;
+        public bool EnableEpicFriends { get => _enableEpicFriends; set => SetValue(ref _enableEpicFriends, value); }
+
+        private bool _enableOriginFriends;
+        public bool EnableOriginFriends { get => _enableOriginFriends; set => SetValue(ref _enableOriginFriends, value); }
 
 
         public bool IsFirstRun { get; set; } = true;
 
+        /// <summary>
+        /// One-shot flag: <c>true</c> after historical <c>PlaytimeFirst</c> duplicates have been cleaned at application start.
+        /// Defaults to <c>false</c> so existing installs run the cleanup once.
+        /// </summary>
+        public bool PlaytimeFirstDedupDone { get; set; } = false;
 
+
+        /// <summary>
+        /// When <c>true</c>, achievements activities / bandeau use the selected provider.
+        /// Kept for JSON backward compatibility (historical SuccessStory-only toggle).
+        /// </summary>
         public bool EnableSuccessStoryData { get; set; } = true;
+
+        /// <summary>
+        /// Achievements data source when <see cref="EnableSuccessStoryData"/> is enabled. Default SuccessStory.
+        /// </summary>
+        public AchievementsProviderKind SelectedAchievementsProvider { get; set; } = AchievementsProviderKind.SuccessStory;
+
         public bool EnableScreenshotsVisualizerData { get; set; } = true;
         public bool EnableHowLongToBeatData { get; set; } = true;
+
+        public bool SaveColumnOrder { get; set; } = false;
+
+        /// <summary>
+        /// When <c>true</c>, PaView shows the friends column; when <c>false</c>, the activity feed uses full width.
+        /// Toggled from PaView (not exposed in the settings UI).
+        /// </summary>
+        public bool IsFriendsPanelExpanded { get; set; } = true;
 
 
         public StoreSettings SteamStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true, UseApi = false };
         public StoreSettings GogStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         public StoreSettings EpicStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
+        public StoreSettings EaStoreSettings { get; set; } = new StoreSettings { ForceAuth = true, UseAuth = true };
         #endregion
 
         // Playnite serializes settings object to a JSON object and saves it as text file.
@@ -44,7 +80,10 @@ namespace PlayerActivities
         #endregion
     }
 
-    public class PlayerActivitiesSettingsViewModel : ObservableObject, ISettings
+    /// <summary>
+    /// Playnite settings view-model for PlayerActivities (edit lifecycle + store sync).
+    /// </summary>
+    public class PlayerActivitiesSettingsViewModel : PluginSettingsViewModel, IPluginSettingsViewModel
     {
         private PlayerActivities Plugin { get; }
         private PlayerActivitiesSettings EditingClone { get; set; }
@@ -52,7 +91,7 @@ namespace PlayerActivities
         private PlayerActivitiesSettings _settings;
         public PlayerActivitiesSettings Settings { get => _settings; set => SetValue(ref _settings, value); }
 
-
+        IPluginSettings IPluginSettingsViewModel.Settings => Settings;
 
         public PlayerActivitiesSettingsViewModel(PlayerActivities plugin)
         {
@@ -64,9 +103,6 @@ namespace PlayerActivities
 
             // LoadPluginSettings returns null if not saved data is available.
             Settings = savedSettings ?? new PlayerActivitiesSettings();
-
-            // TODO TEMP
-            Settings.SteamStoreSettings.ForceAuth = true;
         }
 
         // Code executed when settings view is opened and user starts editing values.
@@ -79,20 +115,28 @@ namespace PlayerActivities
         // This method should revert any changes made to Option1 and Option2.
         public void CancelEdit()
         {
-            Settings = EditingClone;
+            CopySettingsValues(EditingClone, Settings);
+            OnPropertyChanged(nameof(Settings));
         }
 
         // Code executed when user decides to confirm changes made since BeginEdit was called.
         // This method should save settings made to Option1 and Option2.
         public void EndEdit()
         {
-            // StoreAPI intialization
-            PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.PluginState.SteamIsEnabled && Settings.EnableSteamFriends);
-            PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.PluginState.EpicIsEnabled && Settings.EnableEpicFriends);
-            PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.PluginState.GogIsEnabled && Settings.EnableGogFriends);
+            AccountInfos steamUser = PlayerActivities.SteamApi?.CurrentAccountInfos;
+            if (steamUser != null)
+            {
+                steamUser.ApiKey = SteamApi.NormalizeSteamWebApiKey(steamUser.ApiKey);
+            }
 
-            Plugin.SavePluginSettings(Settings);
-            PlayerActivities.PluginDatabase.PluginSettings = this;
+            // StoreAPI initialization (persists trimmed ApiKey with user when Steam friends are enabled)
+            PlayerActivities.SteamApi.SaveSettings(Settings.SteamStoreSettings, Settings.EnableSteamFriends);
+            PlayerActivities.EpicApi.SaveSettings(Settings.EpicStoreSettings, Settings.EnableEpicFriends);
+            PlayerActivities.GogApi.SaveSettings(Settings.GogStoreSettings, Settings.EnableGogFriends);
+            PlayerActivities.EaApi.SaveSettings(Settings.EaStoreSettings, Settings.EnableOriginFriends);
+
+            PersistSettings(Plugin, Settings);
+            PlayerActivities.PluginDatabase.PluginSettings = Settings;
 
             if (API.Instance.ApplicationInfo.Mode == ApplicationMode.Desktop)
             {
@@ -109,7 +153,13 @@ namespace PlayerActivities
         public bool VerifySettings(out List<string> errors)
         {
             errors = new List<string>();
-            return true;
+            string apiKey = SteamApi.NormalizeSteamWebApiKey(PlayerActivities.SteamApi?.CurrentAccountInfos?.ApiKey);
+            if (!apiKey.IsNullOrEmpty() && !SteamApi.IsLikelySteamWebApiKey(apiKey))
+            {
+                errors.Add(ResourceProvider.GetString("LOCSteamApiKeyInvalidSteamId"));
+            }
+
+            return errors.Count == 0;
         }
     }
 }

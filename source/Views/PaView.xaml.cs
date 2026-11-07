@@ -1,15 +1,20 @@
-﻿using CommonPlayniteShared.Commands;
+using CommonPlayniteShared.Commands;
 using CommonPluginsShared;
+using CommonPluginsShared.Commands;
 using CommonPluginsShared.Controls;
 using CommonPluginsShared.Extensions;
+using PlayerActivities.Clients;
 using PlayerActivities.Controls;
 using PlayerActivities.Models;
 using PlayerActivities.Services;
+using PlayerActivities.Services.Achievements;
 using Playnite.SDK;
 using Playnite.SDK.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -32,30 +37,41 @@ namespace PlayerActivities.Views
 
         internal static PaViewData ControlDataContext { get; set; } = new PaViewData();
 
-        private List<string> SearchSources { get; set; } = new List<string>();
+        /// <summary>
+        /// Invokes an immediate timeline rebuild when PaView is loaded (e.g. context-menu refresh).
+        /// </summary>
+        internal static Action<string> RequestTimelineRefresh { get; private set; }
+
+        private HashSet<string> SearchSources { get; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        private readonly DispatcherTimer _searchDebounceTimer;
+        private readonly DispatcherTimer _dataRefreshDebounceTimer;
+        private string _pendingDataRefreshReason;
+        private const int SearchDebounceMs = 250;
+        private const int DataRefreshDebounceMs = 300;
+        private int _friendsEnrichGeneration;
+        private CancellationTokenSource _friendsEnrichCts;
 
         private bool TimeLineFilter(object item)
         {
-            if (item == null)
+            ActivityListGrouped el = item as ActivityListGrouped;
+            if (el?.GameContext == null)
             {
                 return false;
             }
 
-            ActivityListGrouped el = item as ActivityListGrouped;
+            string search = TextboxSearch?.Text ?? string.Empty;
+            bool txtFilter = search.Length == 0
+                || (el.GameContext.Name?.IndexOf(search, StringComparison.InvariantCultureIgnoreCase) ?? -1) >= 0;
 
-            bool txtFilter = el.GameContext.Name.Contains(TextboxSearch.Text, StringComparison.InvariantCultureIgnoreCase);
-
-            bool sourceFilter = true;
-            if (SearchSources.Count > 0)
-            {
-                sourceFilter = SearchSources.Where(x => PlayniteTools.GetSourceName(el.GameContext).IsEqual(x)).Count() > 0;
-            }
+            bool sourceFilter = SearchSources.Count == 0 || SearchSources.Contains(el.SourceName ?? string.Empty);
 
             return txtFilter && sourceFilter;
         }
 
         private bool IsDataFinished = false;
         private bool IsFriendsFinished = false;
+        private bool _friendsLoadStarted = false;
+        private bool _timelineReadyLogged = false;
 
         public PaView(PlayerActivities plugin)
         {
@@ -64,44 +80,225 @@ namespace PlayerActivities.Views
             InitializeComponent();
             DataContext = ControlDataContext;
 
+            _searchDebounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(SearchDebounceMs)
+            };
+            _searchDebounceTimer.Tick += SearchDebounceTimer_Tick;
+
+            _dataRefreshDebounceTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromMilliseconds(DataRefreshDebounceMs)
+            };
+            _dataRefreshDebounceTimer.Tick += DataRefreshDebounceTimer_Tick;
+
+            ConfigureListViewColumnPersistence();
+
             PART_DataLoad.Visibility = Visibility.Visible;
             PART_Data.Visibility = Visibility.Hidden;
             PART_DataRerefsh.Visibility = Visibility.Collapsed;
 
-            GetData();
-            GetFriends();
+            // Sidebar reuses the same PaView instance: subscribe on Loaded, unsubscribe on Unloaded
+            // (ctor-only subscribe breaks after the first Unloaded — see PaViewSidebar Opened cache).
+            Loaded += PaView_Loaded;
+            Unloaded += PaView_Unloaded;
 
-
-            PluginDatabase.Database.ItemUpdated += Database_ItemUpdated;
-
-            PluginDatabase.Database.Select(x => PlayniteTools.GetSourceName(x.Game)).Distinct().ForEach(x =>
+            PluginDatabase.GetAllCache().Select(x => PlayniteTools.GetSourceName(x.Game)).Distinct().ForEach(x =>
             {
                 string icon = TransformIcon.Get(x) + " ";
                 ControlDataContext.FilterSourceItems.Add(new ListSource { SourceName = ((icon.Length == 2) ? icon : string.Empty) + x, SourceNameShort = x, IsCheck = false });
             });
 
 
-            if (!PluginDatabase.PluginSettings.Settings.EnableEpicFriends && !PluginDatabase.PluginSettings.Settings.EnableGogFriends && !PluginDatabase.PluginSettings.Settings.EnableOriginFriends && !PluginDatabase.PluginSettings.Settings.EnableSteamFriends)
+            if (!PluginDatabase.PluginSettings.EnableEpicFriends && !PluginDatabase.PluginSettings.EnableGogFriends && !PluginDatabase.PluginSettings.EnableOriginFriends && !PluginDatabase.PluginSettings.EnableSteamFriends)
             {
                 PART_BtFriends.IsEnabled = false;
             }
+
+            ControlDataContext.IsFriendsPanelExpanded = PluginDatabase.PluginSettings.IsFriendsPanelExpanded;
+            ApplyFriendsPanelLayout();
+        }
+
+        private void ApplyFriendsPanelLayout()
+        {
+            if (PART_ColFeed == null || PART_ColFriendsGap == null || PART_ColFriends == null)
+            {
+                return;
+            }
+
+            bool expanded = ControlDataContext.IsFriendsPanelExpanded;
+            if (expanded)
+            {
+                PART_ColFeed.Width = new GridLength(1.5, GridUnitType.Star);
+                PART_ColFriendsGap.Width = new GridLength(20);
+                PART_ColFriends.Width = new GridLength(1, GridUnitType.Star);
+            }
+            else
+            {
+                // Keep a slim strip so the expand chevron stays reachable next to the friends panel.
+                PART_ColFeed.Width = new GridLength(1, GridUnitType.Star);
+                PART_ColFriendsGap.Width = new GridLength(6);
+                PART_ColFriends.Width = new GridLength(36);
+            }
+
+            Visibility bodyVisibility = expanded ? Visibility.Visible : Visibility.Collapsed;
+            if (PART_FriendsHeaderTitle != null)
+            {
+                PART_FriendsHeaderTitle.Visibility = bodyVisibility;
+            }
+
+            if (PART_GridFriendsContener != null)
+            {
+                PART_GridFriendsContener.Visibility = bodyVisibility;
+            }
+
+            if (PART_GridFriendsDetailsContener != null)
+            {
+                PART_GridFriendsDetailsContener.Visibility = bodyVisibility;
+            }
+
+            if (PART_FriendsFooter != null)
+            {
+                PART_FriendsFooter.Visibility = bodyVisibility;
+            }
+        }
+
+        private void Button_ToggleFriendsPanel_Click(object sender, RoutedEventArgs e)
+        {
+            bool expanded = !ControlDataContext.IsFriendsPanelExpanded;
+            ControlDataContext.IsFriendsPanelExpanded = expanded;
+            PluginDatabase.PluginSettings.IsFriendsPanelExpanded = expanded;
+            Plugin.SavePluginSettings(PluginDatabase.PluginSettings);
+            ApplyFriendsPanelLayout();
+            Common.LogDebug($"[PaView] Friends panel expanded={expanded}");
+        }
+
+        private void ConfigureListViewColumnPersistence()
+        {
+            try
+            {
+                string columnsPath = Path.Combine(PluginDatabase.Paths.PluginUserDataPath, "ListViewColumns.json");
+                bool saveOrder = PluginDatabase.PluginSettings.SaveColumnOrder;
+                Common.LogDebug($"[PaView] Column persistence enabled={saveOrder}, path={columnsPath}");
+
+                PART_LvFriends.EnableColumnPersistence = saveOrder;
+                PART_LvFriends.ColumnConfigurationFilePath = columnsPath;
+                PART_LvFriends.ColumnConfigurationScope = ColumnConfigurationScope.Custom;
+                PART_LvFriends.ColumnConfigurationKey = "PlayerActivities.PaView.Friends";
+
+                PART_LvFriendsDetails.EnableColumnPersistence = saveOrder;
+                PART_LvFriendsDetails.ColumnConfigurationFilePath = columnsPath;
+                PART_LvFriendsDetails.ColumnConfigurationScope = ColumnConfigurationScope.Custom;
+                PART_LvFriendsDetails.ColumnConfigurationKey = "PlayerActivities.PaView.FriendsDetails";
+            }
+            catch (Exception ex)
+            {
+                Common.LogError(ex, false, false, PluginDatabase.PluginName);
+            }
+        }
+
+        private void PaView_Loaded(object sender, RoutedEventArgs e)
+        {
+            PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
+            PluginDatabase.DatabaseItemUpdated += Database_ItemUpdated;
+            PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
+            PluginDatabase.DatabaseItemCollectionChanged += Database_ItemCollectionChanged;
+            RequestTimelineRefresh = GetData;
+
+            Common.LogDebug("[PaView] Loaded — subscribed to database events");
+
+            GetData("Loaded");
+            if (!_friendsLoadStarted)
+            {
+                _friendsLoadStarted = true;
+                GetFriends();
+            }
+        }
+
+        private void PaView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _searchDebounceTimer.Stop();
+            _dataRefreshDebounceTimer.Stop();
+            _pendingDataRefreshReason = null;
+            RequestTimelineRefresh = null;
+            PluginDatabase.DatabaseItemUpdated -= Database_ItemUpdated;
+            PluginDatabase.DatabaseItemCollectionChanged -= Database_ItemCollectionChanged;
+            Common.LogDebug("[PaView] Unloaded — unsubscribed from database events");
         }
 
         private void Database_ItemUpdated(object sender, ItemUpdatedEventArgs<PlayerActivitiesData> e)
         {
-            GetData();
+            int updatedCount = e?.UpdatedItems?.Count ?? 0;
+            ScheduleDataRefresh($"ItemUpdated count={updatedCount}");
+        }
+
+        private void Database_ItemCollectionChanged(object sender, ItemCollectionChangedEventArgs<PlayerActivitiesData> e)
+        {
+            ScheduleDataRefresh("CollectionChanged");
+        }
+
+        private void ScheduleDataRefresh(string reason)
+        {
+            _pendingDataRefreshReason = reason;
+            _dataRefreshDebounceTimer.Stop();
+            _dataRefreshDebounceTimer.Start();
+            Common.LogDebug($"[PaView] ScheduleDataRefresh reason={reason} debounceMs={DataRefreshDebounceMs}");
+        }
+
+        private void DataRefreshDebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _dataRefreshDebounceTimer.Stop();
+            string reason = _pendingDataRefreshReason ?? "Debounced";
+            _pendingDataRefreshReason = null;
+            GetData(reason);
         }
 
         #region Data
 
-        private void GetData()
+        private void GetData(string reason = "GetData")
         {
             _ = Task.Run(() =>
             {
-                ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
+                try
+                {
+                    Stopwatch swAgg = Stopwatch.StartNew();
+                    ObservableCollection<ActivityListGrouped> data = PluginDatabase.GetActivitiesData();
+                    swAgg.Stop();
+                    int count = data?.Count ?? 0;
+                    Common.LogDebug($"[PaView] GetActivitiesData reason={reason} count={count} elapsedMs={swAgg.ElapsedMilliseconds}");
 
-                IsDataFinished = true;
-                IsFinish();
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        try
+                        {
+                            Stopwatch swUi = Stopwatch.StartNew();
+                            ControlDataContext.ItemsSource = data;
+
+                            if (PART_LbTimeLine?.ItemsSource != null)
+                            {
+                                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+                                if (view != null)
+                                {
+                                    view.Filter = TimeLineFilter;
+                                }
+                            }
+
+                            swUi.Stop();
+                            Common.LogDebug($"[PaView] apply timeline UI reason={reason} count={count} elapsedMs={swUi.ElapsedMilliseconds}");
+
+                            IsDataFinished = true;
+                            IsFinish();
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] GetData UI update failed", false, PluginDatabase.PluginName);
+                        }
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] GetData refresh failed", false, PluginDatabase.PluginName);
+                }
             });
         }
 
@@ -109,12 +306,51 @@ namespace PlayerActivities.Views
         {
             _ = Task.Run(() =>
             {
-                _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
-                FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
-                ControlDataContext.FriendsSource = friendsData.PlayerFriends.ToObservable();
-                ControlDataContext.LastFriendsRefresh = friendsData.PlayerFriends.Count == 0 ? (DateTime?)null : friendsData.LastUpdate;
-                IsFriendsFinished = true;
-                IsFinish();
+                try
+                {
+                    _ = SpinWait.SpinUntil(() => PluginDatabase.FriendsDataIsDownloaded, -1);
+
+                    Stopwatch swLoad = Stopwatch.StartNew();
+                    FriendsData friendsData = PluginDatabase.GetFriends(Plugin);
+                    swLoad.Stop();
+
+                    int friendCount = friendsData?.PlayerFriends?.Count ?? 0;
+                    Common.LogDebug($"[PaView] GetFriends load count={friendCount} elapsedMs={swLoad.ElapsedMilliseconds}");
+
+                    ObservableCollection<PlayerFriend> friendsSource = friendsData?.PlayerFriends?.ToObservable()
+                        ?? new ObservableCollection<PlayerFriend>();
+                    DateTime? lastRefresh = friendCount == 0 ? (DateTime?)null : friendsData?.LastUpdate;
+
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        try
+                        {
+                            Stopwatch swUi = Stopwatch.StartNew();
+                            ControlDataContext.FriendsSource = friendsSource;
+                            ControlDataContext.LastFriendsRefresh = lastRefresh;
+                            swUi.Stop();
+                            Common.LogDebug($"[PaView] apply friends UI count={friendCount} elapsedMs={swUi.ElapsedMilliseconds}");
+
+                            IsFriendsFinished = true;
+                            IsFinish();
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] GetFriends UI update failed", false, PluginDatabase.PluginName);
+                            IsFriendsFinished = true;
+                            IsFinish();
+                        }
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] GetFriends refresh failed", false, PluginDatabase.PluginName);
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
+                    {
+                        IsFriendsFinished = true;
+                        IsFinish();
+                    }));
+                }
             });
         }
 
@@ -126,6 +362,12 @@ namespace PlayerActivities.Views
                 {
                     PART_DataLoad.Visibility = Visibility.Hidden;
                     PART_Data.Visibility = Visibility.Visible;
+                    if (!_timelineReadyLogged)
+                    {
+                        _timelineReadyLogged = true;
+                        int groupCount = ControlDataContext.ItemsSource?.Count ?? 0;
+                        Logger.Info($"[PaView] Timeline and friends UI ready — groups={groupCount}");
+                    }
                 }));
 
                 _ = Task.Run(() =>
@@ -134,8 +376,23 @@ namespace PlayerActivities.Views
 
                     _ = (Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(delegate
                     {
-                        CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
-                        view.Filter = TimeLineFilter;
+                        try
+                        {
+                            if (PART_LbTimeLine?.ItemsSource == null)
+                            {
+                                return;
+                            }
+
+                            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+                            if (view != null)
+                            {
+                                view.Filter = TimeLineFilter;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Common.LogError(ex, false, "[PaView] IsFinish filter reapply failed", false, PluginDatabase.PluginName);
+                        }
                     })));
                 });
             }
@@ -147,7 +404,14 @@ namespace PlayerActivities.Views
 
         private void TextboxSearch_TextChanged(object sender, TextChangedEventArgs e)
         {
-            CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
+            _searchDebounceTimer.Stop();
+            _searchDebounceTimer.Start();
+        }
+
+        private void SearchDebounceTimer_Tick(object sender, EventArgs e)
+        {
+            _searchDebounceTimer.Stop();
+            RefreshTimeLineFilter("TextSearch");
         }
 
         private void ChkSource_Checked(object sender, RoutedEventArgs e)
@@ -162,24 +426,45 @@ namespace PlayerActivities.Views
 
         private void FilterCbSource(CheckBox sender)
         {
-            FilterSource.Text = string.Empty;
+            if (sender?.Tag == null)
+            {
+                return;
+            }
 
+            string source = sender.Tag.ToString();
             if ((bool)sender.IsChecked)
             {
-                SearchSources.Add((string)sender.Tag);
+                SearchSources.Add(source);
             }
             else
             {
-                SearchSources.Remove((string)sender.Tag);
+                SearchSources.Remove(source);
             }
 
-            if (SearchSources.Count != 0)
+            FilterSource.Text = SearchSources.Count == 0
+                ? string.Empty
+                : string.Join(", ", SearchSources);
+
+            RefreshTimeLineFilter("SourceFilter");
+        }
+
+        private void RefreshTimeLineFilter(string reason)
+        {
+            if (PART_LbTimeLine?.ItemsSource == null)
             {
-                FilterSource.Text = string.Join(", ", SearchSources);
+                return;
             }
 
-            CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource).Refresh();
+            System.ComponentModel.ICollectionView view = CollectionViewSource.GetDefaultView(PART_LbTimeLine.ItemsSource);
+            if (view == null)
+            {
+                return;
+            }
 
+            Stopwatch sw = Stopwatch.StartNew();
+            view.Refresh();
+            sw.Stop();
+            Common.LogDebug($"[PaView] CollectionView.Refresh reason={reason} searchLen={TextboxSearch?.Text?.Length ?? 0} sources={SearchSources.Count} elapsedMs={sw.ElapsedMilliseconds}");
         }
 
         #endregion
@@ -232,31 +517,260 @@ namespace PlayerActivities.Views
             }
 
             ListViewExtend lv = sender as ListViewExtend;
-            if (!(lv.SelectedItem is PlayerFriend pf))
+            if (lv == null || !(lv.SelectedItem is PlayerFriend pf))
             {
                 return;
             }
 
-            PlayerFriend pf_us = ControlDataContext.FriendsSource.Where(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName))?.First() ?? null;
+            // Me-row for the same store may be missing (data incomplete / filter) — compare playtime as 0.
+            PlayerFriend pf_us = ControlDataContext.FriendsSource?
+                .FirstOrDefault(x => x.IsUser && x.ClientName.IsEqual(pf.ClientName));
 
-            ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
-            pf.Games.ForEach(x =>
+            ApplyFriendsDetails(pf, pf_us);
+
+            // Epic/EA friends: identity-only — no deferred achievement enrich.
+            if (IsFriendsIdentityOnlyClient(pf.ClientName) && !pf.IsUser)
             {
-                listFriendsInfos.Add(new ListFriendsInfo
+                Common.LogDebug($"[PaView] Friends identity-only skip enrich friend={pf.FriendPseudo} client={pf.ClientName}");
+                return;
+            }
+
+            bool needsEnrich = pf.Games != null && pf.Games.Any(g => GenericFriends.NeedsAchievementsFetch(g));
+            bool needsEnrichUs = pf_us?.Games != null && pf_us.Games.Any(g => GenericFriends.NeedsAchievementsFetch(g));
+            if (!needsEnrich && !needsEnrichUs)
+            {
+                return;
+            }
+
+            // Cancel any in-flight enrich from a previous selection (avoids parallel API storms).
+            CancellationTokenSource previousCts = _friendsEnrichCts;
+            _friendsEnrichCts = new CancellationTokenSource();
+            CancellationToken token = _friendsEnrichCts.Token;
+            previousCts?.Cancel();
+            previousCts?.Dispose();
+
+            int generation = ++_friendsEnrichGeneration;
+            string friendId = pf.FriendId;
+            string clientName = pf.ClientName;
+            PlayerFriend selected = pf;
+            PlayerFriend meRow = pf_us;
+
+            ClearAllFriendsUpdating();
+            if (needsEnrich)
+            {
+                selected.IsUpdating = true;
+            }
+
+            _ = Task.Run(() =>
+            {
+                try
                 {
-                    Id = x.Id,
-                    Name = x.Name,
-                    Achievements = x.Achievements,
-                    IsCommun = pf.IsUser ? true : x.IsCommun,
-                    Link = x.Link,
-                    Playtime = x.Playtime,
-                    UsAchievements = pf_us?.Games?.Find(y => x.Id == y.Id)?.Achievements ?? 0,
-                    UsPlaytime = pf_us?.Games?.Find(y => x.Id == y.Id)?.Playtime ?? 0
+                    if (token.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
+                    GenericFriends client = GenericFriends.CreateClient(clientName);
+                    if (client == null)
+                    {
+                        _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(selected)));
+                        return;
+                    }
+
+                    // Enrich selected friend first and refresh UI before the (often large) "me" row.
+                    if (needsEnrich)
+                    {
+                        selected = client.EnrichFriendAchievements(selected, token);
+                        PluginDatabase.UpsertFriend(selected);
+                        if (token.IsCancellationRequested)
+                        {
+                            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(selected)));
+                            return;
+                        }
+
+                        PublishFriendEnrichUi(lv, generation, friendId, clientName, selected, meRow: null, clearUpdating: selected);
+                    }
+
+                    if (needsEnrichUs && meRow != null)
+                    {
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        Dispatcher?.Invoke(() =>
+                        {
+                            if (!token.IsCancellationRequested)
+                            {
+                                meRow.IsUpdating = true;
+                            }
+                        });
+
+                        if (token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+
+                        meRow = client.EnrichFriendAchievements(meRow, token);
+                        PluginDatabase.UpsertFriend(meRow);
+                        if (token.IsCancellationRequested)
+                        {
+                            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() => ClearFriendUpdating(meRow)));
+                            return;
+                        }
+
+                        PublishFriendEnrichUi(lv, generation, friendId, clientName, selected, meRow, clearUpdating: meRow);
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    Common.LogDebug($"[PaView] Friends enrich canceled friend={selected?.FriendPseudo} client={clientName}");
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() =>
+                    {
+                        ClearFriendUpdating(selected);
+                        ClearFriendUpdating(meRow);
+                    }));
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] Deferred friends achievements enrich failed", false, PluginDatabase.PluginName);
+                    _ = Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new ThreadStart(() =>
+                    {
+                        ClearFriendUpdating(selected);
+                        ClearFriendUpdating(meRow);
+                    }));
+                }
+            }, token);
+        }
+
+        /// <summary>
+        /// Pushes enriched friend rows into the list and refreshes details when the same friend is still selected.
+        /// </summary>
+        private void PublishFriendEnrichUi(
+            ListViewExtend lv,
+            int generation,
+            string friendId,
+            string clientName,
+            PlayerFriend selected,
+            PlayerFriend meRow,
+            PlayerFriend clearUpdating)
+        {
+            _ = Dispatcher?.BeginInvoke(DispatcherPriority.Loaded, new ThreadStart(() =>
+            {
+                ClearFriendUpdating(clearUpdating);
+                ReplaceFriendInSource(selected);
+                if (meRow != null)
+                {
+                    ReplaceFriendInSource(meRow);
+                }
+
+                if (generation != _friendsEnrichGeneration)
+                {
+                    return;
+                }
+
+                if (!(lv.SelectedItem is PlayerFriend stillSelected) || !stillSelected.FriendId.IsEqual(friendId))
+                {
+                    return;
+                }
+
+                PlayerFriend detailsFriend = ControlDataContext.FriendsSource?
+                    .FirstOrDefault(x => x != null && x.FriendId.IsEqual(friendId)) ?? selected;
+                PlayerFriend detailsMe = meRow ?? ControlDataContext.FriendsSource?
+                    .FirstOrDefault(x => x.IsUser && x.ClientName.IsEqual(clientName));
+                ApplyFriendsDetails(detailsFriend, detailsMe);
+                Common.LogDebug($"[PaView] Friends details enriched friend={detailsFriend?.FriendPseudo} client={clientName}");
+            }));
+        }
+
+        private static void ClearFriendUpdating(PlayerFriend friend)
+        {
+            if (friend != null)
+            {
+                friend.IsUpdating = false;
+            }
+        }
+
+        private void ClearAllFriendsUpdating()
+        {
+            if (ControlDataContext.FriendsSource == null)
+            {
+                return;
+            }
+
+            foreach (PlayerFriend friend in ControlDataContext.FriendsSource)
+            {
+                ClearFriendUpdating(friend);
+            }
+        }
+
+        private void ApplyFriendsDetails(PlayerFriend pf, PlayerFriend pf_us)
+        {
+            ObservableCollection<ListFriendsInfo> listFriendsInfos = new ObservableCollection<ListFriendsInfo>();
+            if (pf?.Games != null)
+            {
+                pf.Games.ForEach(x =>
+                {
+                    if (x == null)
+                    {
+                        return;
+                    }
+
+                    listFriendsInfos.Add(new ListFriendsInfo
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Achievements = x.Achievements,
+                        IsCommun = pf.IsUser ? true : x.IsCommun,
+                        Link = x.Link,
+                        Playtime = x.Playtime,
+                        UsAchievements = pf_us?.Games?.Find(y => x.Id == y.Id)?.Achievements ?? 0,
+                        UsPlaytime = pf_us?.Games?.Find(y => x.Id == y.Id)?.Playtime ?? 0
+                    });
                 });
-            });
+            }
 
             ControlDataContext.FriendsDetailsSource = listFriendsInfos;
-            PART_LvFriendsDetails.Sorting();
+            ControlDataContext.FriendsDetailsHint = GetFriendsIdentityOnlyHint(pf, listFriendsInfos.Count);
+            PART_LvFriendsDetails?.Sorting();
+        }
+
+        /// <summary>
+        /// Epic and EA store APIs only expose the current user's library — friends stay identity-only.
+        /// </summary>
+        private static bool IsFriendsIdentityOnlyClient(string clientName)
+        {
+            return clientName.IsEqual("Epic") || clientName.IsEqual("EA");
+        }
+
+        private static string GetFriendsIdentityOnlyHint(PlayerFriend pf, int detailsCount)
+        {
+            if (pf == null || pf.IsUser || detailsCount > 0 || !IsFriendsIdentityOnlyClient(pf.ClientName))
+            {
+                return string.Empty;
+            }
+
+            return string.Format(
+                ResourceProvider.GetString("LOCPaFriendsIdentityOnly"),
+                pf.ClientName);
+        }
+
+        private static void ReplaceFriendInSource(PlayerFriend updated)
+        {
+            if (updated == null || ControlDataContext.FriendsSource == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < ControlDataContext.FriendsSource.Count; i++)
+            {
+                PlayerFriend current = ControlDataContext.FriendsSource[i];
+                if (current != null && current.FriendId.IsEqual(updated.FriendId))
+                {
+                    ControlDataContext.FriendsSource[i] = updated;
+                    return;
+                }
+            }
         }
     }
 
@@ -274,6 +788,12 @@ namespace PlayerActivities.Views
         private ObservableCollection<ListFriendsInfo> _friendsDetailsSource = new ObservableCollection<ListFriendsInfo>();
         public ObservableCollection<ListFriendsInfo> FriendsDetailsSource { get => _friendsDetailsSource; set => SetValue(ref _friendsDetailsSource, value); }
 
+        private string _friendsDetailsHint = string.Empty;
+        /// <summary>
+        /// Empty-state hint when the selected friend is Epic/EA (identity-only, no game details).
+        /// </summary>
+        public string FriendsDetailsHint { get => _friendsDetailsHint; set => SetValue(ref _friendsDetailsHint, value); }
+
         private ObservableCollection<ListSource> _filterSourceItems = new ObservableCollection<ListSource>();
         public ObservableCollection<ListSource> FilterSourceItems { get => _filterSourceItems; set => SetValue(ref _filterSourceItems, value); }
 
@@ -283,17 +803,23 @@ namespace PlayerActivities.Views
         private DateTime? _lastFriendsRefresh;
         public DateTime? LastFriendsRefresh { get => _lastFriendsRefresh; set => SetValue(ref _lastFriendsRefresh, value); }
 
+        private bool _isFriendsPanelExpanded = true;
+        /// <summary>
+        /// Whether the friends column is visible in PaView (bound by the toggle button style).
+        /// </summary>
+        public bool IsFriendsPanelExpanded { get => _isFriendsPanelExpanded; set => SetValue(ref _isFriendsPanelExpanded, value); }
+
 
         #region Menus
 
-        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> StartGameCommand { get; } = new RelayCommand<Game>((game)
             => API.Instance.StartGame(game.Id));
 
-        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> InstallGameCommand { get; } = new RelayCommand<Game>((game)
             => API.Instance.InstallGame(game.Id));
 
         public RelayCommand<Game> ShowGameInLibraryCommand { get; } = new RelayCommand<Game>((game)
-            => Commands.GoToGame.Execute(game.Id));
+            => CommandsNavigation.GoToGame.Execute(game.Id));
 
         public RelayCommand<Game> RefreshGameDataCommand { get; } = new RelayCommand<Game>((game) =>
         {
@@ -302,19 +828,41 @@ namespace PlayerActivities.Views
                 return;
             }
 
-            PluginDatabase.InitializePluginData(true, game.Id);
-            PaView.ControlDataContext.ItemsSource = PluginDatabase.GetActivitiesData();
+            _ = Task.Run(() =>
+            {
+                try
+                {
+                    PluginDatabase.InitializePluginData(true, game.Id);
+                    Action<string> refresh = PaView.RequestTimelineRefresh;
+                    if (refresh != null)
+                    {
+                        Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new Action(() => refresh("RefreshGameData")));
+                    }
+                    else
+                    {
+                        ObservableCollection<ActivityListGrouped> data = PluginDatabase.GetActivitiesData();
+                        Application.Current?.Dispatcher?.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                        {
+                            PaView.ControlDataContext.ItemsSource = data;
+                        }));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Common.LogError(ex, false, "[PaView] RefreshGameDataCommand failed", false, PluginDatabase.PluginName);
+                }
+            });
         });
 
-        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game) 
-            => SuccessStoryPlugin.SuccessStoryView(game));
+        public RelayCommand<Game> ShowGameSuccessStoryCommand { get; } = new RelayCommand<Game>((game)
+            => PaAchievementsView.Open(game));
 
-        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> ShowGameHowLongToBeatCommand { get; } = new RelayCommand<Game>((game)
             => HowLongToBeatPlugin.HowLongToBeatView(game));
 
-        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game) 
+        public RelayCommand<Game> ShowGameScreenshotsVisualizerCommand { get; } = new RelayCommand<Game>((game)
             => ScreenshotsVisualizerPlugin.ScreenshotsVisualizerView(game));
-        
+
         #endregion
     }
 
