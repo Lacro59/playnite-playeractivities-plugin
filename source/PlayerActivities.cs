@@ -259,7 +259,7 @@ namespace PlayerActivities
                     {
                         Type = ActivityType.PlaytimeFirst
                     });
-                    Logger.Debug($"PlaytimeFirst added on game start: Id={args.Game?.Id}");
+                    Common.LogDebug($"PlaytimeFirst added on game start: Id={args.Game?.Id}");
                 }
             }
             catch (Exception ex)

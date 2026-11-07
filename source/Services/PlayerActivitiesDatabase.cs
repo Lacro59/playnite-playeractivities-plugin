@@ -136,7 +136,7 @@ namespace PlayerActivities.Services
         /// <returns>Total number of duplicate entries removed.</returns>
         public int DeduplicatePlaytimeFirstActivities()
         {
-            Logger.Debug("PlaytimeFirst dedup: started");
+            Common.LogDebug("PlaytimeFirst dedup: started");
             int removedTotal = 0;
             int gamesTouched = 0;
 
@@ -153,7 +153,7 @@ namespace PlayerActivities.Services
                     gamesTouched++;
                     removedTotal += removed;
                     AddOrUpdate(data);
-                    Logger.Debug($"PlaytimeFirst dedup: game Id={data.Id}, removed={removed}");
+                    Common.LogDebug($"PlaytimeFirst dedup: game Id={data.Id}, removed={removed}");
                 }
             }
 
