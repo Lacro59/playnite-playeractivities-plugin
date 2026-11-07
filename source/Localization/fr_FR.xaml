@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
@@ -9,11 +9,15 @@
     <sys:String x:Key="LOCPaView">Voir les activités du joueur</sys:String>
 
     <sys:String x:Key="LOCPaActivities">Activités du joueur</sys:String>
+    <sys:String x:Key="LOCPaFriends">Friends</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Afficher les données de SuccessStory (plugin SuccessStory requis)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Afficher les données de ScreenshotsVisualizer (plugin ScreenshotsVisualizer requis)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Afficher les données de HowLongToBeat (plugin HowLongToBeat requis)</sys:String>
 
@@ -21,6 +25,10 @@
     <sys:String x:Key="LOCPaEnableGogFriends">Activer les amis GOG</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Activer les amis EA</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Activer les amis Epic</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
+    <sys:String x:Key="LOCPaFriendLibraryPrivate">Library data is private</sys:String>
+    <sys:String x:Key="LOCPaFriendDataUpdating">Updating friend data…</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Afficher les activités du jeu</sys:String>
 

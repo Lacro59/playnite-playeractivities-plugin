@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
     <!-- MainView -->
@@ -9,27 +9,35 @@
     <sys:String x:Key="LOCPaView">Visualizza attività del giocatore</sys:String>
 
     <sys:String x:Key="LOCPaActivities">Attività del giocatore</sys:String>
+    <sys:String x:Key="LOCPaFriends">Friends</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Mostra i dati di SuccessStory (plugin di SuccessStory richiesto)</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Visualizza dati di ScreenshotsVisualizer (plugin ScreenshotsVisualizer richiesto)</sys:String>
     <sys:String x:Key="LOCPaEnableHowLongToBeatData">Visualizza i dati di HowLongToBeat (plugin HowLongToBeat richiesto)</sys:String>
-    
+
     <sys:String x:Key="LOCPaEnableSteamFriends">Abilita amici di Steam</sys:String>
     <sys:String x:Key="LOCPaEnableGogFriends">Abilita amici di GOG</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Abilita gli amici EA</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Abilita amici di Epic</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
+    <sys:String x:Key="LOCPaFriendLibraryPrivate">Library data is private</sys:String>
+    <sys:String x:Key="LOCPaFriendDataUpdating">Updating friend data…</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Visualizza attività di gioco</sys:String>
 
-    
+
     <!-- ActivitiesView -->
 
     <sys:String x:Key="LOCPaPlaytimeFirst">Ha giocato per la prima volta.</sys:String>
     <sys:String x:Key="LOCPaPlaytimeGoal">Hai raggiunto le {0} ore di gioco.</sys:String>
-    
+
     <sys:String x:Key="LOCPaSuccessStoryUnlocked">Hai sbloccato {0} obiettivi.</sys:String>
     <sys:String x:Key="LOCPaSuccessStoryGoal">Hai raggiunto {0}% obiettivi.</sys:String>
 
@@ -43,7 +51,7 @@
     <sys:String x:Key="LOCPaMonthsAgo">{0} mesi fa</sys:String>
     <sys:String x:Key="LOCPaYearAgo">{0} anno fa</sys:String>
     <sys:String x:Key="LOCPaYearsAgo">{0} anni fa</sys:String>
-    
+
     <sys:String x:Key="LOCPaGameOwned">Gioco posseduto</sys:String>
     <sys:String x:Key="LOCPaGameCompleted">Giochi completati</sys:String>
     <sys:String x:Key="LOCPaFriendAchievements">🏆 degli amici</sys:String>
@@ -61,7 +69,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Aggiorna dati del gioco</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">Visualizza dati di HowLongToBeat</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">Visualizza dati di SuccessStory</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">View achievements data</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Visualizza dati di ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
