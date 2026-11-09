@@ -9,13 +9,13 @@
     <sys:String x:Key="LOCPaView">Voir les activités du joueur</sys:String>
 
     <sys:String x:Key="LOCPaActivities">Activités du joueur</sys:String>
-    <sys:String x:Key="LOCPaFriends">Friends</sys:String>
+    <sys:String x:Key="LOCPaFriends">Amis</sys:String>
 
 
     <!-- PlayerActivitiesSettingsView -->
 
-    <sys:String x:Key="LOCPaEnableSuccessStoryData">Display achievements data (requires the selected achievements plugin)</sys:String>
-    <sys:String x:Key="LOCPaAchievementsProvider">Achievements provider</sys:String>
+    <sys:String x:Key="LOCPaEnableSuccessStoryData">Afficher les données des réalisations (nécessite le plugin de succès sélectionné)</sys:String>
+    <sys:String x:Key="LOCPaAchievementsProvider">Fournisseur de succès</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderSuccessStory">SuccessStory</sys:String>
     <sys:String x:Key="LOCPaAchievementsProviderPlayniteAchievements">PlayniteAchievements</sys:String>
     <sys:String x:Key="LOCPaEnableScreenshotsVisualizerData">Afficher les données de ScreenshotsVisualizer (plugin ScreenshotsVisualizer requis)</sys:String>
@@ -25,10 +25,10 @@
     <sys:String x:Key="LOCPaEnableGogFriends">Activer les amis GOG</sys:String>
     <sys:String x:Key="LOCPaEnableEAFriends">Activer les amis EA</sys:String>
     <sys:String x:Key="LOCPaEnableEpicFriends">Activer les amis Epic</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Lists friend identities only. Game library, playtime and achievements are not available for friends on this store.</sys:String>
-    <sys:String x:Key="LOCPaFriendsIdentityOnly">Game library, playtime and achievements are not available for friends on {0}.</sys:String>
-    <sys:String x:Key="LOCPaFriendLibraryPrivate">Library data is private</sys:String>
-    <sys:String x:Key="LOCPaFriendDataUpdating">Updating friend data…</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnlyTooltip">Liste uniquement les identités d'ami. La bibliothèque de jeux, le temps de jeu et les accomplissements ne sont pas disponibles pour les amis de cette boutique.</sys:String>
+    <sys:String x:Key="LOCPaFriendsIdentityOnly">La bibliothèque de jeux, le temps de jeu et les réalisations ne sont pas disponibles pour les amis sur {0}.</sys:String>
+    <sys:String x:Key="LOCPaFriendLibraryPrivate">Les données de la bibliothèque sont privées</sys:String>
+    <sys:String x:Key="LOCPaFriendDataUpdating">Mise à jour des données d'ami…</sys:String>
 
     <sys:String x:Key="LOCPaIntegrationActivities">Afficher les activités du jeu</sys:String>
 
@@ -69,7 +69,7 @@
     <sys:String x:Key="LOCPaRefreshGameData">Actualiser les données du jeu</sys:String>
 
     <sys:String x:Key="LOCPaHowLongToBeatPluginView">Voir les données HowLongToBeat</sys:String>
-    <sys:String x:Key="LOCPaSuccessStoryPluginView">Afficher les données de succès</sys:String>
+    <sys:String x:Key="LOCPaSuccessStoryPluginView">Voir les données des succès</sys:String>
     <sys:String x:Key="LOCPaScreenshotsVisualizerPluginView">Afficher les données ScreenshotsVisualizer</sys:String>
 
 </ResourceDictionary>
