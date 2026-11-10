@@ -48,15 +48,44 @@ namespace PlayerActivities.Views
                 return;
             }
 
+            // Store register / StoreApi wiring waits until the Libraries tab is selected.
+            Common.LogDebug($"[PaSettingsOpen] Loaded deferred store wiring until Libraries tab friends={FormatEnabledFriendsSummary()}");
+        }
+
+        private void PART_SettingsTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
+                return;
+            }
+
+            if (!ReferenceEquals(PART_SettingsTabs.SelectedItem, PART_LibrariesTab))
+            {
+                return;
+            }
+
+            EnsureStoreUiInitialized();
+        }
+
+        /// <summary>
+        /// Registers store panels and binds <c>StoreApi</c> once, on first Libraries tab visit.
+        /// </summary>
+        private void EnsureStoreUiInitialized()
+        {
+            if (_storeUiInitialized)
+            {
+                return;
+            }
+
             _storeUiInitialized = true;
-            StoreSettingsLog.Debug("PlayerActivities settings view initializing store panels");
+            StoreSettingsLog.Debug("PlayerActivities settings view initializing store panels (Libraries tab)");
             Stopwatch sw = Stopwatch.StartNew();
             RegisterStorePanels();
             long registerMs = sw.ElapsedMilliseconds;
             sw.Restart();
             RefreshStorePanels();
             long refreshMs = sw.ElapsedMilliseconds;
-            Common.LogDebug($"[PaSettingsOpen] Loaded store wiring registerMs={registerMs} refreshMs={refreshMs} friends={FormatEnabledFriendsSummary()}");
+            Common.LogDebug($"[PaSettingsOpen] Libraries store wiring registerMs={registerMs} refreshMs={refreshMs} friends={FormatEnabledFriendsSummary()}");
         }
 
         private void PlayerActivitiesSettingsView_Unloaded(object sender, RoutedEventArgs e)
