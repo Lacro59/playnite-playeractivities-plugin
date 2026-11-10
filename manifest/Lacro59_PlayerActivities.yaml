@@ -81,3 +81,11 @@ Packages:
       - 'Fixed: Horizontal scrollbar overlapping achievement and screenshot strips'
       - 'Optimized: PaView filters and lazy-loaded plugin hosts'
       - 'Updated: Localizations'
+  - Version: 1.2.1
+    RequiredApiVersion: 6.13.0
+    ReleaseDate: 2026-11-10
+    PackageUrl: https://github.com/Lacro59/playnite-playeractivities-plugin/releases/download/v1.2.1/playnite-playeractivities-plugin_1_2_1.pext
+    Changelog:
+      - 'Optimized: Faster settings open by deferring store panel wiring until the Libraries tab'
+      - 'Fixed: Settings open no longer blocked by EA login network check'
+      - 'Updated: Localizations'

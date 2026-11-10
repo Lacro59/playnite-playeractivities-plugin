@@ -8,6 +8,7 @@ using Playnite.SDK;
 using Playnite.SDK.Data;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PlayerActivities
 {
@@ -108,7 +109,9 @@ namespace PlayerActivities
         // Code executed when settings view is opened and user starts editing values.
         public void BeginEdit()
         {
+            Stopwatch sw = Stopwatch.StartNew();
             EditingClone = Serialization.GetClone(Settings);
+            Common.LogDebug($"[PaSettingsOpen] BeginEdit clone done elapsedMs={sw.ElapsedMilliseconds}");
         }
 
         // Code executed when user decides to cancel any changes made since BeginEdit was called.
