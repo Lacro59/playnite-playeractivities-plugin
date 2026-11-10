@@ -1,7 +1,9 @@
-﻿using CommonPluginsControls.Stores;
+using CommonPluginsControls.Stores;
 using CommonPluginsControls.Stores.Models;
+using CommonPluginsShared;
 using PlayerActivities.Services;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -19,7 +21,9 @@ namespace PlayerActivities.Views
 
         public PlayerActivitiesSettingsView()
         {
+            Stopwatch sw = Stopwatch.StartNew();
             InitializeComponent();
+            Common.LogDebug($"[PaSettingsOpen] InitializeComponent elapsedMs={sw.ElapsedMilliseconds}");
             Loaded += PlayerActivitiesSettingsView_Loaded;
             Unloaded += PlayerActivitiesSettingsView_Unloaded;
             DataContextChanged += PlayerActivitiesSettingsView_DataContextChanged;
@@ -37,15 +41,22 @@ namespace PlayerActivities.Views
             if (_storeUiInitialized)
             {
                 StoreSettingsLog.Debug("PlayerActivities settings view re-opened; refreshing store panels");
+                Stopwatch swReopen = Stopwatch.StartNew();
                 RefreshStorePanels();
                 RequestStorePanelsBackgroundAuthRefresh();
+                Common.LogDebug($"[PaSettingsOpen] Loaded re-open refresh elapsedMs={swReopen.ElapsedMilliseconds} friends={FormatEnabledFriendsSummary()}");
                 return;
             }
 
             _storeUiInitialized = true;
             StoreSettingsLog.Debug("PlayerActivities settings view initializing store panels");
+            Stopwatch sw = Stopwatch.StartNew();
             RegisterStorePanels();
+            long registerMs = sw.ElapsedMilliseconds;
+            sw.Restart();
             RefreshStorePanels();
+            long refreshMs = sw.ElapsedMilliseconds;
+            Common.LogDebug($"[PaSettingsOpen] Loaded store wiring registerMs={registerMs} refreshMs={refreshMs} friends={FormatEnabledFriendsSummary()}");
         }
 
         private void PlayerActivitiesSettingsView_Unloaded(object sender, RoutedEventArgs e)
@@ -241,6 +252,17 @@ namespace PlayerActivities.Views
             }
 
             return PluginDatabase.PluginSettings;
+        }
+
+        private string FormatEnabledFriendsSummary()
+        {
+            PlayerActivitiesSettings settings = GetEditingSettings();
+            return string.Format(
+                "Steam={0};Epic={1};Gog={2};EA={3}",
+                IsSteamStoreEnabled(settings),
+                IsEpicStoreEnabled(settings),
+                IsGogStoreEnabled(settings),
+                IsEaStoreEnabled(settings));
         }
 
         private static bool IsSteamStoreEnabled(PlayerActivitiesSettings settings)
